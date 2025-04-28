@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Film, LogOut, User } from 'lucide-react';
 import NavLinks from './NavLinks';
 import { useAuth } from '../../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,13 +42,14 @@ const Navbar: React.FC = () => {
     >
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex justify-between items-center">
-          <NavLink 
-            to="/" 
-            className="flex items-center space-x-2 text-white"
-          >
-            <Film size={32} className="text-gold-500" />
+          <Link to="/" className="flex items-center space-x-2">
+            <img 
+              src="/favicon.webp" 
+              alt="FilmFund.io" 
+              className="h-8"
+            />
             <span className="text-xl font-bold tracking-tight">FilmFund.io</span>
-          </NavLink>
+          </Link>
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
