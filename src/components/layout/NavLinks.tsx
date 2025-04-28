@@ -7,11 +7,13 @@ const NavLinks: React.FC = () => {
     { to: "/how-it-works", label: "How It Works" },
     { to: "/for-filmmakers", label: "For Filmmakers" },
     { to: "/for-fans", label: "For Fans" },
-    { to: "/ffa-staking", label: "FFA Staking" }
+    { to: "/ffa-staking", label: "FFA Staking" },
+    { to: "/private-sale", label: "Private Sale" },
+    { to: "https://filmfund.gitbook.io/docs", label: "Whitepaper" }
   ];
 
   return (
-    <div className="md:flex md:items-center md:space-x-6">
+    <div className="md:flex md:items-center md:space-x-1">
       {links.map((link) => (
         <NavLink
           key={link.to}

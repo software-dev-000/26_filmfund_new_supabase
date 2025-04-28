@@ -1,9 +1,71 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Play, TrendingUp, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { projectService } from '../../services/projectService';
+import { Project, ProjectPayment } from '../../types/database';
 
 const Hero: React.FC = () => {
+  const [stats, setStats] = useState({
+    fundsRaised: 0,
+    filmProjects: 0,
+    investors: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        const projects = await projectService.getAllProjects();
+        
+        // Calculate total funds raised
+        const totalFundsRaised = projects.reduce((sum, project) => {
+          const projectFunds = project.project_payments?.reduce(
+            (paymentSum: number, payment: ProjectPayment) => paymentSum + payment.amount, 
+            0
+          ) || 0;
+          return sum + projectFunds;
+        }, 0);
+        
+        // Count active projects
+        const activeProjects = projects.filter(project => project.status === 'active').length;
+        
+        // Count unique investors
+        const uniqueInvestors = new Set();
+        projects.forEach(project => {
+          project.project_payments?.forEach((payment: ProjectPayment) => {
+            // Since ProjectPayment doesn't have a user_id property, we'll use the project_id as a proxy
+            // In a real implementation, you would need to join with a users table or have a user_id in the payment
+            uniqueInvestors.add(project.id);
+          });
+        });
+        
+        setStats({
+          fundsRaised: totalFundsRaised,
+          filmProjects: activeProjects,
+          investors: uniqueInvestors.size
+        });
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchStats();
+  }, []);
+
+  const formatCurrency = (amount: number) => {
+    if (amount >= 1000000) {
+      return `$${(amount / 1000000).toFixed(1)}M+`;
+    } else if (amount >= 1000) {
+      return `$${(amount / 1000).toFixed(1)}K+`;
+    } else {
+      return `$${amount}+`;
+    }
+  };
+
   return (
     <section className="relative pt-20 pb-24 overflow-hidden">
       {/* Background gradient */}
@@ -52,15 +114,21 @@ const Hero: React.FC = () => {
               transition={{ delay: 0.3, duration: 0.5 }}
             >
               <div className="p-4">
-                <p className="text-3xl font-bold text-gold-500 mb-1">$120M+</p>
+                <p className="text-3xl font-bold text-gold-500 mb-1">
+                  {loading ? '...' : formatCurrency(stats.fundsRaised)}
+                </p>
                 <p className="text-sm text-gray-400">Funds Raised</p>
               </div>
               <div className="p-4">
-                <p className="text-3xl font-bold text-gold-500 mb-1">250+</p>
+                <p className="text-3xl font-bold text-gold-500 mb-1">
+                  {loading ? '...' : `${stats.filmProjects}+`}
+                </p>
                 <p className="text-sm text-gray-400">Film Projects</p>
               </div>
               <div className="p-4">
-                <p className="text-3xl font-bold text-gold-500 mb-1">15K+</p>
+                <p className="text-3xl font-bold text-gold-500 mb-1">
+                  {loading ? '...' : `${stats.investors}+`}
+                </p>
                 <p className="text-sm text-gray-400">Investors</p>
               </div>
             </motion.div>

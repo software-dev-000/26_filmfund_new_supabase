@@ -1,75 +1,120 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, DollarSign, Calendar, Clock } from 'lucide-react';
+import { Users, DollarSign, Calendar, Clock, ChevronDown } from 'lucide-react';
+import { projectService } from '../../services/projectService';
+import { Project, ProjectPayment } from '../../types/database';
+
+interface ProjectWithUI extends Project {
+  funding_raised: number;
+  investors: number;
+  days_left: number;
+  category: string;
+  genre: string;
+  director: string;
+  featured: boolean;
+}
 
 const FeaturedProjects: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [projects, setProjects] = useState<ProjectWithUI[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   const categories = [
     { id: 'all', name: 'All Projects' },
     { id: 'feature', name: 'Feature Films' },
+    { id: 'action', name: 'Action' },
     { id: 'documentary', name: 'Documentaries' },
-    { id: 'series', name: 'Series' }
+    { id: 'series', name: 'Series' },
+    { id: 'short', name: 'Short Films' },
+    { id: 'animation', name: 'Animation' },
+    { id: 'experimental', name: 'Experimental' },
+    { id: 'web-series', name: 'Web Series' },
+    { id: 'tv-movie', name: 'TV Movies' },
+    { id: 'reality', name: 'Reality Shows' }
   ];
   
-  const projects = [
-    {
-      id: 1,
-      title: "The Last Horizon",
-      category: "feature",
-      genre: "Sci-Fi Thriller",
-      director: "Elena Rodriguez",
-      fundingGoal: 2500000,
-      fundingRaised: 1750000,
-      investors: 156,
-      daysLeft: 23,
-      image: "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg",
-      featured: true
-    },
-    {
-      id: 2,
-      title: "Beyond the Edge",
-      category: "documentary",
-      genre: "Adventure Documentary",
-      director: "Michael Chen",
-      fundingGoal: 850000,
-      fundingRaised: 650000,
-      investors: 78,
-      daysLeft: 15,
-      image: "https://images.pexels.com/photos/1174996/pexels-photo-1174996.jpeg",
-      featured: true
-    },
-    {
-      id: 3,
-      title: "Midnight in Tokyo",
-      category: "feature",
-      genre: "Drama",
-      director: "Hana Tanaka",
-      fundingGoal: 1200000,
-      fundingRaised: 480000,
-      investors: 53,
-      daysLeft: 34,
-      image: "https://images.pexels.com/photos/1034662/pexels-photo-1034662.jpeg",
-      featured: true
-    },
-    {
-      id: 4,
-      title: "The Climate Frontier",
-      category: "series",
-      genre: "Environmental Series",
-      director: "David Marshall",
-      fundingGoal: 3200000,
-      fundingRaised: 1950000,
-      investors: 203,
-      daysLeft: 45,
-      image: "https://images.pexels.com/photos/1144687/pexels-photo-1144687.jpeg",
-      featured: true
-    }
-  ];
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const data = await projectService.getAllProjects();
+        
+        // Transform projects data and filter for active projects
+        const transformedProjects = data
+          .filter(project => project.status === 'active')
+          .map(project => {
+            // Find the director from team members
+            const director = project.project_team_members?.find(
+              (member: { role: string; name: string }) => member.role.toLowerCase().includes('director')
+            );
+            
+            // Determine category based on project type
+            let category = 'feature';
+            if (project.type?.toLowerCase().includes('documentary')) {
+              category = 'documentary';
+            } else if (project.type?.toLowerCase().includes('series')) {
+              category = 'series';
+            } else if (project.type?.toLowerCase().includes('short')) {
+              category = 'short';
+            } else if (project.type?.toLowerCase().includes('animation')) {
+              category = 'animation';
+            } else if (project.type?.toLowerCase().includes('experimental')) {
+              category = 'experimental';
+            } else if (project.type?.toLowerCase().includes('web-series')) {
+              category = 'web-series';
+            } else if (project.type?.toLowerCase().includes('tv-movie')) {
+              category = 'tv-movie';
+            } else if (project.type?.toLowerCase().includes('reality')) {
+              category = 'reality';
+            }
+            
+            return {
+              ...project,
+              funding_raised: project.project_payments?.reduce((sum: number, payment: ProjectPayment) => sum + payment.amount, 0) || 0,
+              investors: project.project_team_members?.length || 0,
+              days_left: 30, // This should be calculated based on project end date
+              category,
+              genre: project.genre || 'Drama',
+              director: director?.name || 'Unknown Director',
+              featured: true // You might want to add a featured flag to your database
+            };
+          });
+        
+        setProjects(transformedProjects);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProjects();
+  }, []);
   
   const filteredProjects = activeCategory === 'all' 
     ? projects 
-    : projects.filter(project => project.category === activeCategory);
+    : projects.filter(project => project.genre === activeCategory);
+
+  const selectedCategory = categories.find(cat => cat.id === activeCategory)?.name || 'All Projects';
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-navy-950 relative overflow-hidden">
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <div className="animate-pulse">
+            <div className="h-8 bg-navy-800 rounded w-1/4 mb-4"></div>
+            <div className="h-6 bg-navy-800 rounded w-1/3 mb-8"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-navy-800 rounded-xl h-96"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-navy-950 relative overflow-hidden">
@@ -98,25 +143,40 @@ const FeaturedProjects: React.FC = () => {
           </div>
           
           <motion.div 
-            className="flex flex-wrap gap-2"
+            className="relative"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            {categories.map(category => (
+            <div className="relative">
               <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                className={`px-4 py-2 rounded-md transition-colors ${
-                  activeCategory === category.id
-                    ? 'bg-gold-500 text-navy-900'
-                    : 'bg-navy-800 text-white hover:bg-navy-700'
-                }`}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center justify-between bg-navy-800 text-white px-4 py-2 rounded-md w-48 border border-navy-700 hover:bg-navy-700 transition-colors"
               >
-                {category.name}
+                <span>{selectedCategory}</span>
+                <ChevronDown size={16} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-            ))}
+              
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-navy-800 border border-navy-700 rounded-md shadow-lg z-20 max-h-60 overflow-y-auto">
+                  {categories.map(category => (
+                    <button
+                      key={category.id}
+                      onClick={() => {
+                        setActiveCategory(category.id);
+                        setIsDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 hover:bg-navy-700 transition-colors ${
+                        activeCategory === category.id ? 'text-gold-500' : 'text-white'
+                      }`}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </motion.div>
         </div>
         
@@ -125,6 +185,12 @@ const FeaturedProjects: React.FC = () => {
             <ProjectCard key={project.id} project={project} index={index} />
           ))}
         </div>
+        
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-400 text-lg">No active projects found in this category.</p>
+          </div>
+        )}
         
         <motion.div 
           className="mt-12 text-center"
@@ -146,24 +212,12 @@ const FeaturedProjects: React.FC = () => {
 };
 
 interface ProjectCardProps {
-  project: {
-    id: number;
-    title: string;
-    category: string;
-    genre: string;
-    director: string;
-    fundingGoal: number;
-    fundingRaised: number;
-    investors: number;
-    daysLeft: number;
-    image: string;
-    featured: boolean;
-  };
+  project: ProjectWithUI;
   index: number;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
-  const percentFunded = Math.round((project.fundingRaised / project.fundingGoal) * 100);
+  const percentFunded = Math.round((project.funding_raised / project.funding_goal) * 100);
   
   return (
     <motion.div 
@@ -175,7 +229,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     >
       <div className="relative h-48 overflow-hidden">
         <img 
-          src={project.image} 
+          src={project.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
           alt={project.title} 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
@@ -209,7 +263,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
         <div className="grid grid-cols-2 gap-3 text-sm mb-4">
           <div className="flex items-center">
             <DollarSign size={14} className="text-gold-500 mr-1" />
-            <span className="text-gray-300">${(project.fundingRaised / 1000000).toFixed(1)}M raised</span>
+            <span className="text-gray-300">${(project.funding_raised / 1000000).toFixed(1)}M raised</span>
           </div>
           <div className="flex items-center">
             <Users size={14} className="text-gold-500 mr-1" />
@@ -217,11 +271,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
           </div>
           <div className="flex items-center">
             <DollarSign size={14} className="text-gold-500 mr-1" />
-            <span className="text-gray-300">${(project.fundingGoal / 1000000).toFixed(1)}M goal</span>
+            <span className="text-gray-300">${(project.funding_goal / 1000000).toFixed(1)}M goal</span>
           </div>
           <div className="flex items-center">
             <Clock size={14} className="text-gold-500 mr-1" />
-            <span className="text-gray-300">{project.daysLeft} days left</span>
+            <span className="text-gray-300">{project.days_left} days left</span>
           </div>
         </div>
         

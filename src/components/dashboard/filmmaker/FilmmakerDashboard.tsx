@@ -325,6 +325,90 @@ const FilmmakerDashboard: React.FC = () => {
             </div>
           </motion.div>
         </div>
+        
+        {/* Active Projects Section - Now a standalone section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="mt-8 bg-navy-800 rounded-xl border border-navy-700"
+        >
+          <div className="p-6 border-b border-navy-700">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Active Projects</h2>
+              <Link 
+                to="/projects" 
+                className="text-gold-500 hover:text-gold-400 text-sm flex items-center"
+              >
+                View All <ChevronRight size={16} className="ml-1" />
+              </Link>
+            </div>
+          </div>
+          
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {projects
+                .filter(project => project.status === 'active')
+                .slice(0, 3)
+                .map((project, index) => (
+                  <div 
+                    key={project.id} 
+                    className="bg-navy-700 rounded-lg overflow-hidden border border-navy-600 hover:border-navy-500 transition-colors"
+                  >
+                    <div className="h-40 relative">
+                      <img 
+                        src={project.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
+                        alt={project.title} 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2">
+                        <span className="inline-block px-2 py-1 text-xs rounded-full bg-green-900/30 text-green-400">Active</span>
+                      </div>
+                      {/* <Link 
+                        to={`/filmmaker/projects/${project.id}`}
+                        className="absolute top-2 left-2 w-8 h-8 bg-navy-800/80 backdrop-blur-sm text-white rounded-lg flex items-center justify-center hover:bg-navy-700 transition-colors"
+                      >
+                        <Edit size={16} />
+                      </Link> */}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-white font-medium mb-1">{project.title}</h3>
+                      <div className="mt-3">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-gray-400">Funding Progress</span>
+                          <span className="text-green-400 font-medium">
+                            {Math.round((project.funding_raised / project.funding_goal) * 100)}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-navy-600 rounded-full h-2">
+                          <div 
+                            className="bg-green-500 h-2 rounded-full" 
+                            style={{ width: `${Math.round((project.funding_raised / project.funding_goal) * 100)}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex justify-between text-xs mt-2 text-gray-400">
+                          <span>${(project.funding_raised / 1000000).toFixed(1)}M raised</span>
+                          <span>{project.investors} investors</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              
+              {projects.filter(project => project.status === 'active').length === 0 && (
+                <div className="col-span-full text-center py-6">
+                  <p className="text-gray-400">No active projects found.</p>
+                  <Link 
+                    to="/filmmaker/new-project" 
+                    className="inline-block mt-3 text-gold-500 hover:text-gold-400"
+                  >
+                    Create a new project
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );

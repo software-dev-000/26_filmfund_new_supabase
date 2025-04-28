@@ -14,6 +14,11 @@ app.use(helmet({
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
       "img-src": ["'self'", "data:", "https:", "blob:"],
+      "connect-src": ["'self'", "https://unbusknpnrmaxdlbujiz.supabase.co", "https://*.supabase.co"],
+      "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      "style-src": ["'self'", "'unsafe-inline'"],
+      "font-src": ["'self'", "https:", "data:"],
+      "frame-src": ["'self'", "https://*.supabase.co"],
     },
   },
 }));

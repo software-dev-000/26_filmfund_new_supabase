@@ -42,19 +42,19 @@ const Navbar: React.FC = () => {
     >
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2 min-w-[80px]">
             <img 
               src="/favicon.webp" 
               alt="FilmFund.io" 
-              className="h-8"
+              className="h-8 md:h-12"
             />
-            <span className="text-xl font-bold tracking-tight">FilmFund.io</span>
+            {/* <span className="text-xl font-bold tracking-tight">FilmFund.io</span> */}
           </Link>
           
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-1">
             <NavLinks />
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-1">
               {currentUser ? (
                 <>
                   <NavLink 
@@ -110,7 +110,7 @@ const Navbar: React.FC = () => {
         {isOpen && (
           <div className="md:hidden mt-4 py-4 border-t border-navy-800">
             <NavLinks />
-            <div className="mt-4 space-y-2">
+            <div className="space-y-1">
               {currentUser ? (
                 <>
                   <NavLink 

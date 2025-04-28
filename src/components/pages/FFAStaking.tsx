@@ -103,7 +103,7 @@ const FFAStaking: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               {currentUser ? (
                 <Link 
-                  to="/dashboard" 
+                  to="#" 
                   className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-6 py-3 rounded-md font-medium transition-colors"
                 >
                   Start Staking
@@ -117,7 +117,7 @@ const FFAStaking: React.FC = () => {
                 </Link>
               )}
               <Link 
-                to="#learn-more" 
+                to="#" 
                 className="border border-gold-500 text-white hover:bg-navy-700 px-6 py-3 rounded-md font-medium transition-colors"
               >
                 Learn More
@@ -164,7 +164,7 @@ const FFAStaking: React.FC = () => {
             {stakingTiers.map((tier, index) => (
               <motion.div
                 key={tier.id}
-                className={`bg-navy-800 rounded-xl p-6 border-2 transition-colors ${
+                className={`bg-navy-800 flex flex-col justify-between rounded-xl p-6 border-2 transition-colors ${
                   selectedTier === tier.id 
                     ? 'border-gold-500' 
                     : 'border-navy-700'
@@ -272,7 +272,7 @@ const FFAStaking: React.FC = () => {
       <section className="py-16">
         <div className="container mx-auto px-4 md:px-6">
           <motion.div 
-            className="bg-navy-800 rounded-xl p-8 text-center border border-navy-700"
+            className="bg-navy-800 rounded-xl p-6 text-center border border-navy-700 mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -284,7 +284,7 @@ const FFAStaking: React.FC = () => {
             </p>
             {currentUser ? (
               <Link 
-                to="/dashboard" 
+                to="#" 
                 className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-8 py-3 rounded-md font-medium transition-colors inline-block"
               >
                 Start Staking Now
