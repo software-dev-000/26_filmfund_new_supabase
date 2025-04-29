@@ -66,7 +66,7 @@ const Dashboard: React.FC = () => {
                 <SidebarLink to="/dashboard/create-project" icon={<PlusCircle size={20} />} label="Create Project" />
                 <SidebarLink to="/dashboard/funding" icon={<DollarSign size={20} />} label="Funding Status" />
               </>
-            )}
+            )}  
             
             {userType === "admin" && (
               <>

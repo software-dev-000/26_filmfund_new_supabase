@@ -1,25 +1,25 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Film, DollarSign, Users, Shield, BarChart4, Star, Gift, Ticket, CheckCircle } from 'lucide-react';
+import { DollarSign, Users, Shield, Globe } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { useToast } from '../../contexts/ToastContext';
+import { useToast } from '../contexts/ToastContext';
 
-const ForFans: React.FC = () => {
+const ForFilmmakers: React.FC = () => {
   const { currentUser, userType } = useAuth();
   const navigate = useNavigate();
   const { error } = useToast();
 
   const handleGetStarted = () => {
     if (currentUser) {
-      if (userType !== 'investor') {
-        error('You are not registered as an investor', 
-          'Please register as an investor to access this feature.',
+      if (userType !== 'filmmaker') {
+        error('You are not registered as a filmmaker', 
+          'Please register as a filmmaker to access this feature.',
           { label: 'Register', onClick: () => navigate('/register') }
         );
         return;
       }
-      navigate('/investor/dashboard');
+      navigate('/filmmaker/dashboard');
     } else {
       navigate('/register');
     }
@@ -27,57 +27,42 @@ const ForFans: React.FC = () => {
 
   const benefits = [
     {
-      icon: <Star size={24} />,
-      title: "Exclusive Access",
-      description: "Get behind-the-scenes content and early access to film releases."
+      icon: <Globe size={24} />,
+      title: "Global Reach",
+      description: "Access a worldwide network of investors passionate about film."
     },
     {
-      icon: <Gift size={24} />,
-      title: "Special Perks",
-      description: "Receive unique rewards and experiences based on your investment level."
+      icon: <DollarSign size={24} />,
+      title: "Efficient Fundraising",
+      description: "Streamlined process to raise capital with transparent terms."
     },
     {
-      icon: <Ticket size={24} />,
-      title: "Premier Events",
-      description: "Attend film premieres and exclusive screenings."
+      icon: <Shield size={24} />,
+      title: "Legal Compliance",
+      description: "Built-in regulatory compliance and legal framework."
     },
     {
       icon: <Users size={24} />,
-      title: "Community",
-      description: "Connect with other film enthusiasts and creators."
+      title: "Community Building",
+      description: "Connect with fans and build a dedicated audience."
     }
   ];
 
-  const tiers = [
+  const features = [
     {
-      name: "Silver Fan",
-      price: "500",
-      benefits: [
-        "Access to exclusive content",
-        "Quarterly virtual meetups",
-        "Digital copy of the film",
-        "Name in credits"
-      ]
+      title: "Project Dashboard",
+      description: "Track fundraising progress, investor communications, and project milestones.",
+      image: "https://images.pexels.com/photos/7376/startup-photos.jpg"
     },
     {
-      name: "Gold Fan",
-      price: "2,500",
-      benefits: [
-        "All Silver benefits",
-        "Set visit opportunity",
-        "Limited edition merchandise",
-        "Meet & greet with cast"
-      ]
+      title: "Marketing Tools",
+      description: "Built-in tools to promote your project and engage with potential investors.",
+      image: "https://images.pexels.com/photos/905163/pexels-photo-905163.jpeg"
     },
     {
-      name: "Platinum Fan",
-      price: "10,000",
-      benefits: [
-        "All Gold benefits",
-        "Executive producer credit",
-        "Premiere tickets",
-        "Private screening rights"
-      ]
+      title: "Legal Templates",
+      description: "Access standardized legal documents and agreements.",
+      image: "https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg"
     }
   ];
 
@@ -93,32 +78,24 @@ const ForFans: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
           >
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Be Part of the Movies You Love
+              Empower Your Film Project
             </h1>
             <p className="text-xl text-gray-300 mb-8">
-              Support independent films, get exclusive access, and earn returns on successful projects.
+              Access the capital and resources you need to bring your vision to life through 
+              our innovative film financing platform.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {currentUser ? (
-                <button 
-                  onClick={handleGetStarted}
-                  className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-6 py-3 rounded-md font-medium transition-colors"
-                >
-                  Join Now
-                </button>
-              ) : (
-                <Link 
-                  to="/register" 
-                  className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-6 py-3 rounded-md font-medium transition-colors"
-                >
-                  Join Now
-                </Link>
-              )}
+              <button 
+                onClick={handleGetStarted}
+                className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-6 py-3 rounded-md font-medium transition-colors"
+              >
+                Submit Your Project
+              </button>
               <Link 
-                to="/projects" 
+                to="/contact" 
                 className="border border-gold-500 text-white hover:bg-navy-700 px-6 py-3 rounded-md font-medium transition-colors"
               >
-                Browse Projects
+                Schedule a Call
               </Link>
             </div>
           </motion.div>
@@ -133,7 +110,7 @@ const ForFans: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            Fan Benefits
+            Why Choose FilmFund.io
           </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {benefits.map((benefit, index) => (
@@ -155,43 +132,27 @@ const ForFans: React.FC = () => {
         </div>
       </section>
 
-      {/* Investment Tiers */}
+      {/* Features Section */}
       <section className="py-16">
         <div className="container mx-auto px-4 md:px-6">
-          <motion.h2 
-            className="text-3xl font-bold text-white text-center mb-12"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            Investment Tiers
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {tiers.map((tier, index) => (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
               <motion.div
                 key={index}
-                className="bg-navy-800 rounded-xl p-6 border border-navy-700"
+                className="bg-navy-800 rounded-xl overflow-hidden border border-navy-700"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <h3 className="text-2xl font-bold text-white mb-2">{tier.name}</h3>
-                <div className="text-gold-500 text-3xl font-bold mb-6">
-                  ${tier.price}
+                <img 
+                  src={feature.image} 
+                  alt={feature.title} 
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
+                  <p className="text-gray-400">{feature.description}</p>
                 </div>
-                <ul className="space-y-3 mb-6">
-                  {tier.benefits.map((benefit, i) => (
-                    <li key={i} className="flex items-center text-gray-300">
-                      <CheckCircle size={16} className="text-gold-500 mr-2" />
-                      {benefit}
-                    </li>
-                  ))}
-                </ul>
-                <button 
-                  onClick={handleGetStarted}
-                  className="block w-full bg-navy-700 hover:bg-navy-600 text-white text-center py-2 rounded-md transition-colors"
-                >
-                  Get Started
-                </button>
               </motion.div>
             ))}
           </div>
@@ -207,16 +168,16 @@ const ForFans: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
           >
             <h2 className="text-3xl font-bold text-white mb-4">
-              Join the Film Revolution
+              Ready to Fund Your Film?
             </h2>
             <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-              Become part of the next generation of film financing and enjoy exclusive benefits.
+              Join FilmFund.io today and connect with investors who believe in your vision.
             </p>
             <button 
               onClick={handleGetStarted}
               className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-8 py-3 rounded-md font-medium transition-colors inline-block"
             >
-              Start Investing
+              Get Started
             </button>
           </motion.div>
         </div>
@@ -225,4 +186,4 @@ const ForFans: React.FC = () => {
   );
 };
 
-export default ForFans;
+export default ForFilmmakers;

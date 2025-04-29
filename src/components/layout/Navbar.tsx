@@ -79,10 +79,10 @@ const Navbar: React.FC = () => {
                   </button>
                 </>
               ) : (
-                <>
+                <div className="flex items-center space-x-2">
                   <NavLink 
                     to="/login" 
-                    className="text-white hover:text-gold-300 transition-colors"
+                    className="text-white hover:text-gold-300  px-4  transition-colors"
                   >
                     Login
                   </NavLink>
@@ -92,7 +92,7 @@ const Navbar: React.FC = () => {
                   >
                     Sign Up
                   </NavLink>
-                </>
+                </div>
               )}
             </div>
           </div>

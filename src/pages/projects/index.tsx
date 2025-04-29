@@ -137,57 +137,72 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
   const percentFunded = Math.round((project.funding_raised / project.funding_goal) * 100);
   
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-      className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300"
+    <motion.div 
+      className="bg-navy-800 rounded-xl overflow-hidden flex flex-col border border-navy-700 group h-full"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.1 * index }}
     >
-      <Link to={`/projects/${project.id}`}>
-        <div className="relative h-48">
-          <img
-            src={project.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"}
-            alt={project.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-            <h3 className="text-xl font-bold">{project.title}</h3>
-            <p className="text-gray-300">{project.director}</p>
+      <div className="relative h-48 overflow-hidden">
+        <img 
+          src={project.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
+          alt={project.title} 
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        {project.featured && (
+          <div className="absolute top-3 right-3 bg-gold-500 text-navy-900 text-xs font-bold px-2 py-1 rounded-md">
+            Featured
+          </div>
+        )}
+        <div className="absolute left-3 bottom-3 bg-navy-900/80 backdrop-blur-sm text-white text-xs py-1 px-2 rounded">
+          {project.genre}
+        </div>
+      </div>
+      
+      <div className="p-5 flex-grow flex flex-col">
+        <h3 className="text-lg font-bold text-white mb-1">{project.title}</h3>
+        <p className="text-gray-400 text-sm mb-3">Directed by {project.director}</p>
+        
+        <div className="mb-4 mt-1">
+          <div className="flex justify-between text-sm mb-1">
+            <span className="text-gray-400">Funding Progress</span>
+            <span className="text-gold-500 font-medium">{percentFunded}%</span>
+          </div>
+          <div className="w-full bg-navy-700 rounded-full h-2">
+            <div 
+              className="bg-gold-500 h-2 rounded-full" 
+              style={{ width: `${percentFunded}%` }}
+            ></div>
           </div>
         </div>
-        <div className="p-4">
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-gold-500">{project.genre}</span>
-            <span className="bg-gold-500 text-black px-2 py-1 rounded text-sm">{project.type}</span>
+        
+        <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+          <div className="flex items-center">
+            <DollarSign size={14} className="text-gold-500 mr-1" />
+            <span className="text-gray-300">${(project.funding_raised / 1000000).toFixed(1)}M raised</span>
           </div>
-          <div className="mb-4">
-            <div className="h-2 bg-gray-700 rounded-full mb-2">
-              <div
-                className="h-full bg-gold-500 rounded-full"
-                style={{ width: `${Math.min(percentFunded, 100)}%` }}
-              />
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>{percentFunded}% Funded</span>
-              <span>${project.funding_goal.toLocaleString()}</span>
-            </div>
+          <div className="flex items-center">
+            <Users size={14} className="text-gold-500 mr-1" />
+            <span className="text-gray-300">{project.investors} investors</span>
           </div>
-          <div className="flex justify-between text-sm">
-            <div className="flex items-center">
-              <DollarSign size={14} className="text-gold-500 mr-1" />
-              <span className="text-gray-300">${(project.funding_raised / 1000000).toFixed(1)}M raised</span>
-            </div>
-            <div className="flex items-center">
-              <Users size={14} className="text-gold-500 mr-1" />
-              <span className="text-gray-300">{project.investors} investors</span>
-            </div>
-            <div className="flex items-center">
-              <Clock size={14} className="text-gold-500 mr-1" />
-              <span className="text-gray-300">{project.days_left} days left</span>
-            </div>
+          <div className="flex items-center">
+            <DollarSign size={14} className="text-gold-500 mr-1" />
+            <span className="text-gray-300">${(project.funding_goal / 1000000).toFixed(1)}M goal</span>
+          </div>
+          <div className="flex items-center">
+            <Clock size={14} className="text-gold-500 mr-1" />
+            <span className="text-gray-300">{project.days_left} days left</span>
           </div>
         </div>
-      </Link>
+        
+        <Link 
+          to={`/projects/${project.id}`}
+          className="mt-auto bg-navy-700 hover:bg-navy-600 text-white text-center py-2 rounded-md transition-colors"
+        >
+          View Project
+        </Link>
+      </div>
     </motion.div>
   );
 };

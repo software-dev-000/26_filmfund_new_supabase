@@ -10,7 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import { projectService } from '../../services/projectService';
-import StripePaymentForm from '../payment/StripePaymentForm';
+import StripePaymentForm from '../../components/payment/StripePaymentForm';
 
 interface TeamMember {
   name: string;

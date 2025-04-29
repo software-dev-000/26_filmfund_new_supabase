@@ -12,7 +12,7 @@ import {
   Percent
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const FFAStaking: React.FC = () => {
   const [selectedTier, setSelectedTier] = useState<string>('silver');

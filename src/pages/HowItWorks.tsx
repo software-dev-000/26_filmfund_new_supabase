@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Film, DollarSign, Shield, Users, BarChart as ChartBar, CheckCircle, Wallet, FileText, Lock, BarChart4 } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import { Shield, Users, BarChart as ChartBar, CheckCircle, Wallet, FileText, Lock, BarChart4 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 
 const HowItWorks: React.FC = () => {

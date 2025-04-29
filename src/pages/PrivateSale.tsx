@@ -5,7 +5,6 @@ import {
   DollarSign, 
   Clock, 
   Shield,
-  ChevronRight,
   CheckCircle,
   AlertCircle
 } from 'lucide-react';

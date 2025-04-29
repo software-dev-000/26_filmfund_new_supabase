@@ -5,11 +5,9 @@ import {
   DollarSign, 
   TrendingUp, 
   PlusCircle,
-  Clock,
   Users,
   ChevronRight,
   Star,
-  Calendar,
   Edit,
   BarChart4,
   AlertCircle
@@ -17,6 +15,7 @@ import {
 import { Link } from 'react-router-dom';
 import { projectService } from '../../../services/projectService';
 import { Project, ProjectPayment } from '../../../types/database';
+import ProjectCard from '../../../components/project/ProjectCard';
 
 interface ProjectWithUI extends Project {
   funding_raised: number;
@@ -283,9 +282,9 @@ const FilmmakerDashboard: React.FC = () => {
                 <div className="text-center">
                   <BarChart4 size={32} className="text-gold-500 mx-auto mb-2" />
                   <p className="text-white mb-2">Funding Chart</p>
-                  <p className="text-gray-400 text-sm">
+                  {/* <p className="text-gray-400 text-sm">
                     In a real implementation, this would be a chart showing funding over time
-                  </p>
+                  </p> */}
                 </div>
               </div>
             </div>
@@ -445,104 +444,6 @@ const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon, color, trend,
       <h3 className="text-gray-400 text-sm mb-1">{title}</h3>
       <p className="text-2xl font-bold text-white mb-2">{value}</p>
       <p className="text-sm text-gray-400">{trend}</p>
-    </motion.div>
-  );
-};
-
-interface ProjectCardProps {
-  project: ProjectWithUI;
-  index: number;
-}
-
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
-  let statusBadge;
-  let statusContent;
-  
-  switch (project.status) {
-    case "funding":
-      const percentFunded = Math.round((project.funding_raised / project.funding_goal) * 100);
-      statusBadge = <span className="inline-block px-2 py-1 text-xs rounded-full bg-blue-900/30 text-blue-400">Funding</span>;
-      statusContent = (
-        <div className="mt-3">
-          <div className="flex justify-between text-xs mb-1">
-            <span className="text-gray-400">Funding Progress</span>
-            <span className="text-blue-400 font-medium">{percentFunded}%</span>
-          </div>
-          <div className="w-full bg-navy-700 rounded-full h-2">
-            <div 
-              className="bg-blue-500 h-2 rounded-full" 
-              style={{ width: `${percentFunded}%` }}
-            ></div>
-          </div>
-          <div className="flex justify-between text-xs mt-2 text-gray-400">
-            <span>${(project.funding_raised / 1000000).toFixed(1)}M raised</span>
-            <span>{project.days_left} days left</span>
-          </div>
-        </div>
-      );
-      break;
-    case "production":
-      statusBadge = <span className="inline-block px-2 py-1 text-xs rounded-full bg-green-900/30 text-green-400">Production</span>;
-      statusContent = (
-        <div className="mt-3">
-          <div className="flex justify-between text-xs mb-1">
-            <span className="text-gray-400">Production Progress</span>
-            <span className="text-green-400 font-medium">{project.completion_percent}%</span>
-          </div>
-          <div className="w-full bg-navy-700 rounded-full h-2">
-            <div 
-              className="bg-green-500 h-2 rounded-full" 
-              style={{ width: `${project.completion_percent}%` }}
-            ></div>
-          </div>
-          <div className="flex justify-between text-xs mt-2 text-gray-400">
-            <span>${(project.funding_goal / 1000000).toFixed(1)}M budget</span>
-            <span>{project.investors} investors</span>
-          </div>
-        </div>
-      );
-      break;
-    case "draft":
-      statusBadge = <span className="inline-block px-2 py-1 text-xs rounded-full bg-amber-900/30 text-amber-400">Draft</span>;
-      statusContent = (
-        <div className="mt-3 text-center py-1">
-          <button className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-4 py-2 rounded-md text-sm font-medium transition-colors w-full">
-            Complete Submission
-          </button>
-        </div>
-      );
-      break;
-    default:
-      statusBadge = <span className="inline-block px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-400">{project.status}</span>;
-  }
-  
-  return (
-    <motion.div 
-      className="bg-navy-700 rounded-lg overflow-hidden border border-navy-600 hover:border-navy-500 transition-colors"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-    >
-      <div className="h-40 relative">
-        <img 
-          src={project.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
-          alt={project.title} 
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute top-2 right-2">
-          {statusBadge}
-        </div>
-        <Link 
-          to={`/filmmaker/projects/${project.id}`}
-          className="absolute top-2 left-2 w-8 h-8 bg-navy-800/80 backdrop-blur-sm text-white rounded-lg flex items-center justify-center hover:bg-navy-700 transition-colors"
-        >
-          <Edit size={16} />
-        </Link>
-      </div>
-      <div className="p-4">
-        <h3 className="text-white font-medium mb-1">{project.title}</h3>
-        {statusContent}
-      </div>
     </motion.div>
   );
 };
