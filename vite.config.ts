@@ -14,6 +14,6 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['app.filmfund.io', 'localhost'],
+    allowedHosts: ['localhost', 'filmfund.io'],
   },
 });

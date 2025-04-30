@@ -2,20 +2,37 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Shield } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../config/supabase';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would validate against your backend
-    if (email === 'admin@filmfund.io' && password === 'admin123') {
-      localStorage.setItem('adminAuth', 'true');
-      navigate('/dashboard');
-    } else {
-      alert('Invalid admin credentials');
+    try {
+      setError('');
+      setLoading(true);
+      await login(email, password);
+      
+      // Check if the user is an admin
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log(`user: ${JSON.stringify(user, null, 2)}`);
+      if (user?.user_metadata.user_type !== 'superadmin') {
+        await supabase.auth.signOut();
+        throw new Error('Access denied. Admin privileges required.');
+      }
+      
+      navigate('/admin/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to sign in. Please check your credentials.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,6 +51,12 @@ const AdminLogin: React.FC = () => {
           <h2 className="text-3xl font-bold text-white">Admin Login</h2>
           <p className="mt-2 text-gray-400">Access the admin dashboard</p>
         </motion.div>
+
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
 
         <motion.form 
           initial={{ opacity: 0 }}
@@ -82,9 +105,10 @@ const AdminLogin: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-navy-900 bg-gold-500 hover:bg-gold-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-navy-900 bg-gold-500 hover:bg-gold-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Access Admin Dashboard
+              {loading ? 'Signing in...' : 'Access Admin Dashboard'}
             </button>
           </div>
         </motion.form>

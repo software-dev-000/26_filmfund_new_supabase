@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { User, AuthError } from '@supabase/supabase-js';
 import { supabase } from '../config/supabase';
 
-export type UserType = 'superAdmin' | 'admin' | 'filmmaker' | 'fan' | 'investor';
+export type UserType = 'superadmin' | 'admin' | 'filmmaker' | 'investor';
 
 interface AuthContextType {
   currentUser: User | null;

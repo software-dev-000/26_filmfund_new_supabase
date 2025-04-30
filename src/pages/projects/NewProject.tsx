@@ -78,31 +78,35 @@ const initialFormData: FormData = {
   title: 'ABC',
   tagline: 'EDF',
   genre: 'action',
-  status: 'pending',
-  timeline: '123',
-  currentStage: '123',
-  budget: '123',
-  website: '123',
-  fundingGoal: '100000',
+  status: 'active',
+  timeline: 'timeline',
+  currentStage: 'current stage',
+  budget: '1000000',
+  website: 'https://www.filmfund.io',
+  fundingGoal: '1000000',
   duration: '30',
-    stableSplit: '70',
+  stableSplit: '70',
   synopsis: 'Synopsis',
   description: 'Description',
   investmentHighlights: [{ title: 'Investment Highlight 1', description: 'Description'}],
   financialStructure: [{ title: 'Financial Structure 1', description: 'Description'}],
   risks: [{ title: 'Risk 1', description: 'Description'}],
-  milestones: [{ title: 'Milestone 1', duration: '123', description: 'Description'}],
+  milestones: [{ title: 'Milestone 1', duration: 'Q1 2025', description: 'Description'}],
   coverImage: null,
   teamMembers: [{
-    name: '',
-    role: '',
-    bio: '',
+    name: 'John Doe',
+    role: 'Producer',
+    bio: 'John Doe is a producer with over 20 years of experience in the film industry.',
     image: null,
-    notableProjects: []
+    notableProjects: [{
+      title: 'Project 1',
+      link: 'https://www.filmfund.io',
+      description: 'Description'
+    }]
   }],
     documents: [],
     gallery: [],
-    socialLinks: { website: '', twitter: '', instagram: '' },
+    socialLinks: { website: 'https://www.filmfund.io', twitter: 'https://twitter.com/filmfund', instagram: 'https://www.instagram.com/filmfund' },
     tokenization: {
     jurisdiction: 'us',
     legalAdvisor: 'advisor1',
@@ -120,14 +124,14 @@ const initialFormData: FormData = {
     vestingStartDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
     vestingDuration: '24',
     cliffPeriod: '6',
-      requireKycAml: true,
+    requireKycAml: true,
     accreditedOnly: true,
     distributionMethod: 'wallet',
     secondaryMarket: 'sto',
     spvName: 'FilmFund SPV LLC',
     legalDocuments: []
   },
-  paymentAmount: '100', // Default payment amount
+  paymentAmount: '2750', // Default payment amount
 };
 
 const NewProject: React.FC = () => {
@@ -873,6 +877,7 @@ const NewProject: React.FC = () => {
                           onChange={handleInputChange}
                           className="w-full px-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
                           required
+                          disabled={currentUser?.user_metadata.user_type !== 'superadmin' || currentUser?.user_metadata.user_type !== 'admin'}
                         >
                           <option value="pending">Pending</option>
                           <option value="active">Active</option>
@@ -1555,7 +1560,7 @@ const NewProject: React.FC = () => {
                     </label>
                       <div className="relative">
                         <DollarSign size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
+                        <input
                           type="number"
                           id="paymentAmount"
                           name="paymentAmount"
@@ -1566,6 +1571,7 @@ const NewProject: React.FC = () => {
                           required
                           min="1"
                           step="0.01"
+                          disabled={true}
                         />
                       </div>
                     <p className="mt-1 text-sm text-gray-400">
