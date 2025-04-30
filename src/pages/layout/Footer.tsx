@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Film, Twitter, Linkedin, Instagram, Facebook } from 'lucide-react';
+import { Twitter, Linkedin, Instagram, Facebook } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -13,9 +13,9 @@ const Footer: React.FC = () => {
               alt="FilmFund.io" 
               className="h-8"
             />
-            <span className="text-xl font-bold">FilmFund.io</span>
+             
           </div>
-          <p className="text-gray-400 mb-5">
+          <p className="text-gray-400 mb-5 w-full sm:w-1/2 text-center">
             Connecting filmmakers with investors through blockchain technology.
             Revolutionizing film financing with transparency and security.
           </p>
