@@ -9,7 +9,7 @@ interface FilmmakerRouteProps {
 const FilmmakerRoute: React.FC<FilmmakerRouteProps> = ({ children }) => {
   const { currentUser } = useAuth();
   
-  if (!currentUser || currentUser.user_metadata.user_type !== 'filmmaker') {
+  if (!currentUser || currentUser.user_metadata.user_type === 'investor') {
     return <Navigate to="/login" replace />;
   }
 

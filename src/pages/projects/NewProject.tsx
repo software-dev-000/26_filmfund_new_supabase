@@ -1072,20 +1072,19 @@ const NewProject: React.FC = () => {
                               <div key={projectIndex} className="p-4 bg-navy-600 rounded-lg">
                                 <div className="flex justify-between items-center mb-4">
                                   <h4 className="text-white font-medium">Project {projectIndex + 1}</h4>
-                    <button
-                      type="button"
-                                    onClick={() => removeNotableProject(index, projectIndex)}
-                                    className="text-red-400 hover:text-red-300 text-sm"
-                    >
-                                    Remove
-                    </button>
-                  </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => removeNotableProject(index, projectIndex)}
+                                      className="text-red-400 hover:text-red-300 text-sm">
+                                      Remove
+                                    </button>
+                                  </div>
                                 <div className="space-y-4">
                                   <div className="grid grid-cols-2 gap-4">
-                    <div>
+                                    <div>
                                       <label className="block text-sm font-medium text-gray-300 mb-1">
                                         Project Title
-                      </label>
+                                      </label>
                                       <input
                                         type="text"
                                         value={project.title}
@@ -1093,11 +1092,11 @@ const NewProject: React.FC = () => {
                                         className="w-full px-4 py-2 bg-navy-700 border border-navy-500 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
                                         placeholder="Enter project title"
                                       />
-                      </div>
-                    <div>
+                                    </div>
+                                    <div>
                                       <label className="block text-sm font-medium text-gray-300 mb-1">
                                         Project Link
-                      </label>
+                                      </label>
                                       <input
                                         type="url"
                                         value={project.link}
@@ -1105,12 +1104,12 @@ const NewProject: React.FC = () => {
                                         className="w-full px-4 py-2 bg-navy-700 border border-navy-500 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
                                         placeholder="Enter project URL"
                                       />
-                      </div>
-                    </div>
-                    <div>
+                                    </div>
+                                  </div>
+                                  <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-1">
                                       Project Description
-                      </label>
+                                    </label>
                                     <textarea
                                       value={project.description}
                                       onChange={(e) => updateNotableProject(index, projectIndex, 'description', e.target.value)}
@@ -1118,9 +1117,9 @@ const NewProject: React.FC = () => {
                                       className="w-full px-4 py-2 bg-navy-700 border border-navy-500 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
                                       placeholder="Brief description of the project"
                                     />
-                      </div>
-                    </div>
-                  </div>
+                                  </div>
+                                </div>
+                              </div>
                             ))}
                             <button
                               type="button"
@@ -1129,15 +1128,15 @@ const NewProject: React.FC = () => {
                             >
                               + Add Notable Project
                             </button>
-                </div>
-              </div>
+                          </div>
+                        </div>
 
-                    <div>
+                        <div>
                           <label className="block text-sm font-medium text-gray-300 mb-2">
                             Profile Image
-                      </label>
+                          </label>
                           <div className="border-2 border-dashed border-navy-600 rounded-lg p-6">
-                        <input
+                            <input
                               type="file"
                               accept="image/*"
                               onChange={(e) => {
@@ -1174,7 +1173,7 @@ const NewProject: React.FC = () => {
                                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                                     </svg>
                                   </button>
-                      </div>
+                                </div>
                               ) : (
                                 <>
                                   <ImageIcon size={32} className="text-gray-400 mb-2" />
@@ -1187,7 +1186,7 @@ const NewProject: React.FC = () => {
                                 </>
                               )}
                             </label>
-                    </div>
+                           </div>
                         </div>
                       </div>
                     ))}
@@ -1241,7 +1240,7 @@ const NewProject: React.FC = () => {
                                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                                 </svg>
                               </button>
-                      </div>
+                            </div>
                           ) : (
                             <>
                               <ImageIcon size={32} className="text-gray-400 mb-2" />
@@ -1254,8 +1253,8 @@ const NewProject: React.FC = () => {
                             </>
                           )}
                         </label>
-                  </div>
-                </div>
+                      </div>
+                    </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -1301,17 +1300,17 @@ const NewProject: React.FC = () => {
                                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                                 </svg>
                               </button>
-                        </div>
+                            </div>
                           ))}
                         </div>
                       )}
                       </div>
 
                       <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Project Documents
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Project Documents
                         </label>
-                      <div className="border-2 border-dashed border-navy-600 rounded-lg p-6">
+                        <div className="border-2 border-dashed border-navy-600 rounded-lg p-6">
                           <input
                           type="file"
                           accept=".pdf,.doc,.docx,.txt"
@@ -1332,7 +1331,7 @@ const NewProject: React.FC = () => {
                             PDF, DOC, DOCX or TXT (max 10MB each)
                           </p>
                         </label>
-                        </div>
+                      </div>
                       {formData.documents.length > 0 && (
                         <div className="mt-4 space-y-2">
                           {formData.documents.map((file, index) => (
@@ -1340,17 +1339,16 @@ const NewProject: React.FC = () => {
                               <div className="flex items-center">
                                 <FileText size={16} className="text-gray-400 mr-2" />
                                 <span className="text-gray-300">{file.name}</span>
-                      </div>
+                              </div>
                               <button
                                 type="button"
                                 onClick={() => handleRemoveFile('documents', index)}
-                                className="text-red-400 hover:text-red-300"
-                              >
+                                className="text-red-400 hover:text-red-300">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                                 </svg>
                               </button>
-                    </div>
+                            </div>
                           ))}
                         </div>
                       )}
@@ -1374,15 +1372,14 @@ const NewProject: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => removeInvestmentHighlight(index)}
-                            className="text-red-400 hover:text-red-300 text-sm"
-                          >
+                            className="text-red-400 hover:text-red-300 text-sm">
                             Remove
                           </button>
                         )}
                       </div>
 
                       <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div>
+                        <div>
                           <label className="block text-sm font-medium text-gray-300 mb-1">
                             Title
                         </label>
@@ -1395,10 +1392,10 @@ const NewProject: React.FC = () => {
                             required
                           />
                         </div>
-                    <div>
+                        <div>
                           <label className="block text-sm font-medium text-gray-300 mb-1">
                             Description
-                      </label>
+                          </label>
                             <input
                             type="text"
                             value={highlight.description}
@@ -1407,10 +1404,9 @@ const NewProject: React.FC = () => {
                             placeholder="Description of the investment highlight"
                             required
                           />
+                        </div>
                       </div>
                     </div>
-
-                        </div>
                   ))}
                   
                   <button
@@ -1420,8 +1416,8 @@ const NewProject: React.FC = () => {
                   >
                     + Add Investment Highlight
                   </button>
-                      </div>
-                    </div>
+                </div>
+              </div>
 
               <div className="bg-navy-800 rounded-xl p-6 border border-navy-700">
                 <h2 className="text-xl font-bold text-white mb-4">Financial Structure</h2>
@@ -1444,8 +1440,8 @@ const NewProject: React.FC = () => {
 
                       <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-1">
-                            Title
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Title
                         </label>
                           <input
                             type="text"
@@ -1457,8 +1453,8 @@ const NewProject: React.FC = () => {
                           />
                         </div>
                       <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-1">
-                            Description
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Description
                         </label>
                           <input
                             type="text"
@@ -1470,8 +1466,7 @@ const NewProject: React.FC = () => {
                           />
                         </div>
                       </div>
-
-                        </div>
+                    </div>
                   ))}
                   
                   <button
@@ -1481,8 +1476,8 @@ const NewProject: React.FC = () => {
                   >
                     + Add Financial Structure
                   </button>
-                      </div>
-                    </div>
+                </div>
+              </div>
 
               <div className="bg-navy-800 rounded-xl p-6 border border-navy-700">
                 <h2 className="text-xl font-bold text-white mb-4">Risks</h2>
@@ -1501,50 +1496,46 @@ const NewProject: React.FC = () => {
                             Remove
                           </button>
                         )}
-                    </div>
+                      </div>
 
                       <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div>
+                        <div>
                           <label className="block text-sm font-medium text-gray-300 mb-1">
                             Title
-                      </label>
-                      <input
+                          </label>
+                          <input
                             type="text"
                             value={risk.title}
                             onChange={(e) => updateRisk(index, 'title', e.target.value)}
                             className="w-full px-4 py-2 bg-navy-600 border border-navy-500 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
                             placeholder="Title of the risk"
-                        required
-                      />
-                    </div>
-                    <div>
+                            required />
+                          </div> 
+                          <div>
                           <label className="block text-sm font-medium text-gray-300 mb-1">
                             Description
-                      </label>
-                      <input
+                          </label>
+                          <input
                             type="text"
                             value={risk.description}
                             onChange={(e) => updateRisk(index, 'description', e.target.value)}
                             className="w-full px-4 py-2 bg-navy-600 border border-navy-500 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
                             placeholder="Description of the risk"
-                        required
-                      />
+                            required />
+                        </div>
+                      </div>
+                    </div>
+                    ))}
+                  
+                    <button
+                      type="button"
+                      onClick={addRisk}
+                      className="w-full py-3 border-2 border-dashed border-navy-600 rounded-lg text-gray-400 hover:text-white hover:border-navy-500 transition-colors"
+                    >
+                      + Add Risk
+                    </button>
                   </div>
                 </div>
-
-                  
-                  </div>
-                  ))}
-                  
-                  <button
-                    type="button"
-                    onClick={addRisk}
-                    className="w-full py-3 border-2 border-dashed border-navy-600 rounded-lg text-gray-400 hover:text-white hover:border-navy-500 transition-colors"
-                  >
-                    + Add Risk
-                  </button>
-                    </div>
-                    </div>
               </>
             )}
 
@@ -1555,8 +1546,8 @@ const NewProject: React.FC = () => {
                   
                   <div className="space-y-4">
                   <div>
-                      <label htmlFor="paymentAmount" className="block text-sm font-medium text-gray-300 mb-1">
-                        Payment Amount (USD)
+                    <label htmlFor="paymentAmount" className="block text-sm font-medium text-gray-300 mb-1">
+                      Payment Amount (USD)
                     </label>
                       <div className="relative">
                         <DollarSign size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -1565,7 +1556,7 @@ const NewProject: React.FC = () => {
                           id="paymentAmount"
                           name="paymentAmount"
                           value={formData.paymentAmount}
-                      onChange={handleInputChange}
+                          onChange={handleInputChange}
                           className="w-full pl-10 pr-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
                           placeholder="Enter amount"
                           required
@@ -1574,10 +1565,10 @@ const NewProject: React.FC = () => {
                           disabled={true}
                         />
                       </div>
-                    <p className="mt-1 text-sm text-gray-400">
+                      <p className="mt-1 text-sm text-gray-400">
                         This fee covers the cost of processing your project submission
-                    </p>
-                </div>
+                      </p>
+                    </div>
 
                     <StripePaymentForm
                       amount={parseFloat(formData.paymentAmount)}
@@ -1585,7 +1576,7 @@ const NewProject: React.FC = () => {
                       onCancel={() => setCurrentStep(3)}
                       onError={handlePaymentError}
                     />
-                            </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -1604,7 +1595,16 @@ const NewProject: React.FC = () => {
               {currentStep < 4 ? (
                 <button
                   type="button"
-                  onClick={() => setCurrentStep(currentStep + 1)}
+                  onClick={() => {
+                    if (currentStep === 3) {
+                      if(currentUser?.user_metadata.user_type === 'superadmin' || currentUser?.user_metadata.user_type === 'admin') {
+                        handlePaymentSuccess()
+                        return;
+                      }
+                    } else {
+                      setCurrentStep(currentStep + 1)
+                    }
+                  }}
                   className="px-6 py-2 bg-gold-500 text-navy-900 rounded-lg hover:bg-gold-600 transition-colors ml-auto"
                 >
                   Next

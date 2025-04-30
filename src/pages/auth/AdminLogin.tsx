@@ -28,6 +28,7 @@ const AdminLogin: React.FC = () => {
         throw new Error('Access denied. Admin privileges required.');
       }
       
+      console.log('Admin login success. Navigating to admin dashboard...');
       navigate('/admin/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to sign in. Please check your credentials.');
