@@ -69,15 +69,16 @@ const ProjectsPage: React.FC = () => {
   const filteredProjects = projects.filter(project => {
     const matchesCategory = selectedCategory === 'all' || project.genre.toLowerCase() === selectedCategory;
     const matchesType = selectedType === 'all' || project.type === selectedType;
+    const matchesStatus = project.status === 'active';
     const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          project.director.toLowerCase().includes(searchQuery.toLowerCase());
     
-    return matchesCategory && matchesType && matchesSearch;
+    return matchesCategory && matchesType && matchesStatus && matchesSearch;
   });
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="container mx-auto min-h-screen bg-gray-900 text-white p-8">
+      <div className="mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <h1 className="text-4xl font-bold mb-4 md:mb-0">Film Projects</h1>
           <div className="flex items-center space-x-4">

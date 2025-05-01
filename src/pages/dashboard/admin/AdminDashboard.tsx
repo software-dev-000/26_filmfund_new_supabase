@@ -9,8 +9,10 @@ import {
   Check,
   X,
   Eye,
-  TrendingUp
+  TrendingUp,
+  PlusCircle
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const AdminDashboard: React.FC = () => {
   // Mock data - in a real app, this would come from your backend
@@ -95,18 +97,35 @@ const AdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-8"
-      >
-        <h1 className="text-3xl font-bold text-white mb-2">Admin Dashboard</h1>
-        <p className="text-gray-400">
-          Platform management and compliance oversight.
-        </p>
-      </motion.div>
+    <div className="container mx-auto p-6 lg:p-8 min-h-screen bg-navy-950">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-3xl font-bold text-white mb-2">Admin Dashboard</h1>
+          <p className="text-gray-400">
+            Platform management and compliance oversight.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Link 
+            to="/filmmaker/new-project"
+            className="flex items-center px-4 py-2 bg-gold-500 hover:bg-gold-600 text-navy-900 rounded-lg transition-colors"
+          >
+            <PlusCircle size={20} className="mr-2" />
+            New Project
+          </Link>
+        </motion.div>
+      </div>
+      
       
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

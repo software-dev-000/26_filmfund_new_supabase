@@ -9,7 +9,7 @@ const NavLinks: React.FC = () => {
     { to: "/for-fans", label: "For Fans" },
     { to: "/ffa-staking", label: "FFA Staking" },
     { to: "/private-sale", label: "Private Sale" },
-    { to: "https://filmfund.gitbook.io/docs", label: "Whitepaper" }
+    { to: "https://filmfund.gitbook.io/docs", label: "Whitepaper" , target: "_blank"}
   ];
 
   return (
@@ -25,6 +25,7 @@ const NavLinks: React.FC = () => {
                 : 'text-white hover:bg-navy-800/50'
             }`
           }
+          target={link.target ?? '_self'}
         >
           {link.label}
         </NavLink>

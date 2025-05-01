@@ -2,16 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  DollarSign, 
   TrendingUp, 
   Film, 
   ChevronRight,
   Clock,
-  BarChart4,
   Star,
   ArrowUpRight,
   Wallet,
-  Calendar,
   Coins,
   Lock,
   ChevronUp
@@ -93,246 +90,244 @@ const InvestorDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="p-6 lg:p-8 min-h-screen bg-navy-950">
-      <div className="max-w-7xl mx-auto">
+    <div className="container mx-auto p-6 lg:p-8 min-h-screen bg-navy-950">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-8"
+      >
+        <h1 className="text-3xl font-bold text-white mb-2">Welcome back!</h1>
+        <p className="text-gray-400">
+          Here's an overview of your film investments and opportunities.
+        </p>
+      </motion.div>
+      
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatsCard
+          title="Total Invested"
+          value={`$${portfolioStats.totalInvested.toLocaleString()}`}
+          icon={<Wallet size={24} />}
+          color="blue"
+          trend="+12.5% from last month"
+          delay={0.1}
+        />
+        <StatsCard
+          title="Total Returns"
+          value={`$${portfolioStats.totalReturns.toLocaleString()}`}
+          icon={<TrendingUp size={24} />}
+          color="green"
+          trend="+8.3% from last month"
+          delay={0.2}
+        />
+        <StatsCard
+          title="Active Investments"
+          value={portfolioStats.activeInvestments}
+          icon={<Film size={24} />}
+          color="purple"
+          trend="2 new this month"
+          delay={0.3}
+        />
+        <StatsCard
+          title="Pending Funding"
+          value={portfolioStats.pendingFunding}
+          icon={<Clock size={24} />}
+          color="amber"
+          trend="Launching soon"
+          delay={0.4}
+        />
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Recent Investments */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8"
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="lg:col-span-2 bg-navy-800 rounded-xl border border-navy-700"
         >
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome back!</h1>
-          <p className="text-gray-400">
-            Here's an overview of your film investments and opportunities.
-          </p>
-        </motion.div>
-        
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatsCard
-            title="Total Invested"
-            value={`$${portfolioStats.totalInvested.toLocaleString()}`}
-            icon={<Wallet size={24} />}
-            color="blue"
-            trend="+12.5% from last month"
-            delay={0.1}
-          />
-          <StatsCard
-            title="Total Returns"
-            value={`$${portfolioStats.totalReturns.toLocaleString()}`}
-            icon={<TrendingUp size={24} />}
-            color="green"
-            trend="+8.3% from last month"
-            delay={0.2}
-          />
-          <StatsCard
-            title="Active Investments"
-            value={portfolioStats.activeInvestments}
-            icon={<Film size={24} />}
-            color="purple"
-            trend="2 new this month"
-            delay={0.3}
-          />
-          <StatsCard
-            title="Pending Funding"
-            value={portfolioStats.pendingFunding}
-            icon={<Clock size={24} />}
-            color="amber"
-            trend="Launching soon"
-            delay={0.4}
-          />
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Recent Investments */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="lg:col-span-2 bg-navy-800 rounded-xl border border-navy-700"
-          >
-            <div className="p-6 border-b border-navy-700">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-white">Recent Investments</h2>
-                <button className="text-gold-500 hover:text-gold-400 text-sm flex items-center">
-                  View All <ChevronRight size={16} className="ml-1" />
-                </button>
-              </div>
+          <div className="p-6 border-b border-navy-700">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Recent Investments</h2>
+              <button className="text-gold-500 hover:text-gold-400 text-sm flex items-center">
+                View All <ChevronRight size={16} className="ml-1" />
+              </button>
             </div>
-            
-            <div className="divide-y divide-navy-700">
-              {recentInvestments.map((investment) => (
-                <div 
-                  key={investment.id} 
-                  className="flex items-center p-6 hover:bg-navy-700/50 transition-colors"
-                >
-                  <img 
-                    src={investment.image} 
-                    alt={investment.title} 
-                    className="w-16 h-16 rounded-lg object-cover mr-4"
-                  />
-                  <div className="flex-grow">
-                    <h3 className="text-white font-medium mb-1">{investment.title}</h3>
-                    <div className="flex items-center space-x-4">
-                      <p className="text-sm text-gray-400">
-                        Invested on {new Date(investment.date).toLocaleDateString()}
-                      </p>
-                      <span className="text-sm text-gray-400">
-                        {investment.stableSplit}% Stable
-                      </span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-gold-500 font-semibold mb-1">
-                      ${investment.amount.toLocaleString()}
+          </div>
+          
+          <div className="divide-y divide-navy-700">
+            {recentInvestments.map((investment) => (
+              <div 
+                key={investment.id} 
+                className="flex items-center p-6 hover:bg-navy-700/50 transition-colors"
+              >
+                <img 
+                  src={investment.image} 
+                  alt={investment.title} 
+                  className="w-16 h-16 rounded-lg object-cover mr-4"
+                />
+                <div className="flex-grow">
+                  <h3 className="text-white font-medium mb-1">{investment.title}</h3>
+                  <div className="flex items-center space-x-4">
+                    <p className="text-sm text-gray-400">
+                      Invested on {new Date(investment.date).toLocaleDateString()}
                     </p>
-                    <span className="inline-flex items-center text-sm text-green-400">
-                      <ArrowUpRight size={14} className="mr-1" />
-                      {investment.performance}
+                    <span className="text-sm text-gray-400">
+                      {investment.stableSplit}% Stable
                     </span>
                   </div>
                 </div>
-              ))}
-            </div>
-          </motion.div>
-          
-          {/* Staking Box */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="bg-navy-800 rounded-xl border border-navy-700"
-          >
-            <div className="p-6 border-b border-navy-700">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-white">Your Staking</h2>
-                <Link 
-                  to="/ffa-staking" 
-                  className="text-gold-500 hover:text-gold-400 text-sm flex items-center"
-                >
-                  Manage <ChevronRight size={16} className="ml-1" />
-                </Link>
-              </div>
-            </div>
-            
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 rounded-lg bg-gold-500/20 text-gold-500 flex items-center justify-center mr-3">
-                    <Coins size={24} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Staked Amount</p>
-                    <p className="text-xl font-bold text-white">${stakingInfo.stakedAmount.toLocaleString()} FFA</p>
-                  </div>
-                </div>
                 <div className="text-right">
-                  <span className="inline-block px-3 py-1 bg-gold-500/20 text-gold-500 rounded-full text-sm font-medium">
-                    {stakingInfo.tier}
+                  <p className="text-gold-500 font-semibold mb-1">
+                    ${investment.amount.toLocaleString()}
+                  </p>
+                  <span className="inline-flex items-center text-sm text-green-400">
+                    <ArrowUpRight size={14} className="mr-1" />
+                    {investment.performance}
                   </span>
                 </div>
               </div>
-              
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-navy-700 rounded-lg p-4">
-                  <div className="flex items-center text-gray-400 mb-1">
-                    <TrendingUp size={16} className="mr-2" />
-                    APY
-                  </div>
-                  <p className="text-xl font-bold text-white">{stakingInfo.apy}%</p>
-                </div>
-                <div className="bg-navy-700 rounded-lg p-4">
-                  <div className="flex items-center text-gray-400 mb-1">
-                    <Lock size={16} className="mr-2" />
-                    Lock Period
-                  </div>
-                  <p className="text-sm text-white">{stakingInfo.lockPeriod}</p>
-                </div>
-              </div>
-              
-              <div className="bg-navy-700 rounded-lg p-4 mb-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-400 mb-1">Next Reward</p>
-                    <p className="text-lg font-bold text-white">{stakingInfo.nextReward} FFA</p>
-                  </div>
-                  <div className="text-green-400 flex items-center">
-                    <ChevronUp size={16} className="mr-1" />
-                    <span className="text-sm">+2.3%</span>
-                  </div>
-                </div>
-              </div>
-              
-              <button className="w-full bg-gold-500 hover:bg-gold-600 text-navy-900 py-3 rounded-lg font-medium transition-colors">
-                Stake More FFA
-              </button>
+            ))}
+          </div>
+        </motion.div>
+        
+        {/* Staking Box */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="bg-navy-800 rounded-xl border border-navy-700"
+        >
+          <div className="p-6 border-b border-navy-700">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Your Staking</h2>
+              <Link 
+                to="/ffa-staking" 
+                className="text-gold-500 hover:text-gold-400 text-sm flex items-center"
+              >
+                Manage <ChevronRight size={16} className="ml-1" />
+              </Link>
             </div>
-          </motion.div>
+          </div>
           
-          {/* Upcoming Projects */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="lg:col-span-3 bg-navy-800 rounded-xl border border-navy-700"
-          >
-            <div className="p-6 border-b border-navy-700">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-white">Upcoming Projects</h2>
-                <button className="text-gold-500 hover:text-gold-400 text-sm flex items-center">
-                  Explore <ChevronRight size={16} className="ml-1" />
-                </button>
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-lg bg-gold-500/20 text-gold-500 flex items-center justify-center mr-3">
+                  <Coins size={24} />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Staked Amount</p>
+                  <p className="text-xl font-bold text-white">${stakingInfo.stakedAmount.toLocaleString()} FFA</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <span className="inline-block px-3 py-1 bg-gold-500/20 text-gold-500 rounded-full text-sm font-medium">
+                  {stakingInfo.tier}
+                </span>
               </div>
             </div>
             
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {upcomingProjects.map((project) => (
-                <div 
-                  key={project.id} 
-                  className="bg-navy-700 rounded-lg overflow-hidden hover:bg-navy-600 transition-colors"
-                >
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="text-white font-medium">{project.title}</h3>
-                        <span className="inline-block px-2 py-1 text-xs rounded-full bg-navy-600 text-gray-300 mt-1">
-                          {project.category}
-                        </span>
-                      </div>
-                      <div className="flex items-center text-gold-500">
-                        <Star size={14} className="mr-1" />
-                        <span className="text-sm">{project.rating}</span>
-                      </div>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-navy-700 rounded-lg p-4">
+                <div className="flex items-center text-gray-400 mb-1">
+                  <TrendingUp size={16} className="mr-2" />
+                  APY
+                </div>
+                <p className="text-xl font-bold text-white">{stakingInfo.apy}%</p>
+              </div>
+              <div className="bg-navy-700 rounded-lg p-4">
+                <div className="flex items-center text-gray-400 mb-1">
+                  <Lock size={16} className="mr-2" />
+                  Lock Period
+                </div>
+                <p className="text-sm text-white">{stakingInfo.lockPeriod}</p>
+              </div>
+            </div>
+            
+            <div className="bg-navy-700 rounded-lg p-4 mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-400 mb-1">Next Reward</p>
+                  <p className="text-lg font-bold text-white">{stakingInfo.nextReward} FFA</p>
+                </div>
+                <div className="text-green-400 flex items-center">
+                  <ChevronUp size={16} className="mr-1" />
+                  <span className="text-sm">+2.3%</span>
+                </div>
+              </div>
+            </div>
+            
+            <button className="w-full bg-gold-500 hover:bg-gold-600 text-navy-900 py-3 rounded-lg font-medium transition-colors">
+              Stake More FFA
+            </button>
+          </div>
+        </motion.div>
+        
+        {/* Upcoming Projects */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="lg:col-span-3 bg-navy-800 rounded-xl border border-navy-700"
+        >
+          <div className="p-6 border-b border-navy-700">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Upcoming Projects</h2>
+              <button className="text-gold-500 hover:text-gold-400 text-sm flex items-center">
+                Explore <ChevronRight size={16} className="ml-1" />
+              </button>
+            </div>
+          </div>
+          
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {upcomingProjects.map((project) => (
+              <div 
+                key={project.id} 
+                className="bg-navy-700 rounded-lg overflow-hidden hover:bg-navy-600 transition-colors"
+              >
+                <img 
+                  src={project.image} 
+                  alt={project.title} 
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="text-white font-medium">{project.title}</h3>
+                      <span className="inline-block px-2 py-1 text-xs rounded-full bg-navy-600 text-gray-300 mt-1">
+                        {project.category}
+                      </span>
                     </div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between text-gray-400">
-                        <span>Funding Goal</span>
-                        <span>${(project.fundingGoal / 1000000).toFixed(1)}M</span>
-                      </div>
-                      <div className="flex justify-between text-gray-400">
-                        <span>Stable Split</span>
-                        <span>{project.stableSplit}%</span>
-                      </div>
-                      <div className="flex justify-between text-gray-400">
-                        <span>Min Investment</span>
-                        <span>${project.minStake.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-gold-500">
-                        <span>Launch</span>
-                        <span>{project.daysToLaunch} days</span>
-                      </div>
+                    <div className="flex items-center text-gold-500">
+                      <Star size={14} className="mr-1" />
+                      <span className="text-sm">{project.rating}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between text-gray-400">
+                      <span>Funding Goal</span>
+                      <span>${(project.fundingGoal / 1000000).toFixed(1)}M</span>
+                    </div>
+                    <div className="flex justify-between text-gray-400">
+                      <span>Stable Split</span>
+                      <span>{project.stableSplit}%</span>
+                    </div>
+                    <div className="flex justify-between text-gray-400">
+                      <span>Min Investment</span>
+                      <span>${project.minStake.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-gold-500">
+                      <span>Launch</span>
+                      <span>{project.daysToLaunch} days</span>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </div>
   );

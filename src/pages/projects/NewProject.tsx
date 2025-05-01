@@ -134,6 +134,7 @@ const initialFormData: FormData = {
   paymentAmount: '2750', // Default payment amount
 };
 
+
 const NewProject: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -877,7 +878,7 @@ const NewProject: React.FC = () => {
                           onChange={handleInputChange}
                           className="w-full px-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
                           required
-                          disabled={currentUser?.user_metadata.user_type !== 'superadmin' || currentUser?.user_metadata.user_type !== 'admin'}
+                          disabled={currentUser?.user_metadata.user_type !== 'superadmin'}
                         >
                           <option value="pending">Pending</option>
                           <option value="active">Active</option>

@@ -98,8 +98,8 @@ const FilmmakerDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="p-6 lg:p-8 min-h-screen bg-navy-950 mt-[50px]">
-        <div className="max-w-7xl mx-auto">
+      <div className="container p-6 lg:p-8 min-h-screen bg-navy-950 mt-[50px]">
+        <div className="mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-navy-800 rounded w-1/3 mb-4"></div>
             <div className="h-4 bg-navy-800 rounded w-1/4 mb-8"></div>
@@ -123,292 +123,290 @@ const FilmmakerDashboard: React.FC = () => {
   }
 
   return (
-    <div className="p-6 lg:p-8 min-h-screen bg-navy-950">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h1 className="text-3xl font-bold text-white mb-2">Filmmaker Dashboard</h1>
-            <p className="text-gray-400">
-              Manage your film projects and track funding progress
-            </p>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <Link 
-              to="/filmmaker/new-project"
-              className="flex items-center px-4 py-2 bg-gold-500 hover:bg-gold-600 text-navy-900 rounded-lg transition-colors"
-            >
-              <PlusCircle size={20} className="mr-2" />
-              New Project
-            </Link>
-          </motion.div>
-        </div>
+    <div className="container mx-auto p-6 lg:p-8 min-h-screen bg-navy-950">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-3xl font-bold text-white mb-2">Filmmaker Dashboard</h1>
+          <p className="text-gray-400">
+            Manage your film projects and track funding progress
+          </p>
+        </motion.div>
         
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatsCard
-            title="Total Fundraised"
-            value={`$${(stats.totalFundraised / 1000000).toFixed(1)}M`}
-            icon={<DollarSign size={24} />}
-            color="green"
-            trend="+12.5% from last month"
-            delay={0.1}
-          />
-          <StatsCard
-            title="Currently Raising"
-            value={`$${(stats.currentlyRaising / 1000000).toFixed(1)}M`}
-            icon={<TrendingUp size={24} />}
-            color="blue"
-            trend="Active campaign"
-            delay={0.2}
-          />
-          <StatsCard
-            title="Total Projects"
-            value={stats.totalProjects}
-            icon={<Film size={24} />}
-            color="purple"
-            trend="1 in funding"
-            delay={0.3}
-          />
-          <StatsCard
-            title="Active Investors"
-            value={stats.activeInvestors}
-            icon={<Users size={24} />}
-            color="amber"
-            trend="+24 this month"
-            delay={0.4}
-          />
-        </div>
-        
-        {/* Projects Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-navy-800 rounded-xl border border-navy-700 mb-8"
         >
-          <div className="p-6 border-b border-navy-700">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">Your Projects</h2>
-              <div className="flex space-x-2">
-                <button 
-                  onClick={() => setActiveTab('all')}
-                  className={`px-3 py-1 rounded-md transition-colors ${
-                    activeTab === 'all' 
-                      ? 'bg-gold-500 text-navy-900' 
-                      : 'bg-navy-700 text-white'
-                  }`}
-                >
-                  All
-                </button>
-                <button 
-                  onClick={() => setActiveTab('pending')}
-                  className={`px-3 py-1 rounded-md transition-colors ${
-                    activeTab === 'pending' 
-                      ? 'bg-gold-500 text-navy-900' 
-                      : 'bg-navy-700 text-white'
-                  }`}
-                >
-                  Pending
-                </button>
-                <button 
-                  onClick={() => setActiveTab('active')}
-                  className={`px-3 py-1 rounded-md transition-colors ${
-                    activeTab === 'active' 
-                      ? 'bg-gold-500 text-navy-900' 
-                      : 'bg-navy-700 text-white'
-                  }`}
-                >
-                  Active
-                </button>
-                <button 
-                  onClick={() => setActiveTab('completed')}
-                  className={`px-3 py-1 rounded-md transition-colors ${
-                    activeTab === 'completed' 
-                      ? 'bg-gold-500 text-navy-900' 
-                      : 'bg-navy-700 text-white'
-                  }`}
-                >
-                  Completed
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-            {projects
-              .filter(project => 
-                activeTab === 'all' || 
-                (activeTab === 'pending' && project.status === 'pending') ||
-                (activeTab === 'active' && project.status === 'active') ||
-                (activeTab === 'completed' && project.status === 'completed')
-              )
-              .map((project, index) => (
-                <ProjectCard key={project.id} project={project} index={index} />
-              ))}
-          </div>
+          <Link 
+            to="/filmmaker/new-project"
+            className="flex items-center px-4 py-2 bg-gold-500 hover:bg-gold-600 text-navy-900 rounded-lg transition-colors"
+          >
+            <PlusCircle size={20} className="mr-2" />
+            New Project
+          </Link>
         </motion.div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Funding Overview */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="lg:col-span-2 bg-navy-800 rounded-xl border border-navy-700"
-          >
-            <div className="p-6 border-b border-navy-700">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-white">Funding Overview</h2>
-                <div className="flex space-x-2">
-                  <button className="px-3 py-1 text-xs bg-navy-700 rounded-md text-white">Weekly</button>
-                  <button className="px-3 py-1 text-xs bg-gold-500 rounded-md text-navy-900">Monthly</button>
-                  <button className="px-3 py-1 text-xs bg-navy-700 rounded-md text-white">Yearly</button>
-                </div>
-              </div>
+      </div>
+      
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatsCard
+          title="Total Fundraised"
+          value={`$${(stats.totalFundraised / 1000000).toFixed(1)}M`}
+          icon={<DollarSign size={24} />}
+          color="green"
+          trend="+12.5% from last month"
+          delay={0.1}
+        />
+        <StatsCard
+          title="Currently Raising"
+          value={`$${(stats.currentlyRaising / 1000000).toFixed(1)}M`}
+          icon={<TrendingUp size={24} />}
+          color="blue"
+          trend="Active campaign"
+          delay={0.2}
+        />
+        <StatsCard
+          title="Total Projects"
+          value={stats.totalProjects}
+          icon={<Film size={24} />}
+          color="purple"
+          trend="1 in funding"
+          delay={0.3}
+        />
+        <StatsCard
+          title="Active Investors"
+          value={stats.activeInvestors}
+          icon={<Users size={24} />}
+          color="amber"
+          trend="+24 this month"
+          delay={0.4}
+        />
+      </div>
+      
+      {/* Projects Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="bg-navy-800 rounded-xl border border-navy-700 mb-8"
+      >
+        <div className="p-6 border-b border-navy-700">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-white">Your Projects</h2>
+            <div className="flex space-x-2">
+              <button 
+                onClick={() => setActiveTab('all')}
+                className={`px-3 py-1 rounded-md transition-colors ${
+                  activeTab === 'all' 
+                    ? 'bg-gold-500 text-navy-900' 
+                    : 'bg-navy-700 text-white'
+                }`}
+              >
+                All
+              </button>
+              <button 
+                onClick={() => setActiveTab('pending')}
+                className={`px-3 py-1 rounded-md transition-colors ${
+                  activeTab === 'pending' 
+                    ? 'bg-gold-500 text-navy-900' 
+                    : 'bg-navy-700 text-white'
+                }`}
+              >
+                Pending
+              </button>
+              <button 
+                onClick={() => setActiveTab('active')}
+                className={`px-3 py-1 rounded-md transition-colors ${
+                  activeTab === 'active' 
+                    ? 'bg-gold-500 text-navy-900' 
+                    : 'bg-navy-700 text-white'
+                }`}
+              >
+                Active
+              </button>
+              <button 
+                onClick={() => setActiveTab('completed')}
+                className={`px-3 py-1 rounded-md transition-colors ${
+                  activeTab === 'completed' 
+                    ? 'bg-gold-500 text-navy-900' 
+                    : 'bg-navy-700 text-white'
+                }`}
+              >
+                Completed
+              </button>
             </div>
-            
-            <div className="p-6">
-              <div className="h-64 flex items-center justify-center bg-navy-700/50 rounded-lg border border-navy-600">
-                <div className="text-center">
-                  <BarChart4 size={32} className="text-gold-500 mx-auto mb-2" />
-                  <p className="text-white mb-2">Funding Chart</p>
-                  {/* <p className="text-gray-400 text-sm">
-                    In a real implementation, this would be a chart showing funding over time
-                  </p> */}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-          
-          {/* Recent Activity */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="bg-navy-800 rounded-xl border border-navy-700"
-          >
-            <div className="p-6 border-b border-navy-700">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-white">Recent Activity</h2>
-                <button className="text-gold-500 hover:text-gold-400 text-sm flex items-center">
-                  View All <ChevronRight size={16} className="ml-1" />
-                </button>
-              </div>
-            </div>
-            
-            <div className="p-4 space-y-4">
-              {recentActivity.map((activity) => (
-                <div 
-                  key={activity.id} 
-                  className="flex p-3 bg-navy-700 rounded-lg transition-colors"
-                >
-                  <div className="flex-shrink-0 mr-3">
-                    <ActivityIcon type={activity.type} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-white">{activity.message}</p>
-                    <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+          </div>
         </div>
         
-        {/* Active Projects Section - Now a standalone section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+          {projects
+            .filter(project => 
+              activeTab === 'all' || 
+              (activeTab === 'pending' && project.status === 'pending') ||
+              (activeTab === 'active' && project.status === 'active') ||
+              (activeTab === 'completed' && project.status === 'completed')
+            )
+            .map((project, index) => (
+              <ProjectCard key={project.id} project={project} index={index} />
+            ))}
+        </div>
+      </motion.div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Funding Overview */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="mt-8 bg-navy-800 rounded-xl border border-navy-700"
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="lg:col-span-2 bg-navy-800 rounded-xl border border-navy-700"
         >
           <div className="p-6 border-b border-navy-700">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">Active Projects</h2>
-              <Link 
-                to="/projects" 
-                className="text-gold-500 hover:text-gold-400 text-sm flex items-center"
-              >
-                View All <ChevronRight size={16} className="ml-1" />
-              </Link>
+              <h2 className="text-xl font-bold text-white">Funding Overview</h2>
+              <div className="flex space-x-2">
+                <button className="px-3 py-1 text-xs bg-navy-700 rounded-md text-white">Weekly</button>
+                <button className="px-3 py-1 text-xs bg-gold-500 rounded-md text-navy-900">Monthly</button>
+                <button className="px-3 py-1 text-xs bg-navy-700 rounded-md text-white">Yearly</button>
+              </div>
             </div>
           </div>
           
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects
-                .filter(project => project.status === 'active')
-                .slice(0, 3)
-                .map((project, index) => (
-                  <div 
-                    key={project.id} 
-                    className="bg-navy-700 rounded-lg overflow-hidden border border-navy-600 hover:border-navy-500 transition-colors"
-                  >
-                    <div className="h-40 relative">
-                      <img 
-                        src={project.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
-                        alt={project.title} 
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <span className="inline-block px-2 py-1 text-xs rounded-full bg-green-900/30 text-green-400">Active</span>
-                      </div>
-                      {/* <Link 
-                        to={`/filmmaker/projects/${project.id}`}
-                        className="absolute top-2 left-2 w-8 h-8 bg-navy-800/80 backdrop-blur-sm text-white rounded-lg flex items-center justify-center hover:bg-navy-700 transition-colors"
-                      >
-                        <Edit size={16} />
-                      </Link> */}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="text-white font-medium mb-1">{project.title}</h3>
-                      <div className="mt-3">
-                        <div className="flex justify-between text-xs mb-1">
-                          <span className="text-gray-400">Funding Progress</span>
-                          <span className="text-green-400 font-medium">
-                            {Math.round((project.funding_raised / project.funding_goal) * 100)}%
-                          </span>
-                        </div>
-                        <div className="w-full bg-navy-600 rounded-full h-2">
-                          <div 
-                            className="bg-green-500 h-2 rounded-full" 
-                            style={{ width: `${Math.round((project.funding_raised / project.funding_goal) * 100)}%` }}
-                          ></div>
-                        </div>
-                        <div className="flex justify-between text-xs mt-2 text-gray-400">
-                          <span>${(project.funding_raised / 1000000).toFixed(1)}M raised</span>
-                          <span>{project.investors} investors</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              
-              {projects.filter(project => project.status === 'active').length === 0 && (
-                <div className="col-span-full text-center py-6">
-                  <p className="text-gray-400">No active projects found.</p>
-                  <Link 
-                    to="/filmmaker/new-project" 
-                    className="inline-block mt-3 text-gold-500 hover:text-gold-400"
-                  >
-                    Create a new project
-                  </Link>
-                </div>
-              )}
+            <div className="h-64 flex items-center justify-center bg-navy-700/50 rounded-lg border border-navy-600">
+              <div className="text-center">
+                <BarChart4 size={32} className="text-gold-500 mx-auto mb-2" />
+                <p className="text-white mb-2">Funding Chart</p>
+                {/* <p className="text-gray-400 text-sm">
+                  In a real implementation, this would be a chart showing funding over time
+                </p> */}
+              </div>
             </div>
           </div>
         </motion.div>
+        
+        {/* Recent Activity */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="bg-navy-800 rounded-xl border border-navy-700"
+        >
+          <div className="p-6 border-b border-navy-700">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Recent Activity</h2>
+              <button className="text-gold-500 hover:text-gold-400 text-sm flex items-center">
+                View All <ChevronRight size={16} className="ml-1" />
+              </button>
+            </div>
+          </div>
+          
+          <div className="p-4 space-y-4">
+            {recentActivity.map((activity) => (
+              <div 
+                key={activity.id} 
+                className="flex p-3 bg-navy-700 rounded-lg transition-colors"
+              >
+                <div className="flex-shrink-0 mr-3">
+                  <ActivityIcon type={activity.type} />
+                </div>
+                <div>
+                  <p className="text-sm text-white">{activity.message}</p>
+                  <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </div>
+      
+      {/* Active Projects Section - Now a standalone section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+        className="mt-8 bg-navy-800 rounded-xl border border-navy-700"
+      >
+        <div className="p-6 border-b border-navy-700">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-white">Active Projects</h2>
+            <Link 
+              to="/projects" 
+              className="text-gold-500 hover:text-gold-400 text-sm flex items-center"
+            >
+              View All <ChevronRight size={16} className="ml-1" />
+            </Link>
+          </div>
+        </div>
+        
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects
+              .filter(project => project.status === 'active')
+              .slice(0, 3)
+              .map((project, index) => (
+                <div 
+                  key={project.id} 
+                  className="bg-navy-700 rounded-lg overflow-hidden border border-navy-600 hover:border-navy-500 transition-colors"
+                >
+                  <div className="h-40 relative">
+                    <img 
+                      src={project.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
+                      alt={project.title} 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-2 right-2">
+                      <span className="inline-block px-2 py-1 text-xs rounded-full bg-green-900/30 text-green-400">Active</span>
+                    </div>
+                    {/* <Link 
+                      to={`/filmmaker/projects/${project.id}`}
+                      className="absolute top-2 left-2 w-8 h-8 bg-navy-800/80 backdrop-blur-sm text-white rounded-lg flex items-center justify-center hover:bg-navy-700 transition-colors"
+                    >
+                      <Edit size={16} />
+                    </Link> */}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-white font-medium mb-1">{project.title}</h3>
+                    <div className="mt-3">
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-gray-400">Funding Progress</span>
+                        <span className="text-green-400 font-medium">
+                          {Math.round((project.funding_raised / project.funding_goal) * 100)}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-navy-600 rounded-full h-2">
+                        <div 
+                          className="bg-green-500 h-2 rounded-full" 
+                          style={{ width: `${Math.round((project.funding_raised / project.funding_goal) * 100)}%` }}
+                        ></div>
+                      </div>
+                      <div className="flex justify-between text-xs mt-2 text-gray-400">
+                        <span>${(project.funding_raised / 1000000).toFixed(1)}M raised</span>
+                        <span>{project.investors} investors</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            
+            {projects.filter(project => project.status === 'active').length === 0 && (
+              <div className="col-span-full text-center py-6">
+                <p className="text-gray-400">No active projects found.</p>
+                <Link 
+                  to="/filmmaker/new-project" 
+                  className="inline-block mt-3 text-gold-500 hover:text-gold-400"
+                >
+                  Create a new project
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

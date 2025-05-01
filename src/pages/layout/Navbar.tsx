@@ -58,7 +58,7 @@ const Navbar: React.FC = () => {
               {currentUser ? (
                 <>
                   <NavLink 
-                    to={`/${currentUser.user_metadata.user_type}/dashboard`}
+                    to={currentUser.user_metadata.user_type === 'superadmin' || currentUser.user_metadata.user_type === 'admin' ? '/admin/dashboard' : `/${currentUser.user_metadata.user_type}/dashboard`}
                     className={({ isActive }) =>
                       `flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
                         isActive 
