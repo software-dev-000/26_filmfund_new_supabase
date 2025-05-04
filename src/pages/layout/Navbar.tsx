@@ -37,7 +37,7 @@ const Navbar: React.FC = () => {
   return (
     <nav 
       className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-navy-950/95 backdrop-blur-sm shadow-lg py-2' : 'bg-transparent py-4'
+        isScrolled ? 'bg-navy-950/95 backdrop-blur-sm shadow-lg py-2' : 'bg-navy-950/80 backdrop-blur-sm py-4'
       }`}
     >
       <div className="container mx-auto px-4 md:px-6">

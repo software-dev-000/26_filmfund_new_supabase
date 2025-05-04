@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Film, 
@@ -8,46 +8,197 @@ import {
   ChevronRight,
   Check,
   X,
-  Eye,
   TrendingUp,
-  PlusCircle
+  PlusCircle,
+  Edit,
+  Trash2
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { projectService } from '../../../services/projectService';
+import { Project } from '../../../types/database';
+import toast, { Toaster } from 'react-hot-toast';
 
 const AdminDashboard: React.FC = () => {
-  // Mock data - in a real app, this would come from your backend
-  const stats = {
-    totalProjects: 250,
-    activeUsers: 15632,
-    pendingApprovals: 12,
-    complianceAlerts: 3
-  };
-  
-  const pendingApprovals = [
-    {
-      id: 1,
-      title: "Urban Legends",
-      type: "Project",
-      filmmaker: "David Johnson",
-      submitted: "2025-03-18",
-      image: "https://images.pexels.com/photos/3052361/pexels-photo-3052361.jpeg"
-    },
-    {
-      id: 2,
-      title: "Blue Skies",
-      type: "Project",
-      filmmaker: "Emily Chen",
-      submitted: "2025-03-17",
-      image: "https://images.pexels.com/photos/1693095/pexels-photo-1693095.jpeg"
-    },
-    {
-      id: 3,
-      title: "Maria Lopez",
-      type: "Filmmaker Verification",
-      submitted: "2025-03-16"
+  const [pendingApprovals, setPendingApprovals] = useState<Project[]>([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalProjects: 0,
+    activeUsers: 0,
+    pendingApprovals: 0,
+    complianceAlerts: 0
+  });
+  const navigate = useNavigate();
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const projects = await projectService.getAllProjects();
+      const pendingProjects = projects.filter((project: Project) => project.status === 'pending');
+      setPendingApprovals(pendingProjects);
+      setAllProjects(projects);
+      
+      // Calculate stats
+      setStats({
+        totalProjects: projects.length,
+        activeUsers: projects.reduce((acc: number, project: Project) => 
+          acc + (project.status === 'active' ? 1 : 0), 0),
+        pendingApprovals: pendingProjects.length,
+        complianceAlerts: 0 // This would come from a different service
+      });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast.error('Failed to fetch projects');
+    } finally {
+      setLoading(false);
     }
-  ];
-  
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleApprove = async (projectId: string) => {
+    try {
+      await projectService.updateProject(projectId, { status: 'active' });
+      toast.success('Project approved successfully');
+      await fetchData(); // Refresh all data
+    } catch (error) {
+      console.error('Error approving project:', error);
+      toast.error('Failed to approve project');
+    }
+  };
+
+  const handleReject = async (projectId: string) => {
+    try {
+      await projectService.updateProject(projectId, { status: 'rejected' });
+      toast.success('Project rejected successfully');
+      await fetchData(); // Refresh all data
+    } catch (error) {
+      console.error('Error rejecting project:', error);
+      toast.error('Failed to reject project');
+    }
+  };
+
+  const handleDelete = async (projectId: string, projectTitle: string) => {
+    const toastId = toast.custom(
+      (t) => (
+        <div className="bg-navy-800 p-4 rounded-lg shadow-lg border border-navy-700">
+          <div className="flex items-center space-x-4">
+            <div className="flex-shrink-0">
+              <AlertTriangle className="h-6 w-6 text-amber-500" />
+            </div>
+            <div className="flex-1">
+              <p className="text-white font-medium">Delete Project</p>
+              <p className="text-gray-400 text-sm mt-1">
+                Are you sure you want to delete "{projectTitle}"? This action cannot be undone.
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 flex justify-end space-x-2">
+            <button
+              onClick={() => toast.dismiss(toastId)}
+              className="px-3 py-1 text-sm bg-navy-700 text-white rounded-md hover:bg-navy-600 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  await projectService.deleteProject(projectId);
+                  toast.dismiss(toastId);
+                  toast.success('Project deleted successfully');
+                  await fetchData();
+                } catch (error) {
+                  console.error('Error deleting project:', error);
+                  toast.error('Failed to delete project');
+                }
+              }}
+              className="px-3 py-1 text-sm bg-red-800 text-white rounded-md hover:bg-red-700 transition-colors"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        duration: Infinity,
+        position: 'top-center',
+      }
+    );
+  };
+
+  const handleEdit = (projectId: string) => {
+    navigate(`/admin/projects/${projectId}/edit`);
+  };
+
+  const renderProjectItem = (item: Project, showApproveReject: boolean = true) => (
+    <div 
+      key={item.id} 
+      className="flex items-center p-4 bg-navy-700 rounded-lg hover:bg-navy-600 transition-colors"
+    >
+      {item.cover_image ? (
+        <img 
+          src={item.cover_image} 
+          alt={item.title} 
+          className="w-12 h-12 rounded-md object-cover mr-4"
+        />
+      ) : (
+        <div className="w-12 h-12 rounded-md bg-navy-600 flex items-center justify-center mr-4 text-gold-500">
+          <Film size={24} />
+        </div>
+      )}
+      
+      <div className="flex-grow">
+        <div className="flex items-center">
+          <h3 className="text-white font-medium">{item.title}</h3>
+          <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-navy-600 text-gray-300">
+            {item.status}
+          </span>
+        </div>
+        <p className="text-xs text-gray-400">
+          Submitted by {item.filmmaker_id} • {new Date(item.created_at).toLocaleDateString()}
+        </p>
+      </div>
+      
+      <div className="flex space-x-2 z-10">
+        {showApproveReject && (
+          <>
+            <button 
+              onClick={() => handleApprove(item.id)}
+              className="p-2 rounded-full bg-green-800/30 text-green-400 hover:bg-green-800/50 transition-colors"
+              title="Approve"
+            >
+              <Check size={16} />
+            </button>
+            <button 
+              onClick={() => handleReject(item.id)}
+              className="p-2 rounded-full bg-red-800/30 text-red-400 hover:bg-red-800/50 transition-colors"
+              title="Reject"
+            >
+              <X size={16} />
+            </button>
+          </>
+        )}
+        <button 
+          onClick={() => handleEdit(item.id)}
+          className="p-2 rounded-full bg-navy-600 text-white hover:bg-navy-500 transition-colors"
+          title="Edit"
+        >
+          <Edit size={16} />
+        </button>
+        <button 
+          onClick={() => handleDelete(item.id, item.title)}
+          className="p-2 rounded-full bg-red-800/30 text-red-400 hover:bg-red-800/50 transition-colors"
+          title="Delete"
+        >
+          <Trash2 size={16} />
+        </button>
+      </div>
+    </div>
+  );
+
+  // Mock data - in a real app, this would come from your backend
   const recentActivity = [
     {
       id: 1,
@@ -98,6 +249,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6 lg:p-8 min-h-screen bg-navy-950">
+      <Toaster position="top-center" />
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <motion.div
@@ -175,53 +327,17 @@ const AdminDashboard: React.FC = () => {
           </div>
           
           <div className="space-y-4">
-            {pendingApprovals.map((item) => (
-              <div 
-                key={item.id} 
-                className="flex items-center p-4 bg-navy-700 rounded-lg hover:bg-navy-600 transition-colors"
-              >
-                {item.image ? (
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="w-12 h-12 rounded-md object-cover mr-4"
-                  />
-                ) : (
-                  <div className="w-12 h-12 rounded-md bg-navy-600 flex items-center justify-center mr-4 text-gold-500">
-                    <Users size={24} />
-                  </div>
-                )}
-                
-                <div className="flex-grow">
-                  <div className="flex items-center">
-                    <h3 className="text-white font-medium">{item.title}</h3>
-                    <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-navy-600 text-gray-300">
-                      {item.type}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-400">
-                    {item.filmmaker ? `Submitted by ${item.filmmaker} • ` : ''}
-                    {new Date(item.submitted).toLocaleDateString()}
-                  </p>
-                </div>
-                
-                <div className="flex space-x-2">
-                  <button className="p-2 rounded-full bg-green-800/30 text-green-400 hover:bg-green-800/50 transition-colors">
-                    <Check size={16} />
-                  </button>
-                  <button className="p-2 rounded-full bg-red-800/30 text-red-400 hover:bg-red-800/50 transition-colors">
-                    <X size={16} />
-                  </button>
-                  <button className="p-2 rounded-full bg-navy-600 text-white hover:bg-navy-500 transition-colors">
-                    <Eye size={16} />
-                  </button>
-                </div>
+            {pendingApprovals.map(item => renderProjectItem(item, true))}
+            
+            {!loading && pendingApprovals.length === 0 && (
+              <div className="text-center py-4 text-gray-400">
+                No pending approvals
               </div>
-            ))}
+            )}
           </div>
         </motion.div>
         
-        {/* Platform Activity */}
+        {/* Recent Activity */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -253,11 +369,38 @@ const AdminDashboard: React.FC = () => {
         </motion.div>
       </div>
       
-      {/* Compliance Alerts */}
+      {/* All Projects */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
+        className="bg-navy-800 rounded-xl p-6 mb-8 border border-navy-700"
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-white">All Projects</h2>
+          <div className="flex space-x-2">
+            <button className="px-3 py-1 text-xs bg-navy-700 rounded-md text-white">All</button>
+            <button className="px-3 py-1 text-xs bg-gold-500 rounded-md text-navy-900">Active</button>
+            <button className="px-3 py-1 text-xs bg-navy-700 rounded-md text-white">Completed</button>
+          </div>
+        </div>
+        
+        <div className="space-y-4">
+          {allProjects.map(item => renderProjectItem(item))}
+          
+          {!loading && allProjects.length === 0 && (
+            <div className="text-center py-4 text-gray-400">
+              No projects found
+            </div>
+          )}
+        </div>
+      </motion.div>
+      
+      {/* Compliance Alerts */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
         className="bg-navy-800 rounded-xl p-6 mb-8 border border-navy-700"
       >
         <div className="flex justify-between items-center mb-6">
@@ -305,7 +448,7 @@ const AdminDashboard: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.5 }}
+        transition={{ duration: 0.5, delay: 0.6 }}
         className="bg-navy-800 rounded-xl p-6 border border-navy-700"
       >
         <div className="flex justify-between items-center mb-6">

@@ -81,8 +81,8 @@ const ProjectsPage: React.FC = () => {
       <div className="mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <h1 className="text-4xl font-bold mb-4 md:mb-0">Film Projects</h1>
-          <div className="flex items-center space-x-4">
-            <div className="relative">
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <div className="relative  w-full md:fit">
               <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
@@ -92,11 +92,11 @@ const ProjectsPage: React.FC = () => {
                 className="bg-gray-800 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-gold-500"
               />
             </div>
-            <div className="relative">
+            <div className="relative w-full md:fit">
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="appearance-none bg-gray-800 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-gold-500"
+                className="appearance-none bg-gray-800 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-gold-500 w-full md:w-fit"
               >
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>{category.name}</option>
@@ -104,11 +104,11 @@ const ProjectsPage: React.FC = () => {
               </select>
               <ChevronDown size={20} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
             </div>
-            <div className="relative">
+            <div className="relative w-full md:fit">
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="appearance-none bg-gray-800 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-gold-500"
+                className="appearance-none bg-gray-800 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-gold-500 w-full md:w-fit"
               >
                 {types.map(type => (
                   <option key={type.id} value={type.id}>{type.name}</option>
