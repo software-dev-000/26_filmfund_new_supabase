@@ -120,9 +120,21 @@ const ProjectsPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} />
-          ))}
+          {filteredProjects.length > 0 ? (
+            filteredProjects.map((project, index) => (
+              <ProjectCard key={project.id} project={project} index={index} />
+            ))
+          ) : (
+            <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">
+              <Film size={48} className="text-gray-500 mb-4" />
+              <h3 className="text-xl font-semibold text-gray-300 mb-2">No Projects Found</h3>
+              <p className="text-gray-400 max-w-md">
+                {searchQuery || selectedCategory !== 'all' || selectedType !== 'all' 
+                  ? "Try adjusting your search or filters to find what you're looking for."
+                  : "There are currently no active projects available. Check back later!"}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

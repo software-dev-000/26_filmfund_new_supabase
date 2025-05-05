@@ -168,12 +168,12 @@ const FeaturedProjects: React.FC = () => {
           viewport={{ once: true }}
           transition={{ delay: 0.4 }}
         >
-          <a 
-            href="/projects" 
+          <Link 
+            to="/projects" 
             className="inline-block border border-gold-500 text-white hover:bg-navy-800 px-6 py-3 rounded-md font-medium transition-colors"
           >
             View All Projects
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>

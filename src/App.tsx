@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './pages/layout/Navbar';
 import Footer from './pages/layout/Footer';
 import Hero from './components/landing/Hero';
+import VideoShowcase from './components/landing/VideoShowcase';
 import HowItWorks from './components/landing/HowItWorks';
 import FeaturedProjects from './components/landing/FeaturedProjects';
 import Benefits from './components/landing/Benefits';
@@ -16,6 +17,13 @@ import ForFilmmakers from './pages/ForFilmmakers';
 import ForFans from './pages/ForFans';
 import FFAStaking from './pages/FFAStaking';
 import PrivateSale from './pages/PrivateSale';
+import About from './pages/About';
+import Careers from './pages/Careers';
+import Contact from './pages/Contact';
+import PressKit from './pages/PressKit';
+import Roadmap from './pages/Roadmap';
+import Tokenomics from './pages/tokenomics';
+import UserSettings from './pages/UserSettings';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
@@ -62,8 +70,15 @@ function App() {
                 <Route path="/how-it-works" element={<HowItWorksPage />} />
                 <Route path="/for-filmmakers" element={<ForFilmmakers />} />
                 <Route path="/for-fans" element={<ForFans />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/careers" element={<Careers />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/press-kit" element={<PressKit />} />
+                <Route path="/roadmap" element={<Roadmap />} />
+                <Route path="/tokenomics" element={<Tokenomics />} />
                 <Route path="/ffa-staking" element={<FFAStaking />} />
                 <Route path="/private-sale" element={<PrivateSale />} />
+                <Route path="/user-settings" element={<UserSettings />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -84,6 +99,7 @@ function Home() {
   return (
     <>
       <Hero />
+      <VideoShowcase />
       <HowItWorks />
       <FeaturedProjects />
       <Benefits />

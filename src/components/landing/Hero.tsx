@@ -1,197 +1,173 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Play, TrendingUp, Shield } from 'lucide-react';
+import { Play, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { projectService } from '../../services/projectService';
-import { Project, ProjectPayment } from '../../types/database';
 
 const Hero: React.FC = () => {
-  const [stats, setStats] = useState({
-    fundsRaised: 0,
-    filmProjects: 0,
-    investors: 0
-  });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        const projects = await projectService.getAllProjects();
-        
-        // Calculate total funds raised
-        const totalFundsRaised = projects.reduce((sum, project) => {
-          const projectFunds = project.project_payments?.reduce(
-            (paymentSum: number, payment: ProjectPayment) => paymentSum + payment.amount, 
-            0
-          ) || 0;
-          return sum + projectFunds;
-        }, 0);
-        
-        // Count active projects
-        const activeProjects = projects.filter(project => project.status === 'active').length;
-        
-        // Count unique investors
-        const uniqueInvestors = new Set();
-        projects.forEach(project => {
-          project.project_payments?.forEach((payment: ProjectPayment) => {
-            // Since ProjectPayment doesn't have a user_id property, we'll use the project_id as a proxy
-            // In a real implementation, you would need to join with a users table or have a user_id in the payment
-            uniqueInvestors.add(project.id);
-          });
-        });
-        
-        setStats({
-          fundsRaised: totalFundsRaised,
-          filmProjects: activeProjects,
-          investors: uniqueInvestors.size
-        });
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchStats();
-  }, []);
-
-  const formatCurrency = (amount: number) => {
-    if (amount >= 1000000) {
-      return `$${(amount / 1000000).toFixed(1)}M+`;
-    } else if (amount >= 1000) {
-      return `$${(amount / 1000).toFixed(1)}K+`;
-    } else {
-      return `$${amount}+`;
-    }
-  };
-
   return (
-    <section className="relative pt-20 pb-24 overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-navy-950 via-navy-900 to-navy-950 z-0"></div>
-      
-      {/* Film grain overlay */}
-      <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/3552472/pexels-photo-3552472.jpeg')] opacity-10 mix-blend-overlay z-0"></div>
-      
-      <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-6 items-center">
-          <div className="lg:w-1/2">
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      {/* Video Background */}
+      <div className="absolute inset-0 w-full h-full">
+        <div className="absolute inset-0 bg-gradient-to-b from-navy-950/95 via-navy-900/80 to-navy-950/95 z-10"></div>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover scale-105 transform"
+        >
+          <source src="https://player.vimeo.com/external/434045526.sd.mp4?s=c27eecc69a27dbc4ff2b87d38afc35f1a9e7c02d&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
+        </video>
+      </div>
+
+      {/* Animated Film Reels Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          className="absolute w-full h-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          {[...Array(20)].map((_, i) => (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              key={i}
+              className="absolute w-16 h-16 rounded-full bg-gold-500/10 backdrop-blur-sm"
+              initial={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                scale: 0
+              }}
+              animate={{
+                x: [
+                  Math.random() * window.innerWidth,
+                  Math.random() * window.innerWidth,
+                  Math.random() * window.innerWidth
+                ],
+                y: [
+                  Math.random() * window.innerHeight,
+                  Math.random() * window.innerHeight,
+                  Math.random() * window.innerHeight
+                ],
+                scale: [0, 1, 0],
+                opacity: [0, 1, 0]
+              }}
+              transition={{
+                duration: Math.random() * 10 + 10,
+                repeat: Infinity,
+                ease: "linear"
+              }}
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-                The Future of <span className="text-gold-500">Film Financing</span> is Here
-              </h1>
-              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-                FilmFund.io connects filmmakers with global investors through 
-                compliant security tokens, revolutionizing how films get funded.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link 
-                  to="/register" 
-                  className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-6 py-3 rounded-md font-medium flex items-center justify-center transition-colors"
-                >
-                  Get Started
-                </Link>
-                <Link 
-                  to="/how-it-works" 
-                  className="border border-gold-500 text-white hover:bg-navy-800 px-6 py-3 rounded-md font-medium flex items-center justify-center transition-colors"
-                >
-                  <Play size={18} className="mr-2" />
-                  How It Works
-                </Link>
-              </div>
+              <motion.div
+                className="w-full h-full rounded-full bg-gold-500/20"
+                animate={{
+                  rotate: 360
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              >
+                <div className="w-full h-full rounded-full border-2 border-dashed border-gold-500/30 relative">
+                  <div className="absolute inset-2 border-2 border-gold-500/20 rounded-full"></div>
+                </div>
+              </motion.div>
             </motion.div>
-            
-            <motion.div 
-              className="mt-12 grid grid-cols-3 gap-4 text-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-            >
-              <div className="p-4">
-                <p className="text-3xl font-bold text-gold-500 mb-1">
-                  {loading ? '...' : formatCurrency(stats.fundsRaised)}
-                </p>
-                <p className="text-sm text-gray-400">Funds Raised</p>
-              </div>
-              <div className="p-4">
-                <p className="text-3xl font-bold text-gold-500 mb-1">
-                  {loading ? '...' : `${stats.filmProjects}+`}
-                </p>
-                <p className="text-sm text-gray-400">Film Projects</p>
-              </div>
-              <div className="p-4">
-                <p className="text-3xl font-bold text-gold-500 mb-1">
-                  {loading ? '...' : `${stats.investors}+`}
-                </p>
-                <p className="text-sm text-gray-400">Investors</p>
-              </div>
-            </motion.div>
-          </div>
-          
-          <motion.div 
-            className="lg:w-1/2"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
+          ))}
+        </motion.div>
+      </div>
+
+      <div className="container mx-auto px-4 md:px-6 relative z-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center max-w-4xl mx-auto"
+        >
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="inline-flex items-center bg-white/5 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-white/10"
           >
-            <div className="relative">
-              <div className="bg-navy-800/50 backdrop-blur-sm rounded-xl p-1">
-                <img 
-                  src="https://images.pexels.com/photos/7234263/pexels-photo-7234263.jpeg" 
-                  alt="Dashboard Preview" 
-                  className="rounded-lg w-full shadow-2xl"
-                />
-              </div>
-              
-              {/* Feature highlights */}
-              <FeatureBadge 
-                icon={<TrendingUp size={16} />}
-                text="Real-time funding analytics"
-                position="top-left"
-              />
-              <FeatureBadge 
-                icon={<Shield size={16} />}
-                text="Regulatory compliant"
-                position="bottom-right"
-              />
-            </div>
+            <span className="relative flex h-2 w-2 mr-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-500"></span>
+            </span>
+            <span className="text-gold-500 font-medium mr-2">Now Live</span>
+            <span className="text-gray-400">Join the revolution in film financing</span>
           </motion.div>
-        </div>
+
+          <motion.h1 
+            className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            The Future of{' '}
+            <span className="relative inline-block">
+              <span className="text-gold-500">Film Financing</span>
+              <motion.span
+                className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-gold-500/0 via-gold-500/50 to-gold-500/0"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+              ></motion.span>
+            </span>
+          </motion.h1>
+
+          <motion.p 
+            className="text-xl text-gray-300 mb-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            Connect with global investors through secure, tokenized film financing.
+            Transform your creative vision into reality.
+          </motion.p>
+
+          <motion.div 
+            className="flex flex-col sm:flex-row gap-6 justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Link 
+              to="/register" 
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gold-500 px-8 py-3 font-medium text-navy-900 transition-all duration-300 hover:bg-gold-400 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <motion.span
+                className="absolute inset-0 bg-gradient-to-r from-gold-400 via-gold-500 to-gold-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                initial={false}
+                animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+              />
+              <span className="relative flex items-center">
+                Get Started
+                <ChevronRight size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
+            </Link>
+            
+            <Link 
+              to="/how-it-works" 
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg px-8 py-3 font-medium"
+            >
+              <span className="absolute inset-0 bg-white/5 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/10"></span>
+              <span className="absolute inset-0 border border-white/10 rounded-lg"></span>
+              <motion.span
+                className="absolute inset-0 bg-gradient-to-r from-gold-500/20 via-transparent to-gold-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                initial={false}
+                animate={{ x: ['-100%', '100%'] }}
+                transition={{ repeat: Infinity, duration: 3 }}
+              />
+              <span className="relative flex items-center text-white">
+                <Play size={18} className="mr-2 transition-transform duration-300 group-hover:scale-110" />
+                Watch Demo
+              </span>
+            </Link>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
-  );
-};
-
-interface FeatureBadgeProps {
-  icon: React.ReactNode;
-  text: string;
-  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-}
-
-const FeatureBadge: React.FC<FeatureBadgeProps> = ({ icon, text, position }) => {
-  const positionClasses = {
-    'top-left': '-top-4 -left-4',
-    'top-right': '-top-4 -right-4',
-    'bottom-left': '-bottom-4 -left-4',
-    'bottom-right': '-bottom-4 -right-4'
-  };
-  
-  return (
-    <motion.div 
-      className={`absolute ${positionClasses[position]} bg-navy-800 text-white rounded-full px-4 py-2 flex items-center shadow-lg border border-navy-700`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.5, duration: 0.3 }}
-    >
-      <span className="mr-2 text-gold-500">{icon}</span>
-      {text}
-    </motion.div>
   );
 };
 

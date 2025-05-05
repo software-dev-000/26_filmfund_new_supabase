@@ -7,14 +7,14 @@ const Footer: React.FC = () => {
     <footer className="bg-navy-950 text-white pt-16 pb-8">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex lg:flex-row flex-col md:flex-row mb-12 gap-20">
-          <div className="flex flex-col items-center gap-4 justify-between">
+          <div className="flex flex-col items-start ml-auto gap-4 justify-between">
             <img 
               src="/favicon.webp" 
               alt="FilmFund.io" 
-              className="h-8 place-self-center"
+              className="h-8 place-self-start"
             />
               
-            <p className="text-gray-400 w-3/4 text-center">
+            <p className="text-gray-400 w-3/4 text-start">
               Connecting filmmakers with investors through blockchain technology.
               Revolutionizing film financing with transparency and security.
             </p>
@@ -32,8 +32,8 @@ const Footer: React.FC = () => {
               <ul className="space-y-3">
                 <FooterLink to="/projects">Film Projects</FooterLink>
                 <FooterLink to="/how-it-works">How It Works</FooterLink>
-                <FooterLink to="#">Tokenomics</FooterLink>
-                <FooterLink to="#">Roadmap</FooterLink>
+                <FooterLink to="/tokenomics">Tokenomics</FooterLink>
+                <FooterLink to="/roadmap">Roadmap</FooterLink>
               </ul>
             </div>
             
@@ -41,8 +41,8 @@ const Footer: React.FC = () => {
               <h3 className="text-lg font-semibold mb-5">Token</h3>
               <ul className="space-y-3">
                 <FooterLink to="/private-sale">Private Sale</FooterLink>
-                <FooterLink to="/ffa-staking">Staking</FooterLink>
-                <FooterLink to="#">For Investors</FooterLink>
+                <FooterLink to="/for-fans">For Fans</FooterLink>
+                <FooterLink to="/for-filmmakers">For Filmmakers</FooterLink>
                 <FooterLink to="https://filmfund.io/whitepaper.pdf">Whitepaper</FooterLink>
               </ul>
             </div>
@@ -50,10 +50,10 @@ const Footer: React.FC = () => {
             <div className='col-span-1'>
               <h3 className="text-lg font-semibold mb-5">Company</h3>
               <ul className="space-y-3">
-                <FooterLink to="#">About Us</FooterLink>
-                <FooterLink to="#">Contact</FooterLink>
-                <FooterLink to="#">Careers</FooterLink>
-                <FooterLink to="#">Press Kit</FooterLink>
+                <FooterLink to="/about">About Us</FooterLink>
+                <FooterLink to="/contact">Contact</FooterLink>
+                <FooterLink to="/careers">Careers</FooterLink>
+                <FooterLink to="/press-kit">Press Kit</FooterLink>
               </ul>
             </div>
           </div>
@@ -74,12 +74,12 @@ const Footer: React.FC = () => {
 
 const SocialIcon: React.FC<{ icon: React.ReactNode, to: string }> = ({ icon, to }) => {
   return (
-    <a 
-      href={to} 
+    <Link 
+      to={to} 
       className="w-9 h-9 rounded-full bg-navy-800 flex items-center justify-center hover:bg-gold-500 hover:text-navy-900 transition-colors"
     >
       {icon}
-    </a>
+    </Link>
   );
 };
 
