@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Film, 
-  Filter,
   Search,
   ChevronDown,
   Users,
@@ -19,6 +18,7 @@ interface ProjectWithUI extends Project {
   funding_raised: number;
   investors: number;
   director: string;
+  featured?: boolean;
 }
 
 const ProjectsPage: React.FC = () => {
@@ -122,7 +122,7 @@ const ProjectsPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProjects.length > 0 ? (
             filteredProjects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} />
+            <ProjectCard key={project.id} project={project} index={index} />
             ))
           ) : (
             <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">

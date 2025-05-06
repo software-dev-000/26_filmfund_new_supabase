@@ -175,10 +175,6 @@ const FFAStaking: React.FC = () => {
                 onClick={() => setSelectedTier(tier.id)}
               >
                 <h3 className="text-2xl font-bold text-white mb-2">{tier.name}</h3>
-                <div className="flex items-baseline mb-6">
-                  <span className="text-gold-500 text-3xl font-bold">{tier.apy}%</span>
-                  <span className="text-gray-400 ml-2">APY</span>
-                </div>
                 <div className="space-y-4 mb-6">
                   <div className="flex items-center text-gray-300">
                     <DollarSign size={16} className="text-gold-500 mr-2" />

@@ -1,6 +1,93 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Coins, Lock, TrendingUp, Users, Shield, PieChart as ChartPie, Zap, ArrowUpRight, Clock, Award } from 'lucide-react';
+import { Coins, Lock, TrendingUp, Users, Shield, PieChart as ChartPie, Zap, ArrowUpRight, Award } from 'lucide-react';
+import FusionCharts from "fusioncharts";
+import charts from "fusioncharts/fusioncharts.charts";
+import ReactFC from "react-fusioncharts";
+charts(FusionCharts);
+
+const dataSource = {
+  chart: {
+    caption: "Token Distribution",
+    subcaption: "Total Supply: 100,000,000",
+    baseFontColor: "#ffffff",
+    baseFontSize: "14",
+    baseFontFamily: "Arial, Helvetica, sans-serif",
+    enablesmartlabels: "0",
+    showLabels: "0",
+    showValues: "1",
+    usedataplotcolorforlabels: "1",
+    plottooltext: "$label, <b>$value</b> FFA",
+    theme: "candy",
+
+    bgColor: "#2d3c6b",
+    width: "100%",
+    height: "100%",
+    
+    showTooltip: "1",
+    plotToolText: "Target: $label, <br> Amount: $value FFA",
+    toolTipTextColor: "#ffffff",
+    toolTipBgColor: "#001727",
+    toolTipBorderRadius: "5",
+    toolTipBorderColor: "#001727",
+    toolTipBorderSize: "1",
+    toolTipBgAlpha: "70",
+    toolTipFontSize: "10",
+    toolTipFontFamily: "Verdana, Arial, Helvetica, sans-serif",
+    tollTipFontColor: "#ffffff",
+    showToolTipShadow: "1",
+
+    cornerRadius: "10",
+  
+  },
+  data: [
+    {
+      label: "Pre-seed Sale",
+      value: 10000000,
+      color: "#97D6FF"
+    },
+    {
+      label: "Private Sale",
+      value: 7000000,
+      color: "#FFC51A"
+    },
+    {
+      label: "Public Sale",
+      value: 18000000,
+      color: "#FF9352"
+    },
+    {
+      label: "Team & Advisors",
+      value: 15000000,
+      color: "#4EA723"
+    },
+    {
+      label: "Ecosystem development & partnerships",
+      value: 10000000,
+      color: "#AF990D"
+    },
+    {
+      label: "Marketing & Community Growth",
+      value: 15000000,
+      color: "#6846D3"
+    },
+    {
+      label: "Reward & Airdrop",
+      value: 23000000,
+      color: "#D18FFB"
+    },
+    {
+      label: "Reserve & Liquidity pool",
+      value: 10000000,
+      color: "#E86DAE"
+    },
+    {
+      label: "Legal & Compliance",
+      value: 1000000,
+      color: "#F9AB9F"
+    } 
+  ]
+};
 
 const Tokenomics: React.FC = () => {
   const tokenInfo = {
@@ -14,12 +101,15 @@ const Tokenomics: React.FC = () => {
   };
 
   const distribution = [
-    { category: "Public Sale", percentage: 30, color: "bg-blue-500" },
-    { category: "Team & Advisors", percentage: 20, color: "bg-purple-500" },
-    { category: "Platform Development", percentage: 15, color: "bg-green-500" },
-    { category: "Marketing", percentage: 10, color: "bg-yellow-500" },
-    { category: "Community Rewards", percentage: 15, color: "bg-red-500" },
-    { category: "Reserve", percentage: 10, color: "bg-indigo-500" }
+    { category: "Pre-seed Sale", percentage: 1, color: "#97D6FF" },
+    { category: "Private Sale", percentage: 7, color: "#FFC51A" },
+    { category: "Public Sale", percentage: 18, color: "#FF9352" },
+    { category: "Team & Advisors", percentage: 15, color: "#4EA723" },
+    { category: "Ecosystem development & partnerships", percentage: 10, color: "#AF990D" },
+    { category: "Marketing & Community Growth", percentage: 15, color: "#6846D3" },
+    { category: "Reward & Airdrop", percentage: 23, color: "#D18FFB" },
+    { category: "Reserve & Liquidity pool", percentage: 10, color: "#E86DAE" },
+    { category: "Legal & Compliance", percentage: 1, color: "#F9AB9F" },
   ];
 
   const stakingTiers = [
@@ -61,7 +151,7 @@ const Tokenomics: React.FC = () => {
   const metrics = [
     {
       label: "Total Value Locked",
-      value: "$24.5M",
+      value: "$2.45M",
       change: "+15.2%",
       icon: <Lock size={24} />
     },
@@ -196,7 +286,7 @@ const Tokenomics: React.FC = () => {
             >
               <div className="aspect-square relative">
                 {/* Pie Chart Visualization */}
-                <div className="absolute inset-0 flex items-center justify-center">
+                {/* <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-64 h-64 relative">
                     {distribution.map((segment, index) => {
                       const rotation = index * (360 / distribution.length);
@@ -218,7 +308,14 @@ const Tokenomics: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
+                <ReactFC
+                  type="doughnut3d"
+                  width="100%"
+                  height="80%"
+                  dataFormat="JSON"
+                  dataSource={dataSource}
+                />
               </div>
             </motion.div>
 
@@ -226,9 +323,9 @@ const Tokenomics: React.FC = () => {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="space-y-4"
+              className="flex flex-col gap-4 justify-between"
             >
-              {distribution.map((segment, index) => (
+              {distribution.map((segment) => (
                 <div 
                   key={segment.category}
                   className="bg-navy-800 rounded-lg p-4 flex items-center justify-between"

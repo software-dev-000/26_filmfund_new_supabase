@@ -78,7 +78,7 @@ function App() {
                 <Route path="/tokenomics" element={<Tokenomics />} />
                 <Route path="/ffa-staking" element={<FFAStaking />} />
                 <Route path="/private-sale" element={<PrivateSale />} />
-                <Route path="/user-settings" element={<UserSettings />} />
+                <Route path="/user/settings" element={<UserSettings />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />

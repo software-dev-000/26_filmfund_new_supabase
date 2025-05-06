@@ -32,7 +32,7 @@ const Register: React.FC = () => {
     try {
       setError('');
       setLoading(true);
-      await signup(email, password, firstName, lastName, userType);
+      await signup(email, password, firstName, lastName, userType, '');
       setShowSuccess(true);
       // Redirect after 2 seconds
       setTimeout(() => {

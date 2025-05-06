@@ -2,42 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   User, 
-  Mail, 
-  Phone,
-  Lock, 
   Bell, 
   Shield,
   Trash2,
   Save,
   AlertCircle,
-  Globe,
   Monitor,
-  DollarSign,
   FileText,
-  ChevronRight,
-  LogOut,
   Clock,
   Smartphone,
-  Upload
+  Loader2
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../config/supabase';
+import { projectService } from '../services/projectService';
+import { s3Service } from '../services/s3Service';
 
 const UserSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState('profile');
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const { currentUser } = useAuth();
+  const { loading, currentUser, updateProfile } = useAuth();
 
   const [formData, setFormData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     language: 'en',
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
+    avatarUrl: '',
     twoFactorAuth: false,
     notifications: {
       projectUpdates: true,
@@ -49,6 +45,19 @@ const UserSettings: React.FC = () => {
       defaultDashboard: 'investor',
       currency: 'USD'
     }
+  });
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [passwordMatchError, setPasswordMatchError] = useState('');
+
+  const [initialProfile, setInitialProfile] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    avatarUrl: '',
   });
 
   // Mock data for recent sessions
@@ -72,57 +81,102 @@ const UserSettings: React.FC = () => {
   ];
 
   useEffect(() => {
-    loadProfile();
-  }, []);
+    if (
+      formData.newPassword &&
+      formData.confirmPassword &&
+      formData.newPassword !== formData.confirmPassword
+    ) {
+      setPasswordMatchError('New password and confirm password do not match.');
+    } else {
+      setPasswordMatchError('');
+    }
+  }, [formData.newPassword, formData.confirmPassword]);
 
-  const loadProfile = async () => {
+  useEffect(() => {
+    if (currentUser) {
+      setFormData(prev => ({
+        ...prev,
+        firstName: currentUser.user_metadata?.first_name || '',
+        lastName: currentUser.user_metadata?.last_name || '',
+        avatarUrl: currentUser.user_metadata?.avatar_url || '',
+        email: currentUser.email || '',
+      }));
+      setInitialProfile({
+        firstName: currentUser.user_metadata?.first_name || '',
+        lastName: currentUser.user_metadata?.last_name || '',
+        avatarUrl: currentUser.user_metadata?.avatar_url || '',
+        email: currentUser.email || '',
+      });
+    }
+  }, [currentUser]);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !currentUser) return;
+
     try {
-      const profileData = await getCurrentProfile();
-      if (profileData) {
-        setProfile(profileData);
-        setFormData(prev => ({
-          ...prev,
-          fullName: profileData.full_name || '',
-          email: profileData.email || '',
-          phone: profileData.phone || '',
-          language: profileData.language || 'en'
-        }));
+      setSaving(true);
+
+      // // Delete previous avatar if it exists
+      // if (currentUser.user_metadata.avatar_url) {
+      //   try {
+      //     console.log(`Deleting previous avatar: ${currentUser.user_metadata.avatar_url}`);
+      //     // Extract the file path from the URL
+      //     await s3Service.deleteFile('avatars', currentUser.user_metadata.avatar_url.split('avatars/')[1] || '');
+        
+      //   } catch (deleteError) {
+      //     console.error('Error deleting previous avatar:', deleteError);
+      //     // Continue with upload even if delete fails
+      //   }
+      // }
+
+      // Upload new avatar to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${currentUser.id}/${Date.now()}.${fileExt}`;
+      const url = await projectService.uploadFile('avatars', fileName, file);
+
+      if (url) {
+        setFormData(prev => ({ ...prev, avatarUrl: url }));
+        setMessage({ type: 'success', text: 'Avatar uploaded successfully!' });
       }
-    } catch (error) {
-      console.error('Error loading profile:', error);
+    } catch (error: any) {
+      setMessage({ type: 'error', text: error.message || 'Failed to upload avatar.' });
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
     setMessage({ type: '', text: '' });
 
+    const isFirstNameChanged = formData.firstName.trim() !== initialProfile.firstName.trim();
+    const isLastNameChanged = formData.lastName.trim() !== initialProfile.lastName.trim();
+    const isNewPassword = formData.newPassword.trim() !== '';
+    const isAvatarChanged = formData.avatarUrl !== initialProfile.avatarUrl;
+
+    if (!isFirstNameChanged && !isLastNameChanged && !isNewPassword && !isAvatarChanged) {
+      setMessage({ type: 'error', text: 'Please change at least one field (first name, last name, avatar, or new password) before saving.' });
+      return;
+    }
+
+    setSaving(true);
+
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          full_name: formData.fullName,
-          phone: formData.phone,
-          language: formData.language,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', profile.id);
-
-      if (error) throw error;
-
-      if (formData.newPassword && formData.currentPassword) {
-        const { error: passwordError } = await supabase.auth.updateUser({
-          password: formData.newPassword
-        });
-
-        if (passwordError) throw passwordError;
-      }
-
+      await updateProfile(
+        isFirstNameChanged ? formData.firstName : initialProfile.firstName,
+        isLastNameChanged ? formData.lastName : initialProfile.lastName,
+        formData.avatarUrl,
+        formData.currentPassword,
+        isNewPassword ? formData.newPassword : ''
+      );
       setMessage({ type: 'success', text: 'Settings updated successfully!' });
-      loadProfile();
+      setInitialProfile({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        avatarUrl: formData.avatarUrl,
+      });
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message });
     } finally {
@@ -141,20 +195,20 @@ const UserSettings: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-navy-950 flex items-center justify-center">
-        <div className="text-white">Loading settings...</div>
+        <Loader2 className="animate-spin" size={24} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-navy-950 pt-20 pb-12">
+    <div className="min-h-screen bg-navy-950 py-5">
       <div className="container mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-4xl mx-auto"
+          className="max-w-5xl mx-auto"
         >
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex sm:flex-row flex-col items-center justify-between mb-8 gap-4">
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">Account Settings</h1>
               <p className="text-gray-400">Manage your account preferences and security settings</p>
@@ -163,7 +217,7 @@ const UserSettings: React.FC = () => {
               type="submit"
               disabled={saving}
               onClick={handleSubmit}
-              className="flex items-center px-6 py-3 bg-gold-500 text-navy-900 rounded-lg hover:bg-gold-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center w-full sm:w-auto justify-center sm:justify-start px-6 py-3 bg-gold-500 text-navy-900 rounded-lg hover:bg-gold-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save size={16} className="mr-2" />
               {saving ? 'Saving...' : 'Save Changes'}
@@ -183,17 +237,17 @@ const UserSettings: React.FC = () => {
             </div>
           )}
 
-          <div className="flex gap-6">
+          <div className="flex flex-col md:flex-row gap-6">
             {/* Tabs Navigation */}
-            <div className="w-64 flex-shrink-0">
-              <div className="bg-navy-800 rounded-xl border border-navy-700 overflow-hidden">
+            <div className="md:w-64 flex-shrink-0 mb-4 md:mb-0">
+              <div className="flex md:block overflow-x-auto space-x-2 md:space-x-0 bg-navy-800 rounded-xl border border-navy-700">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
                   return (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center px-4 py-3 text-left transition-colors ${
+                      className={`flex items-center px-4 py-3 whitespace-nowrap transition-colors sm:w-full max-w-[180px] sm:max-w-none ${
                         activeTab === tab.id
                           ? 'bg-navy-700 text-gold-500'
                           : 'text-gray-400 hover:bg-navy-700/50'
@@ -206,25 +260,62 @@ const UserSettings: React.FC = () => {
                 })}
               </div>
             </div>
-
             {/* Tab Content */}
-            <div className="flex-grow">
+            <div className="flex-grow w-full">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Profile Information */}
                 {activeTab === 'profile' && (
                   <section className="bg-navy-800 rounded-xl p-6 border border-navy-700">
                     <h2 className="text-xl font-bold text-white mb-6">Profile Information</h2>
                     <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">
-                          Full Name
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.fullName}
-                          onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                          className="w-full bg-navy-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold-500"
-                        />
+                      <div className="flex flex-col items-center mb-6">
+                        <div className="relative">
+                          <img
+                            src={formData.avatarUrl || '/avatar.png'}
+                            alt="User Avatar"
+                            className="w-24 h-24 rounded-full object-cover border-4 border-gold-500"
+                          />
+                          <div className="absolute bottom-0 right-0 bg-gold-500 rounded-full p-2 cursor-pointer hover:bg-gold-600 transition-colors">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleAvatarChange}
+                              className="hidden"
+                              id="avatar-upload"
+                            />
+                            <label htmlFor="avatar-upload" className="cursor-pointer">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-navy-900" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                              </svg>
+                            </label>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-400 mt-2">Click the edit icon to change your avatar</p>
+                      </div>
+                      <div className="flex flex-col sm:flex-row gap-4 w-full">
+                        <div className="flex flex-col gap-1 w-full">
+                          <label className="block text-sm font-medium text-gray-400 mb-2">
+                            First Name
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.firstName}
+                            onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+                            className="w-full bg-navy-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold-500"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1 w-full">
+                          <label className="block text-sm font-medium text-gray-400 mb-2">
+                            Last Name
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.lastName}
+                            onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+                            className="w-full bg-navy-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold-500"
+                          />
+                        </div>
+                        
                       </div>
 
                       <div>
@@ -282,6 +373,9 @@ const UserSettings: React.FC = () => {
                   <div className="space-y-6">
                     <section className="bg-navy-800 rounded-xl p-6 border border-navy-700">
                       <h2 className="text-xl font-bold text-white mb-6">Change Password</h2>
+                      {passwordMatchError && (
+                        <div className="mb-2 text-red-500">{passwordMatchError}</div>
+                      )}
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -598,6 +692,7 @@ const UserSettings: React.FC = () => {
                       <button
                         type="button"
                         className="flex items-center px-4 py-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500/30 transition-colors"
+                        onClick={() => setShowDeleteModal(true)}
                       >
                         <Trash2 size={16} className="mr-2" />
                         Delete Account
@@ -610,6 +705,79 @@ const UserSettings: React.FC = () => {
           </div>
         </motion.div>
       </div>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-navy-900 rounded-xl p-8 max-w-md w-full border border-red-500 shadow-2xl">
+            <h2 className="text-xl font-bold text-red-500 mb-4 flex items-center">
+              <AlertCircle size={20} className="mr-2" />
+              Confirm Account Deletion
+            </h2>
+            <p className="text-gray-300 mb-4">
+              This action is <span className="text-red-500 font-bold">undoable</span>. <br></br>To confirm, type <span className="font-mono bg-navy-800 px-2 py-1 rounded">delete account</span> below.
+            </p>
+            <input
+              type="text"
+              className="w-full bg-navy-800 text-white rounded-lg px-4 py-3 mb-2 focus:outline-none focus:ring-2 focus:ring-gold-500"
+              placeholder="Type 'delete account' to confirm"
+              value={deleteConfirmText}
+              onChange={e => {
+                setDeleteConfirmText(e.target.value);
+                setDeleteError('');
+              }}
+              disabled={deleting}
+            />
+            {deleteError && <div className="text-red-500 mb-2">{deleteError}</div>}
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                className="px-4 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteConfirmText('');
+                  setDeleteError('');
+                }}
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
+                onClick={async () => {
+                  if (deleteConfirmText !== 'delete account') {
+                    setDeleteError('You must type "delete account" to confirm.');
+                    return;
+                  }
+                  setDeleting(true);
+                  setDeleteError('');
+                  // Call your delete logic here
+                  try {
+                    // 1. Delete from your profiles table
+                    if (currentUser) {
+                      await supabase.from('profiles').delete().eq('id', currentUser.id);
+                    }
+
+                    // 2. Delete from Supabase auth
+                    if (currentUser) {
+                      const { error } = await supabase.auth.admin.deleteUser(currentUser.id);
+                      if (error) throw error;
+                    }
+                    
+                    // 3. Log out and redirect
+                    await supabase.auth.signOut();
+                    window.location.href = '/';
+                  } catch (err: any) {
+                    setDeleteError(err.message || 'Failed to delete account.');
+                    setDeleting(false);
+                  }
+                }}
+                disabled={ deleteConfirmText !== 'delete account' || deleting}
+              >
+                {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

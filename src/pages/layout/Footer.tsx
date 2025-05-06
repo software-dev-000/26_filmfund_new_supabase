@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Twitter, Linkedin, Instagram, Facebook } from 'lucide-react';
+import { Linkedin, Instagram, Facebook } from 'lucide-react';
+import XIcon from '@mui/icons-material/X';
 
 const Footer: React.FC = () => {
   return (
@@ -19,7 +20,7 @@ const Footer: React.FC = () => {
               Revolutionizing film financing with transparency and security.
             </p>
             <div className="flex space-x-8 justify-center">
-              <SocialIcon icon={<Twitter size={20} />} to="https://x.com/FilmFund_DM/" />
+              <SocialIcon icon={<XIcon style={{ fontSize: 20 }} />} to="https://x.com/FilmFund_DM/" />
               <SocialIcon icon={<Linkedin size={20} />} to="https://www.linkedin.com/company/filmfund-io/" />
               <SocialIcon icon={<Instagram size={20} />} to="https://www.instagram.com/filmfund.io_/" />
               <SocialIcon icon={<Facebook size={20} />} to="https://www.facebook.com/filmfund.io/" />

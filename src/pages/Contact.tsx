@@ -8,10 +8,10 @@ import {
   User, 
   Send,
   Linkedin,
-  Twitter,
   Facebook,
   Instagram
 } from 'lucide-react';
+import XIcon from '@mui/icons-material/X';
 import { Link } from 'react-router-dom';
 
 const Contact: React.FC = () => {
@@ -55,7 +55,7 @@ const Contact: React.FC = () => {
   ];
 
   const socialLinks = [
-    { icon: <Twitter size={20} />, to: "https://x.com/FilmFund_DM/", label: "Twitter" },
+    { icon: <XIcon style={{ fontSize: 20 }} />, to: "https://x.com/FilmFund_DM/", label: "Twitter" },
     { icon: <Linkedin size={20} />, to: "https://www.linkedin.com/company/filmfund-io/", label: "LinkedIn" },
     { icon: <Instagram size={20} />, to: "https://www.instagram.com/filmfund.io_/", label: "Instagram" },
     { icon: <Facebook size={20} />, to: "https://www.facebook.com/filmfund.io/", label: "Facebook" },

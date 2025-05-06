@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Film, LogOut, User, ChevronDown } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import { supabase } from '../../config/supabase';
 
 interface MenuLink {
   label: string;
@@ -19,6 +20,7 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
@@ -39,6 +41,7 @@ const Navbar: React.FC = () => {
         { to: '/private-sale', label: 'Private Sale' },
         { to: '/for-fans', label: 'For Fans' },
         { to: '/for-filmmakers', label: 'For Filmmakers' },
+        { to: '/ffa-staking', label: 'Staking'},
         { to: 'https://filmfund.io/whitepaper.pdf', label: 'Whitepaper', external: true }
       ]
     },
@@ -65,6 +68,23 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
+
+  useEffect(() => {
+    if (currentUser) {
+      setAvatarUrl(currentUser.user_metadata?.avatar_url || '/avatar.png');
+    }
+
+    // Subscribe to auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setAvatarUrl(session.user.user_metadata?.avatar_url || '/avatar.png');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [currentUser]);
 
   const handleLogout = async () => {
     try {
@@ -154,13 +174,27 @@ const Navbar: React.FC = () => {
                     <User size={18} />
                     <span>Dashboard</span>
                   </NavLink>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center space-x-2 px-4 py-2 rounded-lg text-white hover:bg-navy-800/50 transition-colors text-lg"
-                  >
-                    <LogOut size={18} />
-                    <span>Logout</span>
-                  </button>
+                  <div className="relative group">
+                    <img
+                      src={avatarUrl}
+                      alt="User Avatar"
+                      className="w-10 h-10 rounded-full cursor-pointer border-2 border-gold-500"
+                    />
+                    <div className="absolute right-0 mt-2 w-48 bg-navy-950/95 backdrop-blur-sm rounded-lg shadow-xl py-2 transition-all duration-200 border border-navy-700/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible z-50">
+                      <NavLink
+                        to="/user/settings"
+                        className="block px-4 py-2.5 transition-colors text-base text-white hover:bg-navy-800/80"
+                      >
+                        User Settings
+                      </NavLink>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2.5 transition-colors text-base text-white hover:bg-navy-800/80"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="flex items-center gap-5">
@@ -244,12 +278,27 @@ const Navbar: React.FC = () => {
                   >
                     Dashboard
                   </NavLink>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-white hover:bg-navy-800 rounded-lg transition-colors text-lg"
-                  >
-                    Logout
-                  </button>
+                  <div className="relative group">
+                    <img
+                      src={avatarUrl}
+                      alt="User Avatar"
+                      className="w-10 h-10 rounded-full cursor-pointer border-2 border-gold-500"
+                    />
+                    <div className="absolute right-0 mt-2 w-48 bg-navy-950/95 backdrop-blur-sm rounded-lg shadow-xl py-2 transition-all duration-200 border border-navy-700/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible z-50">
+                      <NavLink
+                        to="/user/settings"
+                        className="block px-4 py-2.5 transition-colors text-base text-white hover:bg-navy-800/80"
+                      >
+                        User Settings
+                      </NavLink>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2.5 transition-colors text-base text-white hover:bg-navy-800/80"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>

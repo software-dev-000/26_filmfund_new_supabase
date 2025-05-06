@@ -7,10 +7,11 @@ export type UserType = 'superadmin' | 'admin' | 'filmmaker' | 'investor';
 interface AuthContextType {
   currentUser: User | null;
   userType: UserType | null;
-  signup: (email: string, password: string, firstName: string, lastName: string, userType: UserType) => Promise<void>;
+  signup: (email: string, password: string, firstName: string, lastName: string, userType: UserType, avatarUrl: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  updateProfile: (firstName: string, lastName: string, avatarUrl: string, currentPwd: string, newPwd?: string) => Promise<void>;
   loading: boolean;
 }
 
@@ -57,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const signup = async (email: string, password: string, firstName: string, lastName: string, userType: UserType) => {
+  const signup = async (email: string, password: string, firstName: string, lastName: string, userType: UserType, avatarUrl: string) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -66,6 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           first_name: firstName,
           last_name: lastName,
           user_type: userType,
+          avatar_url: avatarUrl,
         },
       },
     });
@@ -94,6 +96,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) throw error;
   };
 
+  const updateProfile = async (
+    firstName: string,
+    lastName: string,
+    avatarUrl: string,
+    currentPwd: string,
+    newPwd?: string,
+  ) => {
+    if (!currentUser) throw new Error('Not authenticated');
+
+    // 1. Re-authenticate user for security
+    if(currentPwd !== '' || newPwd !== '') {
+      console.log(`updating password for ${currentUser.email}, currentPwd: ${currentPwd}, newPwd: ${newPwd}`)
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: currentUser.email!!,
+        password: currentPwd,
+      });
+      if (signInError) throw new Error('Current password is incorrect.');
+      console.log(`signInError: ${signInError}`)
+      const { error: updatePasswordError } = await supabase.auth.updateUser({
+        password: newPwd,
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          avatar_url: avatarUrl,
+        },
+      });
+      if (updatePasswordError) throw updatePasswordError;
+    } else {
+      console.log(`updating user for ${currentUser.email}, firstName: ${firstName}, lastName: ${lastName}`)
+      const { error: updateUserError } = await supabase.auth.updateUser({
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          avatar_url: avatarUrl,
+        },
+      });
+      if (updateUserError) throw updateUserError;
+    }
+  };
+
+  
+
   const value = {
     currentUser,
     userType,
@@ -101,6 +145,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     logout,
     resetPassword,
+    updateProfile,
     loading,
   };
 
