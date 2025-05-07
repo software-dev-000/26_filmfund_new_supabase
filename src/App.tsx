@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useScrollToTop } from './hooks/useScrollToTop';
 import Navbar from './pages/layout/Navbar';
 import Footer from './pages/layout/Footer';
 import Hero from './components/landing/Hero';
@@ -40,6 +41,7 @@ function App() {
     <AuthProvider>
       <ToastProvider>
         <Router>
+          <ScrollToTop />
           <div className="flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-grow mt-[70px]">
@@ -104,6 +106,12 @@ function Home() {
       <Benefits />
     </>
   );
+}
+
+// Separate component to use the hook inside Router context
+function ScrollToTop() {
+  useScrollToTop();
+  return null;
 }
 
 export default App;

@@ -77,7 +77,7 @@ const ProjectsPage: React.FC = () => {
   });
 
   return (
-    <div className="container mx-auto min-h-screen bg-gray-900 text-white p-8">
+    <div className="container mx-auto min-h-screen bg-gray-900 text-white p-8 pt-20">
       <div className="mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <h1 className="text-4xl font-bold mb-4 md:mb-0">Film Projects</h1>
