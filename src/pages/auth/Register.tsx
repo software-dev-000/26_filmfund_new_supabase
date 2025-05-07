@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, User, Film, CheckCircle } from 'lucide-react';
+import { Mail, Lock, User, Film, CheckCircle, DollarSign } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth, UserType } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
 
 const Register: React.FC = () => {
   const [firstName, setFirstName] = useState('');
@@ -11,38 +12,37 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [userType, setUserType] = useState<UserType>('filmmaker');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
   const { signup } = useAuth();
+  const toast = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
-      return setError('Passwords do not match');
+      return toast.error('Passwords do not match');
     }
 
     if (!acceptTerms) {
-      return setError('You must accept the terms of service');
+      return toast.error('You must accept the terms of service');
     }
 
     try {
-      setError('');
       setLoading(true);
       await signup(email, password, firstName, lastName, userType, '');
-      setShowSuccess(true);
-      // Redirect after 2 seconds
+      toast.success('Account created successfully!');
+      // Redirect after 1 second
       setTimeout(() => {
         navigate('/');
       }, 1000);
     } catch (err) {
       if (err instanceof Error) {
-        setError(`Failed to create an account: ${err.message}`);
+        toast.error('Failed to create account', err.message);
       } else {
-        setError('An unexpected error occurred');
+        toast.error('An unexpected error occurred');
       }
     } finally {
       setLoading(false);
@@ -65,33 +65,6 @@ const Register: React.FC = () => {
           <p className="mt-2 text-gray-400">Join the future of film financing</p>
         </motion.div>
 
-        <AnimatePresence>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-              role="alert"
-            >
-              <span className="block sm:inline">{error}</span>
-            </motion.div>
-          )}
-
-          {showSuccess && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative flex items-center gap-2"
-              role="alert"
-            >
-              <CheckCircle className="h-5 w-5" />
-              <span className="block sm:inline">Account created successfully! Redirecting...</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         <motion.form 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -108,23 +81,25 @@ const Register: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setUserType('filmmaker')}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
                     userType === 'filmmaker'
                       ? 'bg-gold-500 text-navy-900'
                       : 'bg-navy-800 text-white hover:bg-navy-700'
                   }`}
                 >
+                  <Film size={18} />
                   Filmmaker
                 </button>
                 <button
                   type="button"
                   onClick={() => setUserType('investor')}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
                     userType === 'investor'
                       ? 'bg-gold-500 text-navy-900'
                       : 'bg-navy-800 text-white hover:bg-navy-700'
                   }`}
                 >
+                  <DollarSign size={18} />
                   Investor
                 </button>
               </div>

@@ -8,7 +8,6 @@ import {
   Users,
   ChevronRight,
   Star,
-  Edit,
   BarChart4,
   AlertCircle
 } from 'lucide-react';
@@ -16,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { projectService } from '../../../services/projectService';
 import { Project, ProjectPayment } from '../../../types/database';
 import ProjectCard from '../../../components/project/ProjectCard';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface ProjectWithUI extends Project {
   funding_raised: number;
@@ -25,6 +25,7 @@ interface ProjectWithUI extends Project {
 }
 
 const FilmmakerDashboard: React.FC = () => {
+  const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
   const [projects, setProjects] = useState<ProjectWithUI[]>([]);
   const [loading, setLoading] = useState(true);
@@ -246,10 +247,10 @@ const FilmmakerDashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
           {projects
             .filter(project => 
-              activeTab === 'all' || 
+              (activeTab === 'all' || 
               (activeTab === 'pending' && project.status === 'pending') ||
               (activeTab === 'active' && project.status === 'active') ||
-              (activeTab === 'completed' && project.status === 'completed')
+              (activeTab === 'completed' && project.status === 'completed')) && project.filmmaker_id === currentUser?.id
             )
             .map((project, index) => (
               <ProjectCard key={project.id} project={project} index={index} />
@@ -346,7 +347,7 @@ const FilmmakerDashboard: React.FC = () => {
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects
-              .filter(project => project.status === 'active')
+              .filter(project => project.status === 'active' )
               .slice(0, 3)
               .map((project, index) => (
                 <div 

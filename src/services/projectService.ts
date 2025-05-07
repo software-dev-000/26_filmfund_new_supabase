@@ -63,12 +63,63 @@ export const projectService = {
   },
 
   async deleteProject(id: string) {
-    const { error } = await supabase
-      .from('projects')
-      .delete()
-      .eq('id', id);
+    try {
+      // First, get all files that need to be deleted from S3
+      const { data: project, error: fetchError } = await supabase
+        .from('projects')
+        .select(`
+          cover_image,
+          project_media (file_url),
+          project_legal_documents (file_url)
+        `)
+        .eq('id', id)
+        .single();
 
-    if (error) throw error;
+      if (fetchError) throw fetchError;
+
+      // Delete cover image if exists
+      if (project.cover_image) {
+        const coverImagePath = project.cover_image.split('project-images/')[1];
+        if (coverImagePath) {
+          await s3Service.deleteFile('project-images', coverImagePath);
+        }
+      }
+
+      // Delete media files
+      if (project.project_media) {
+        await Promise.all(
+          project.project_media.map(async (media: any) => {
+            const mediaPath = media.file_url.split('project-gallery/')[1];
+            if (mediaPath) {
+              await s3Service.deleteFile('project-gallery', mediaPath);
+            }
+          })
+        );
+      }
+
+      // Delete legal documents
+      if (project.project_legal_documents) {
+        await Promise.all(
+          project.project_legal_documents.map(async (doc: any) => {
+            const docPath = doc.file_url.split('legal-documents/')[1];
+            if (docPath) {
+              await s3Service.deleteFile('legal-documents', docPath);
+            }
+          })
+        );
+      }
+
+      // Delete the project (this will cascade delete all related records)
+      const { error: deleteError } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', id);
+
+      if (deleteError) throw deleteError;
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      throw error;
+    }
   },
 
   // Team members operations

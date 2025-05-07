@@ -95,7 +95,6 @@ function App() {
 
 function Home() {
   const { currentUser } = useAuth();
-  console.log(`currentUser: ${JSON.stringify(currentUser, null, 2)}`);
   return (
     <>
       <Hero />

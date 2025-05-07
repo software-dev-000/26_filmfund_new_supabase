@@ -16,12 +16,26 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { projectService } from '../../../services/projectService';
 import { Project } from '../../../types/database';
-import toast, { Toaster } from 'react-hot-toast';
+import { useToast } from '../../../contexts/ToastContext';
+import ConfirmModal from '../../../components/ConfirmModal';
+
 
 const AdminDashboard: React.FC = () => {
   const [pendingApprovals, setPendingApprovals] = useState<Project[]>([]);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedStatus, setSelectedStatus] = useState('all');
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    projectId: string | null;
+    projectTitle: string;
+    isLoading: boolean;
+  }>({
+    isOpen: false,
+    projectId: null,
+    projectTitle: '',
+    isLoading: false
+  });
   const [stats, setStats] = useState({
     totalProjects: 0,
     activeUsers: 0,
@@ -29,6 +43,8 @@ const AdminDashboard: React.FC = () => {
     complianceAlerts: 0
   });
   const navigate = useNavigate();
+  const toast = useToast();
+
 
   const fetchData = async () => {
     try {
@@ -80,100 +96,65 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleDelete = async (projectId: string, projectTitle: string) => {
-    const toastId = toast.custom(
-      (t) => (
-        <div className="bg-navy-800 p-4 rounded-lg shadow-lg border border-navy-700">
-          <div className="flex items-center space-x-4">
-            <div className="flex-shrink-0">
-              <AlertTriangle className="h-6 w-6 text-amber-500" />
-            </div>
-            <div className="flex-1">
-              <p className="text-white font-medium">Delete Project</p>
-              <p className="text-gray-400 text-sm mt-1">
-                Are you sure you want to delete "{projectTitle}"? This action cannot be undone.
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 flex justify-end space-x-2">
-            <button
-              onClick={() => toast.dismiss(toastId)}
-              className="px-3 py-1 text-sm bg-navy-700 text-white rounded-md hover:bg-navy-600 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={async () => {
-                try {
-                  await projectService.deleteProject(projectId);
-                  toast.dismiss(toastId);
-                  toast.success('Project deleted successfully');
-                  await fetchData();
-                } catch (error) {
-                  console.error('Error deleting project:', error);
-                  toast.error('Failed to delete project');
-                }
-              }}
-              className="px-3 py-1 text-sm bg-red-800 text-white rounded-md hover:bg-red-700 transition-colors"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      ),
-      {
-        duration: Infinity,
-        position: 'top-center',
-      }
-    );
+  const handleDelete = (projectId: string, projectTitle: string) => {
+    setDeleteModal({
+      isOpen: true,
+      projectId,
+      projectTitle,
+      isLoading: false
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteModal.projectId) return;
+    
+    try {
+      setDeleteModal(prev => ({ ...prev, isLoading: true }));
+      await projectService.deleteProject(deleteModal.projectId);
+      toast.success('Project deleted successfully');
+      await fetchData();
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast.error('Failed to delete project');
+    } finally {
+      setDeleteModal({
+        isOpen: false,
+        projectId: null,
+        projectTitle: '',
+        isLoading: false
+      });
+    }
   };
 
   const handleEdit = (projectId: string) => {
     navigate(`/admin/projects/${projectId}/edit`);
   };
 
-  const renderProjectItem = (item: Project, showApproveReject: boolean = true) => (
-    <div 
-      key={item.id} 
-      className="flex items-center p-4 bg-navy-700 rounded-lg hover:bg-navy-600 transition-colors"
-    >
-      {item.cover_image ? (
-        <img 
-          src={item.cover_image} 
-          alt={item.title} 
-          className="w-12 h-12 rounded-md object-cover mr-4"
-        />
-      ) : (
-        <div className="w-12 h-12 rounded-md bg-navy-600 flex items-center justify-center mr-4 text-gold-500">
-          <Film size={24} />
+  const renderProjectItem = (item: Project) => (
+    <div key={item.id} className="flex items-center justify-between p-4 bg-navy-700 rounded-lg">
+      <div className="flex items-center space-x-4">
+        <div className="w-12 h-12 bg-navy-600 rounded-lg flex items-center justify-center">
+          <Film size={24} className="text-gold-500" />
         </div>
-      )}
-      
-      <div className="flex-grow">
-        <div className="flex items-center">
+        <div>
           <h3 className="text-white font-medium">{item.title}</h3>
-          <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-navy-600 text-gray-300">
-            {item.status}
-          </span>
+          <p className="text-sm text-gray-400">Status: {item.status}</p>
         </div>
-        <p className="text-xs text-gray-400">
-          Submitted by {item.filmmaker_id} • {new Date(item.created_at).toLocaleDateString()}
-        </p>
       </div>
       
       <div className="flex space-x-2 z-10">
-        {showApproveReject && (
+        {item.status === 'pending' && (
           <>
             <button 
               onClick={() => handleApprove(item.id)}
-              className="p-2 rounded-full bg-green-800/30 text-green-400 hover:bg-green-800/50 transition-colors"
+              className="p-2 rounded-full bg-green-600 text-white hover:bg-green-800/100 transition-colors"
               title="Approve"
             >
               <Check size={16} />
             </button>
             <button 
               onClick={() => handleReject(item.id)}
-              className="p-2 rounded-full bg-red-800/30 text-red-400 hover:bg-red-800/50 transition-colors"
+              className="p-2 rounded-full bg-red-600 text-white hover:bg-red-800/100 transition-colors"
               title="Reject"
             >
               <X size={16} />
@@ -189,7 +170,7 @@ const AdminDashboard: React.FC = () => {
         </button>
         <button 
           onClick={() => handleDelete(item.id, item.title)}
-          className="p-2 rounded-full bg-red-800/30 text-red-400 hover:bg-red-800/50 transition-colors"
+          className="p-2 rounded-full bg-red-600 text-white hover:bg-red-800/100 transition-colors"
           title="Delete"
         >
           <Trash2 size={16} />
@@ -249,7 +230,15 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6 lg:p-8 min-h-screen bg-navy-950">
-      <Toaster position="top-center" />
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, projectId: null, projectTitle: '', isLoading: false })}
+        onConfirm={handleConfirmDelete}
+        title="Delete Project"
+        message={`Are you sure you want to delete "${deleteModal.projectTitle}"? This action cannot be undone.`}
+        confirmText="Delete"
+        isLoading={deleteModal.isLoading}
+      />
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <motion.div
@@ -327,7 +316,7 @@ const AdminDashboard: React.FC = () => {
           </div>
           
           <div className="space-y-4">
-            {pendingApprovals.map(item => renderProjectItem(item, true))}
+            {pendingApprovals.map(item => renderProjectItem(item))}
             
             {!loading && pendingApprovals.length === 0 && (
               <div className="text-center py-4 text-gray-400">
@@ -378,17 +367,31 @@ const AdminDashboard: React.FC = () => {
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-white">All Projects</h2>
-          <div className="flex space-x-2">
-            <button className="px-3 py-1 text-xs bg-navy-700 rounded-md text-white">All</button>
-            <button className="px-3 py-1 text-xs bg-gold-500 rounded-md text-navy-900">Active</button>
-            <button className="px-3 py-1 text-xs bg-navy-700 rounded-md text-white">Completed</button>
-          </div>
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="bg-navy-700 text-white px-3 py-1 rounded-md text-sm border border-navy-600 focus:outline-none focus:border-gold-500"
+          >
+            <option value="all">All Projects</option>
+            <option value="pending">Pending</option>
+            <option value="active">Active</option>
+            <option value="rejected">Rejected</option>
+            <option value="completed">Completed</option>
+          </select>
         </div>
         
         <div className="space-y-4">
-          {allProjects.map(item => renderProjectItem(item))}
+          {allProjects
+            .filter(project => 
+              selectedStatus === 'all' || 
+              project.status === selectedStatus
+            )
+            .map(item => renderProjectItem(item))}
           
-          {!loading && allProjects.length === 0 && (
+          {!loading && allProjects.filter(project => 
+            selectedStatus === 'all' || 
+            project.status === selectedStatus
+          ).length === 0 && (
             <div className="text-center py-4 text-gray-400">
               No projects found
             </div>

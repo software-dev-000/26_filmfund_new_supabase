@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -13,15 +13,93 @@ import {
   Lock,
   ChevronUp
 } from 'lucide-react';
+import { projectService } from '../../../services/projectService';
+import { Project, ProjectPayment } from '../../../types/database';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useToast } from '../../../contexts/ToastContext';
+
+interface ProjectWithUI extends Project {
+  funding_raised: number;
+  investors: number;
+  days_left: number;
+  completion_percent?: number;
+  performance?: string;
+  amount?: number;
+  date?: string;
+}
 
 const InvestorDashboard: React.FC = () => {
-  // Mock data - in a real app, this would come from your backend
-  const portfolioStats = {
-    totalInvested: 125000,
-    totalReturns: 28750,
-    activeInvestments: 8,
-    pendingFunding: 2
-  };
+  const { currentUser } = useAuth();
+  const toast = useToast();
+  const [loading, setLoading] = useState(true);
+  const [portfolioStats, setPortfolioStats] = useState({
+    totalInvested: 0,
+    totalReturns: 0,
+    activeInvestments: 0,
+    pendingFunding: 0
+  });
+
+  const [recentInvestments, setRecentInvestments] = useState<ProjectWithUI[]>([]);
+  const [upcomingProjects, setUpcomingProjects] = useState<ProjectWithUI[]>([]);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const data = await projectService.getAllProjects();
+        
+        // Transform projects data
+        const transformedProjects = data.map(project => ({
+          ...project,
+          funding_raised: project.project_payments?.reduce((sum: number, payment: ProjectPayment) => sum + payment.amount, 0) || 0,
+          investors: project.project_payments?.length || 0,
+          days_left: 30, // This should be calculated based on project end date
+          completion_percent: project.status === 'production' ? 45 : undefined, // This should be calculated based on actual progress
+          performance: project.status === 'production' ? '+23%' : undefined,
+          amount: project.project_payments?.reduce((sum: number, payment: ProjectPayment) => sum + payment.amount, 0),
+          date: project.project_payments?.find((p: ProjectPayment) => p.status === 'active')?.created_at
+        }));
+
+        // Calculate portfolio stats
+        const totalInvested = transformedProjects.reduce((sum, project) => sum + project.funding_raised, 0);
+        const totalReturns = transformedProjects.reduce((sum, project) => {
+          // This is a placeholder calculation - you should implement your actual returns calculation
+          return sum + (project.funding_raised * 0.23); // Assuming 23% return
+        }, 0);
+        const activeInvestments = transformedProjects.filter(project => project.status === 'active').length;
+        const pendingFunding = transformedProjects.filter(project => project.status === 'funding').length;
+
+        setPortfolioStats({
+          totalInvested,
+          totalReturns,
+          activeInvestments,
+          pendingFunding
+        });
+
+        // Set recent investments (last 3 active investments)
+        setRecentInvestments(
+          transformedProjects
+            .filter(project => project.status === 'active')
+            .slice(0, 3)
+        );
+
+        // Set upcoming projects (projects in funding status)
+        setUpcomingProjects(
+          transformedProjects
+            .filter(project => project.status === 'funding')
+            .slice(0, 2)
+        );
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        toast.error('Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [toast]);
 
   const stakingInfo = {
     stakedAmount: 25000,
@@ -31,64 +109,6 @@ const InvestorDashboard: React.FC = () => {
     lockPeriod: '180 days remaining'
   };
   
-  const recentInvestments = [
-    {
-      id: 1,
-      title: "The Last Horizon",
-      amount: 15000,
-      date: "2025-03-15",
-      status: "Active",
-      performance: "+12.5%",
-      stableSplit: 70, // Percentage in stablecoins
-      image: "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"
-    },
-    {
-      id: 2,
-      title: "Beyond the Edge",
-      amount: 7500,
-      date: "2025-02-28",
-      status: "Active",
-      performance: "+8.3%",
-      stableSplit: 60,
-      image: "https://images.pexels.com/photos/1174996/pexels-photo-1174996.jpeg"
-    },
-    {
-      id: 3,
-      title: "Midnight in Tokyo",
-      amount: 10000,
-      date: "2025-01-20",
-      status: "Active",
-      performance: "+15.7%",
-      stableSplit: 80,
-      image: "https://images.pexels.com/photos/1034662/pexels-photo-1034662.jpeg"
-    }
-  ];
-  
-  const upcomingProjects = [
-    {
-      id: 4,
-      title: "Echoes of Tomorrow",
-      category: "Sci-Fi",
-      fundingGoal: 1800000,
-      daysToLaunch: 3,
-      stableSplit: 75,
-      minStake: 5000,
-      image: "https://images.pexels.com/photos/3265460/pexels-photo-3265460.jpeg",
-      rating: 4.8
-    },
-    {
-      id: 5,
-      title: "The Silent Road",
-      category: "Drama",
-      fundingGoal: 950000,
-      daysToLaunch: 7,
-      stableSplit: 65,
-      minStake: 2500,
-      image: "https://images.pexels.com/photos/2873486/pexels-photo-2873486.jpeg",
-      rating: 4.5
-    }
-  ];
-
   return (
     <div className="container mx-auto p-6 lg:p-8 min-h-screen bg-navy-950">
       <motion.div
@@ -145,7 +165,7 @@ const InvestorDashboard: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="lg:col-span-2 bg-navy-800 rounded-xl border border-navy-700"
+          className="lg:col-span-2 bg-navy-800 rounded-xl border border-navy-700 overflow-hidden"
         >
           <div className="p-6 border-b border-navy-700">
             <div className="flex items-center justify-between">
@@ -156,39 +176,76 @@ const InvestorDashboard: React.FC = () => {
             </div>
           </div>
           
-          <div className="divide-y divide-navy-700">
-            {recentInvestments.map((investment) => (
-              <div 
-                key={investment.id} 
-                className="flex items-center p-6 hover:bg-navy-700/50 transition-colors"
-              >
-                <img 
-                  src={investment.image} 
-                  alt={investment.title} 
-                  className="w-16 h-16 rounded-lg object-cover mr-4"
-                />
-                <div className="flex-grow">
-                  <h3 className="text-white font-medium mb-1">{investment.title}</h3>
-                  <div className="flex items-center space-x-4">
-                    <p className="text-sm text-gray-400">
-                      Invested on {new Date(investment.date).toLocaleDateString()}
-                    </p>
-                    <span className="text-sm text-gray-400">
-                      {investment.stableSplit}% Stable
-                    </span>
+          <div className="relative">
+            <div className="flex overflow-x-hidden">
+              <div className="animate-scroll flex">
+                {recentInvestments.map((investment) => (
+                  <div 
+                    key={investment.id} 
+                    className="flex items-center p-6 hover:bg-navy-700/50 transition-colors min-w-[400px]"
+                  >
+                    <img 
+                      src={investment.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
+                      alt={investment.title} 
+                      className="w-16 h-16 rounded-lg object-cover mr-4"
+                    />
+                    <div className="flex-grow">
+                      <h3 className="text-white font-medium mb-1">{investment.title}</h3>
+                      <div className="flex items-center space-x-4">
+                        <p className="text-sm text-gray-400">
+                          Invested on {new Date(investment.created_at).toLocaleDateString()}
+                        </p>
+                        <span className="text-sm text-gray-400">
+                          {investment.stable_split}% Stable
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-gold-500 font-semibold mb-1">
+                        ${investment.funding_raised.toLocaleString()}
+                      </p>
+                      <span className="inline-flex items-center text-sm text-green-400">
+                        <ArrowUpRight size={14} className="mr-1" />
+                        {investment.performance || '+0%'}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-gold-500 font-semibold mb-1">
-                    ${investment.amount.toLocaleString()}
-                  </p>
-                  <span className="inline-flex items-center text-sm text-green-400">
-                    <ArrowUpRight size={14} className="mr-1" />
-                    {investment.performance}
-                  </span>
-                </div>
+                ))}
+                {/* Duplicate items for seamless scrolling */}
+                {recentInvestments.map((investment) => (
+                  <div 
+                    key={`${investment.id}-duplicate`} 
+                    className="flex items-center p-6 hover:bg-navy-700/50 transition-colors min-w-[400px]"
+                  >
+                    <img 
+                      src={investment.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
+                      alt={investment.title} 
+                      className="w-16 h-16 rounded-lg object-cover mr-4"
+                    />
+                    <div className="flex-grow">
+                      <h3 className="text-white font-medium mb-1">{investment.title}</h3>
+                      <div className="flex items-center space-x-4">
+                        <p className="text-sm text-gray-400">
+                          Invested on {new Date(investment.created_at).toLocaleDateString()}
+                        </p>
+                        <span className="text-sm text-gray-400">
+                          {investment.stable_split}% Stable
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-gold-500 font-semibold mb-1">
+                        ${investment.funding_raised.toLocaleString()}
+                      </p>
+                      <span className="inline-flex items-center text-sm text-green-400">
+                        <ArrowUpRight size={14} className="mr-1" />
+                        {investment.performance || '+0%'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </motion.div>
         
@@ -288,7 +345,7 @@ const InvestorDashboard: React.FC = () => {
                 className="bg-navy-700 rounded-lg overflow-hidden hover:bg-navy-600 transition-colors"
               >
                 <img 
-                  src={project.image} 
+                  src={project.cover_image || "https://images.pexels.com/photos/3265460/pexels-photo-3265460.jpeg"} 
                   alt={project.title} 
                   className="w-full h-48 object-cover"
                 />
@@ -297,30 +354,30 @@ const InvestorDashboard: React.FC = () => {
                     <div>
                       <h3 className="text-white font-medium">{project.title}</h3>
                       <span className="inline-block px-2 py-1 text-xs rounded-full bg-navy-600 text-gray-300 mt-1">
-                        {project.category}
+                        {project.genre}
                       </span>
                     </div>
                     <div className="flex items-center text-gold-500">
                       <Star size={14} className="mr-1" />
-                      <span className="text-sm">{project.rating}</span>
+                      <span className="text-sm">4.5</span>
                     </div>
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between text-gray-400">
                       <span>Funding Goal</span>
-                      <span>${(project.fundingGoal / 1000000).toFixed(1)}M</span>
+                      <span>${(project.funding_goal / 1000000).toFixed(1)}M</span>
                     </div>
                     <div className="flex justify-between text-gray-400">
                       <span>Stable Split</span>
-                      <span>{project.stableSplit}%</span>
+                      <span>{project.stable_split}%</span>
                     </div>
                     <div className="flex justify-between text-gray-400">
                       <span>Min Investment</span>
-                      <span>${project.minStake.toLocaleString()}</span>
+                      <span>${(project.funding_goal * 0.01).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-gold-500">
                       <span>Launch</span>
-                      <span>{project.daysToLaunch} days</span>
+                      <span>{project.days_left} days</span>
                     </div>
                   </div>
                 </div>
@@ -367,5 +424,30 @@ const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon, color, trend,
     </motion.div>
   );
 };
+
+// Add this at the end of the file, before the export statement
+const styles = `
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+`;
+
+// Add this right after the imports
+const styleSheet = document.createElement("style");
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
 
 export default InvestorDashboard;

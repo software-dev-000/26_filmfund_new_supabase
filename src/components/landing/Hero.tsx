@@ -94,11 +94,11 @@ const Hero: React.FC = () => {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-500"></span>
             </span>
             <span className="text-gold-500 font-medium mr-2">Now Live</span>
-            <span className="text-gray-400">Join the revolution in film financing</span>
+            <span className="text-gray-400 block sm:inline">Join the revolution in film financing</span>
           </motion.div>
 
           <motion.h1 
-            className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-4"
+            className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mt-10 mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}

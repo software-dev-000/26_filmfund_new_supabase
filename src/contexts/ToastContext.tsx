@@ -27,6 +27,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     toast.success(message, {
       description,
       action,
+      closeButton: true,
     });
   };
 
@@ -34,6 +35,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     toast.error(message, {
       description,
       action,
+      closeButton: true,
     });
   };
 
@@ -41,6 +43,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     toast.info(message, {
       description,
       action,
+      closeButton: true,
     });
   };
 
@@ -48,13 +51,23 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     toast.warning(message, {
       description,
       action,
+      closeButton: true,
     });
   };
 
   return (
     <ToastContext.Provider value={{ success, error, info, warning }}>
       {children}
-      <Toaster position="top-right" richColors />
+      <Toaster 
+        position="top-right" 
+        richColors 
+        closeButton 
+        theme="light"
+        style={{ 
+          '--toast-bg': 'rgb(30 41 59)',
+          '--toast-border': 'rgb(51 65 85)',
+        } as React.CSSProperties}
+      />
     </ToastContext.Provider>
   );
 }; 

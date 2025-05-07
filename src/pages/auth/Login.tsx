@@ -3,24 +3,29 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, Film } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const toast = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      setError('');
       setLoading(true);
       await login(email, password);
+      toast.success('Successfully signed in!');
       navigate('/');
     } catch (err) {
-      setError('Failed to sign in. Please check your credentials.');
+      if (err instanceof Error) {
+        toast.error('Failed to sign in', err.message);
+      } else {
+        toast.error('Failed to sign in. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }
@@ -41,12 +46,6 @@ const Login: React.FC = () => {
           <h2 className="text-3xl font-bold text-white">Welcome back</h2>
           <p className="mt-2 text-gray-400">Sign in to your account</p>
         </motion.div>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <span className="block sm:inline">{error}</span>
-          </div>
-        )}
 
         <motion.form 
           initial={{ opacity: 0 }}

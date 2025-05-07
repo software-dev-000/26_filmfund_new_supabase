@@ -17,12 +17,15 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../config/supabase';
 import { projectService } from '../services/projectService';
 import { s3Service } from '../services/s3Service';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '../contexts/ToastContext';
 
 const UserSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
-  const { loading, currentUser, updateProfile } = useAuth();
+  const { loading, currentUser, updateProfile, logout } = useAuth();
+  const navigate = useNavigate();
+  const toast = useToast();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -116,31 +119,16 @@ const UserSettings: React.FC = () => {
 
     try {
       setSaving(true);
-
-      // // Delete previous avatar if it exists
-      // if (currentUser.user_metadata.avatar_url) {
-      //   try {
-      //     console.log(`Deleting previous avatar: ${currentUser.user_metadata.avatar_url}`);
-      //     // Extract the file path from the URL
-      //     await s3Service.deleteFile('avatars', currentUser.user_metadata.avatar_url.split('avatars/')[1] || '');
-        
-      //   } catch (deleteError) {
-      //     console.error('Error deleting previous avatar:', deleteError);
-      //     // Continue with upload even if delete fails
-      //   }
-      // }
-
-      // Upload new avatar to Supabase Storage
       const fileExt = file.name.split('.').pop();
       const fileName = `${currentUser.id}/${Date.now()}.${fileExt}`;
       const url = await projectService.uploadFile('avatars', fileName, file);
 
       if (url) {
         setFormData(prev => ({ ...prev, avatarUrl: url }));
-        setMessage({ type: 'success', text: 'Avatar uploaded successfully!' });
+        toast.success('Avatar uploaded successfully!');
       }
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Failed to upload avatar.' });
+      toast.error('Failed to upload avatar', error.message);
     } finally {
       setSaving(false);
     }
@@ -148,7 +136,17 @@ const UserSettings: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage({ type: '', text: '' });
+
+    // Validate first name and last name
+    if (!formData.firstName.trim()) {
+      toast.error('First name is required');
+      return;
+    }
+
+    if (!formData.lastName.trim()) {
+      toast.error('Last name is required');
+      return;
+    }
 
     const isFirstNameChanged = formData.firstName.trim() !== initialProfile.firstName.trim();
     const isLastNameChanged = formData.lastName.trim() !== initialProfile.lastName.trim();
@@ -156,7 +154,7 @@ const UserSettings: React.FC = () => {
     const isAvatarChanged = formData.avatarUrl !== initialProfile.avatarUrl;
 
     if (!isFirstNameChanged && !isLastNameChanged && !isNewPassword && !isAvatarChanged) {
-      setMessage({ type: 'error', text: 'Please change at least one field (first name, last name, avatar, or new password) before saving.' });
+      toast.error('Please change at least one field (first name, last name, avatar, or new password) before saving.');
       return;
     }
 
@@ -170,7 +168,7 @@ const UserSettings: React.FC = () => {
         formData.currentPassword,
         isNewPassword ? formData.newPassword : ''
       );
-      setMessage({ type: 'success', text: 'Settings updated successfully!' });
+      toast.success('Settings updated successfully!');
       setInitialProfile({
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -178,9 +176,55 @@ const UserSettings: React.FC = () => {
         avatarUrl: formData.avatarUrl,
       });
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message });
+      toast.error('Failed to update settings', error.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!currentUser) return;
+
+    try {
+      setDeleting(true);
+
+      // 1. Delete user's avatar from storage if exists
+      if (formData.avatarUrl) {
+        const previousPath = formData.avatarUrl.split('avatars/')[1];
+        if (previousPath) {
+          await s3Service.deleteFile("avatars", previousPath);
+        }
+      }
+
+      // 2. Delete user via Edge Function
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('No active session');
+
+      await supabase.from('users').delete().eq('id', currentUser.id);
+
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ userId: currentUser.id }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete account');
+      }
+
+      toast.success('Account deleted successfully');
+      // 3. Logout and redirect
+      await logout();
+      navigate('/');
+    } catch (error: any) {
+      console.error('Error deleting account:', error);
+      toast.error('Failed to delete account', error.message);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -223,19 +267,6 @@ const UserSettings: React.FC = () => {
               {saving ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
-
-          {message.text && (
-            <div className={`mb-6 p-4 rounded-lg ${
-              message.type === 'success' 
-                ? 'bg-green-500/10 border border-green-500 text-green-500'
-                : 'bg-red-500/10 border border-red-500 text-red-500'
-            }`}>
-              <div className="flex items-center">
-                <AlertCircle size={20} className="mr-2" />
-                {message.text}
-              </div>
-            </div>
-          )}
 
           <div className="flex flex-col md:flex-row gap-6">
             {/* Tabs Navigation */}
@@ -295,24 +326,26 @@ const UserSettings: React.FC = () => {
                       <div className="flex flex-col sm:flex-row gap-4 w-full">
                         <div className="flex flex-col gap-1 w-full">
                           <label className="block text-sm font-medium text-gray-400 mb-2">
-                            First Name
+                            First Name <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
                             value={formData.firstName}
                             onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                             className="w-full bg-navy-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold-500"
+                            required
                           />
                         </div>
                         <div className="flex flex-col gap-1 w-full">
                           <label className="block text-sm font-medium text-gray-400 mb-2">
-                            Last Name
+                            Last Name <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
                             value={formData.lastName}
                             onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                             className="w-full bg-navy-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold-500"
+                            required
                           />
                         </div>
                         
@@ -742,35 +775,8 @@ const UserSettings: React.FC = () => {
               </button>
               <button
                 className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
-                onClick={async () => {
-                  if (deleteConfirmText !== 'delete account') {
-                    setDeleteError('You must type "delete account" to confirm.');
-                    return;
-                  }
-                  setDeleting(true);
-                  setDeleteError('');
-                  // Call your delete logic here
-                  try {
-                    // 1. Delete from your profiles table
-                    if (currentUser) {
-                      await supabase.from('profiles').delete().eq('id', currentUser.id);
-                    }
-
-                    // 2. Delete from Supabase auth
-                    if (currentUser) {
-                      const { error } = await supabase.auth.admin.deleteUser(currentUser.id);
-                      if (error) throw error;
-                    }
-                    
-                    // 3. Log out and redirect
-                    await supabase.auth.signOut();
-                    window.location.href = '/';
-                  } catch (err: any) {
-                    setDeleteError(err.message || 'Failed to delete account.');
-                    setDeleting(false);
-                  }
-                }}
-                disabled={ deleteConfirmText !== 'delete account' || deleting}
+                onClick={handleDeleteAccount}
+                disabled={deleteConfirmText !== 'delete account' || deleting}
               >
                 {deleting ? 'Deleting...' : 'Delete'}
               </button>

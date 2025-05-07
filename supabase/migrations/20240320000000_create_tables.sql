@@ -193,9 +193,31 @@ CREATE POLICY "Users can create their own projects"
     ON projects FOR INSERT
     WITH CHECK (auth.uid() = filmmaker_id);
 
-CREATE POLICY "Users can update their own projects"
+DROP POLICY IF EXISTS "Users can update their own projects" ON projects;
+CREATE POLICY "Users can update their own projects or admins can update any project"
     ON projects FOR UPDATE
-    USING (auth.uid() = filmmaker_id);
+    USING (
+        auth.uid() = filmmaker_id 
+        OR 
+        EXISTS (
+            SELECT 1 FROM users 
+            WHERE users.id = auth.uid() 
+            AND users.user_type IN ('admin', 'superadmin')
+        )
+    );
+
+DROP POLICY IF EXISTS "Users can delete their own projects" ON projects;
+CREATE POLICY "Users can delete their own projects or superadmins can delete any project"
+    ON projects FOR DELETE
+    USING (
+        auth.uid() = filmmaker_id 
+        OR 
+        EXISTS (
+            SELECT 1 FROM users 
+            WHERE users.id = auth.uid() 
+            AND users.user_type = 'superadmin'
+        )
+    );
 
 -- Project media policies
 CREATE POLICY "Users can view all project media"

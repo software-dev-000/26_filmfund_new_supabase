@@ -78,7 +78,7 @@ const initialFormData: FormData = {
   title: 'ABC',
   tagline: 'EDF',
   genre: 'action',
-  status: 'active',
+  status: 'pending',
   timeline: 'timeline',
   currentStage: 'current stage',
   budget: '1000000',
@@ -460,7 +460,13 @@ const NewProject: React.FC = () => {
 
       console.log('Project created successfully!');
       success('Project created successfully!');
-    navigate('/filmmaker/dashboard');
+      if (currentUser.user_metadata.user_type === 'filmmaker') {
+        navigate('/filmmaker/dashboard');
+      } else if (currentUser.user_metadata.user_type === 'admin' || currentUser.user_metadata.user_type === "superadmin") {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       console.error('Failed to create project', err);
       error('Failed to create project', err instanceof Error ? err.message : 'Unknown error occurred');
@@ -1601,6 +1607,8 @@ const NewProject: React.FC = () => {
                       if(currentUser?.user_metadata.user_type === 'superadmin' || currentUser?.user_metadata.user_type === 'admin') {
                         handlePaymentSuccess()
                         return;
+                      } else {
+                        setCurrentStep(currentStep + 1)
                       }
                     } else {
                       setCurrentStep(currentStep + 1)

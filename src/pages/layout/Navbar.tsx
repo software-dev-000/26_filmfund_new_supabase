@@ -171,7 +171,6 @@ const Navbar: React.FC = () => {
                       }`
                     }
                   >
-                    <User size={18} />
                     <span>Dashboard</span>
                   </NavLink>
                   <div className="relative group">
@@ -183,16 +182,20 @@ const Navbar: React.FC = () => {
                     <div className="absolute right-0 mt-2 w-48 bg-navy-950/95 backdrop-blur-sm rounded-lg shadow-xl py-2 transition-all duration-200 border border-navy-700/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible z-50">
                       <NavLink
                         to="/user/settings"
-                        className="block px-4 py-2.5 transition-colors text-base text-white hover:bg-navy-800/80"
+                        className="flex items-center px-4 py-2.5 gap-2 transition-colors text-base text-white hover:bg-navy-800/80"
                       >
-                        User Settings
+                        <User size={18} />
+                        <span>User Settings</span>
                       </NavLink>
-                      <button
-                        onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2.5 transition-colors text-base text-white hover:bg-navy-800/80"
-                      >
-                        Logout
-                      </button>
+                      <div className="flex items-center px-5 py-2.5 gap-2 hover:bg-navy-800/80">
+                        <LogOut size={18} /> 
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full text-left transition-colors text-base text-white "
+                        >
+                          Logout
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -271,37 +274,33 @@ const Navbar: React.FC = () => {
             
             <div className="mt-4 pt-4 border-t border-navy-800">
               {currentUser ? (
-                <>
+                <div className="flex flex-col items-start gap-4 px-4">
                   <NavLink 
                     to={currentUser.user_metadata.user_type === 'superadmin' || currentUser.user_metadata.user_type === 'admin' ? '/admin/dashboard' : `/${currentUser.user_metadata.user_type}/dashboard`}
-                    className="block px-4 py-2 text-white hover:bg-navy-800 rounded-lg transition-colors text-lg"
+                    className="flex items-center space-x-2  py-2 text-white hover:bg-navy-800 rounded-lg transition-colors text-lg"
                   >
-                    Dashboard
+                    <span>Dashboard</span>
                   </NavLink>
-                  <div className="relative group">
-                    <img
-                      src={avatarUrl}
-                      alt="User Avatar"
-                      className="w-10 h-10 rounded-full cursor-pointer border-2 border-gold-500"
-                    />
-                    <div className="absolute right-0 mt-2 w-48 bg-navy-950/95 backdrop-blur-sm rounded-lg shadow-xl py-2 transition-all duration-200 border border-navy-700/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible z-50">
-                      <NavLink
-                        to="/user/settings"
-                        className="block px-4 py-2.5 transition-colors text-base text-white hover:bg-navy-800/80"
-                      >
-                        User Settings
-                      </NavLink>
-                      <button
-                        onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2.5 transition-colors text-base text-white hover:bg-navy-800/80"
-                      >
-                        Logout
-                      </button>
-                    </div>
+                 
+                  <NavLink
+                    to="/user/settings"
+                    className="flex items-center py-2.5 gap-2 text-white hover:bg-navy-800 rounded-lg transition-colors text-lg"
+                  >
+                    <User size={18} />
+                    <span>User Settings</span>
+                  </NavLink>
+                  <div className="flex items-center px-1 gap-3 hover:bg-navy-800/80">
+                    <LogOut size={18} />
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left py-2.5 transition-colors text-lg text-white"
+                    >
+                      Logout
+                    </button>
                   </div>
-                </>
+                </div>
               ) : (
-                <>
+                <div className="flex flex-col gap-2 px-4">
                   <NavLink 
                     to="/login" 
                     className="block px-4 py-2 text-white hover:bg-navy-800 rounded-lg transition-colors text-lg"
@@ -314,7 +313,7 @@ const Navbar: React.FC = () => {
                   >
                     Sign Up
                   </NavLink>
-                </>
+                </div>
               )}
             </div>
           </div>

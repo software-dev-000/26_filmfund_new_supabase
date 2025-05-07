@@ -14,6 +14,19 @@ import {
   Shield
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Marquee from "react-fast-marquee";
+
+interface TeamMember {
+  name: string;
+  role: string;
+  bio: string;
+  image: string;
+  social: {
+    linkedin: string;
+    github?: string;
+    twitter?: string;
+  };
+}
 
 const About: React.FC = () => {
   const stats = [
@@ -64,59 +77,85 @@ const About: React.FC = () => {
 
   const team = [
     {
-      name: "Sarah Chen",
-      role: "Chief Executive Officer",
-      image: "https://images.pexels.com/photos/3796217/pexels-photo-3796217.jpeg",
-      bio: "Former VP at Goldman Sachs with 15+ years in fintech and blockchain",
+      name: "Douglas McKenna",
+      role: "Co-Founder & CEO",
+      image: "/teams/teamimg1.png",
+      bio: "Douglas brings over a decade of experience in the film industry, having produced and financed multiple successful film projects. His deep understanding of both traditional and decentralized finance, combined with his hands-on experience in blockchain, positions him as a leading voice in film tokenization.",
       social: {
-        linkedin: "#",
-        twitter: "#"
+        linkedin: "https://www.linkedin.com/in/douglas-mckenna-348b862b/",
       }
     },
     {
-      name: "Michael Rodriguez",
-      role: "Chief Technology Officer",
-      image: "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg",
-      bio: "Blockchain architect and former lead developer at Ethereum Foundation",
+      name: "Ciprian Filip",
+      role: "Co-Founder & Advisor",
+      image: "/teams/teamimg2.png",
+      bio: "Ciprian Filip brings a wealth of experience in blockchain technology and strategic consulting to FilmFund.io. As a key contributor, he focuses on implementing innovative tokenization models and advising on the overall architecture. His deep understanding of decentralized technologies and practical business insights ensures FilmFund.io delivers cutting-edge solutions for the film financing ecosystem.",
       social: {
-        github: "#",
-        linkedin: "#"
+        linkedin: "https://www.linkedin.com/in/ciprianfilip/",
       }
     },
     {
-      name: "Emily Thompson",
-      role: "Head of Film Relations",
-      image: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg",
-      bio: "20+ years in film production and distribution at major studios",
+      name: "Nenad Nedeljkovic",
+      role: "Lead Engineer",
+      image: "/teams/teamimg8.png",
+      bio: "Nenad is an experienced full stack engineer with a deep passion for blockchain development.Having worked with major decentralized projects, he brings technical expertiseand problem-solving capabilities to FilmFund.io's core development team. Nenad oversees all aspects of platform development, ensuring its functionality,security, and scalability.",
       social: {
-        linkedin: "#",
-        twitter: "#"
+        linkedin: "https://www.linkedin.com/in/nenad-nedeljkovic-27ab832/",
       }
     },
     {
-      name: "David Park",
-      role: "Chief Financial Officer",
-      image: "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg",
-      bio: "Former Managing Director at BlackRock, specializing in digital assets",
+      name: "Guy Zajonc",
+      role: "Senior Advisor - Films",
+      image: "/teams/teamimg3.png",
+      bio: "Guy is a former lawyer and CEO-level executive with experience in both private and publicly traded startups. He co-founded a production company, growing it to over $100M in revenue. He has worked with National Geographic, IMAX filmmaker Stephen Low, and collaborated with James Cameron on Ghosts of the Abyss and Battleship Bismarck for DiscoveryChannel.",
+      social: {
+        linkedin: "https://www.linkedin.com/in/guy-zajonc-60878495/",
+      }
+    },
+    {
+      name: "Jose Paolo Miller",
+      role: "Legal Advisor (MiCA & Compliance)",
+      image: "/teams/teamimg10.png",
+      bio: "Jose is an experienced lawyer specializing in fintech, payments, and blockchain, José provides legal guidance on regulatory compliance, ensuring FilmFund.io aligns with MiCA and other financial regulations. His expertise supports the platform's legal framework for tokenized film financing and investor protection.",
+      social: {
+        linkedin: "https://www.linkedin.com/in/jpmiler/",
+      }
+    },
+    {
+      name: "Mauro Andriotto",
+      role: "Legal Advisor",
+      image: "/teams/teamimg4.png",
+      bio: "Mauro is a leading expert in blockchain compliance and security token offerings. He has worked with numerous crypto projects, ensuring legal compliance across multiple jurisdictions. Mauro ensures that FilmFund.io complies with global legal standards, guiding the security token issuance and regulatory framework.",
       social: {
         linkedin: "#",
-        twitter: "#"
       }
-    }
+    },
   ];
 
   const advisors = [
     {
-      name: "Robert Martinez",
-      role: "Film Industry Advisor",
-      image: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg",
+      name: "Ciprian Filip",
+      role: "Co-Founder & Advisor",
+      image: "/teams/teamimg2.png",
       credentials: "Academy Award-winning Producer"
     },
     {
-      name: "Dr. Lisa Wang",
-      role: "Blockchain Security",
-      image: "https://images.pexels.com/photos/1587009/pexels-photo-1587009.jpeg",
+      name: "Guy Zajonc",
+      role: "Senior Advisor - Films",
+      image: "/teams/teamimg3.png",
       credentials: "PhD in Cryptography, MIT"
+    },
+    {
+      name: "Jose Paolo Miller",
+      role: "Legal Advisor (MiCA & Compliance)",
+      image: "/teams/teamimg10.png",
+      credentials: "Blockchain Compliance Expert"
+    },
+    {
+      name: "Mauro Andriotto",
+      role: "Legal Advisor",
+      image: "/teams/teamimg4.png",
+      credentials: "Blockchain Compliance Expert"
     }
   ];
 
@@ -211,64 +250,71 @@ const About: React.FC = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-20 bg-navy-900">
-        <div className="container mx-auto px-4 md:px-6">
+      <section className="py-20 bg-navy-950">
+        <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
             <h2 className="text-3xl font-bold text-white mb-4">Our Team</h2>
-            <p className="text-gray-300 max-w-2xl mx-auto">
-              Meet the experts behind FilmFund.io, bringing together decades of experience 
-              in film, finance, and technology.
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Meet the passionate individuals behind FilmFund.io, dedicated to revolutionizing film financing through blockchain technology.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member, index) => (
-              <motion.div
-                key={index}
-                className="bg-navy-800 rounded-xl overflow-hidden border border-navy-700"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <div className="aspect-square relative group">
-                  <img 
-                    src={member.image} 
-                    alt={member.name} 
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy-950 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
-                  <p className="text-gold-500 mb-3">{member.role}</p>
-                  <p className="text-gray-400 text-sm mb-4">{member.bio}</p>
-                  <div className="flex space-x-3">
-                    {member.social.github && (
-                      <a href={member.social.github} className="text-gray-400 hover:text-gold-500 transition-colors">
-                        <Github size={20} />
-                      </a>
-                    )}
-                    {member.social.linkedin && (
-                      <a href={member.social.linkedin} className="text-gray-400 hover:text-gold-500 transition-colors">
-                        <Linkedin size={20} />
-                      </a>
-                    )}
-                    {member.social.twitter && (
-                      <a href={member.social.twitter} className="text-gray-400 hover:text-gold-500 transition-colors">
-                        <Twitter size={20} />
-                      </a>
-                    )}
+          <Marquee
+            gradient={false}
+            speed={60}
+            pauseOnHover={true}
+            direction="left"
+            className="overflow-hidden"
+          >
+            <div className="flex gap-8 px-4">
+              {team.map((member, index) => (
+                <motion.div
+                  key={index}
+                  className="bg-navy-800 rounded-xl overflow-hidden border border-navy-700 w-[300px] flex flex-col"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <div className="aspect-square relative group">
+                    <img 
+                      src={member.image} 
+                      alt={member.name} 
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy-950 to-transparent opacity-0 transition-opacity duration-300"></div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                  <div className="p-6 flex flex-col flex-grow">
+                    <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
+                    <p className="text-gold-500 mb-3">{member.role}</p>
+                    <p className="text-gray-400 text-sm mb-4 flex-grow">{member.bio}</p>
+                    <div className="flex space-x-3 mt-auto">
+                      {member.social?.github && (
+                        <Link to={member.social.github} target="_blank" className="text-gray-400 hover:text-gold-500 transition-colors">
+                          <Github size={20} />
+                        </Link>
+                      )}
+                      {member.social.linkedin && (
+                        <Link to={member.social.linkedin} target="_blank" className="text-gray-400 hover:text-gold-500 transition-colors">
+                          <Linkedin size={20} />
+                        </Link>
+                      )}
+                      {member.social?.twitter && (
+                        <Link to={member.social.twitter} target="_blank" className="text-gray-400 hover:text-gold-500 transition-colors">
+                          <Twitter size={20} />
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </Marquee>
         </div>
       </section>
 
