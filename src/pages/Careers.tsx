@@ -37,13 +37,13 @@ const Careers: React.FC = () => {
   ];
 
   const positions = [
-    {
-      title: "Senior Blockchain Engineer",
-      department: "Engineering",
-      location: "Remote",
-      type: "Full-time",
-      description: "Build and maintain our security token infrastructure and smart contracts."
-    },
+    // {
+    //   title: "Senior Blockchain Engineer",
+    //   department: "Engineering",
+    //   location: "Remote",
+    //   type: "Full-time",
+    //   description: "Build and maintain our security token infrastructure and smart contracts."
+    // },
     {
       title: "Film Industry Relations Manager",
       department: "Business Development",
@@ -58,13 +58,13 @@ const Careers: React.FC = () => {
       type: "Full-time",
       description: "Create beautiful and intuitive experiences for our platform."
     },
-    {
-      title: "Compliance Officer",
-      department: "Legal",
-      location: "Remote",
-      type: "Full-time",
-      description: "Ensure platform compliance with securities regulations."
-    }
+    // {
+    //   title: "Compliance Officer",
+    //   department: "Legal",
+    //   location: "Remote",
+    //   type: "Full-time",
+    //   description: "Ensure platform compliance with securities regulations."
+    // }
   ];
 
   const values = [
@@ -111,8 +111,12 @@ const Careers: React.FC = () => {
               Help us revolutionize film financing and empower the next generation of storytellers.
             </p>
             <Link 
-              to="#positions" 
+              to="#open-positions" 
               className="inline-flex items-center bg-gold-500 hover:bg-gold-600 text-navy-900 px-6 py-3 rounded-lg font-medium transition-colors"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('open-positions')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               <Briefcase size={20} className="mr-2" />
               View Open Positions
@@ -195,7 +199,7 @@ const Careers: React.FC = () => {
       </section>
 
       {/* Open Positions */}
-      <section id="positions" className="py-20 bg-navy-900">
+      <section id="open-positions" className="py-20 bg-navy-900">
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

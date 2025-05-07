@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
         { to: '/for-fans', label: 'For Fans' },
         { to: '/for-filmmakers', label: 'For Filmmakers' },
         { to: '/ffa-staking', label: 'Staking'},
-        { to: 'https://filmfund.io/whitepaper.pdf', label: 'Whitepaper', external: true }
+        { to: 'https://filmfund.gitbook.io/docs', label: 'Whitepaper', external: true }
       ]
     },
     {

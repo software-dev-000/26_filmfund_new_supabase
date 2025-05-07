@@ -19,9 +19,9 @@ const PrivateSale: React.FC = () => {
     tokenPrice: 0.50,
     minPurchase: 1000,
     maxPurchase: 100000,
-    totalAllocation: '10,000,000',
-    remainingAllocation: '7,250,000',
-    endDate: 'March 31, 2025'
+    totalAllocation: '70,000,000',
+    remainingAllocation: '70,000,000',
+    endDate: 'May 31, 2025'
   };
 
   useEffect(() => {

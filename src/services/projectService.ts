@@ -455,4 +455,47 @@ export const projectService = {
     if (error) throw error;
     return data;
   }
+};
+
+export interface GlobalStats {
+  totalFunded: number;
+  globalInvestors: number;
+  filmProjects: number;
+}
+
+export const fetchGlobalStats = async (): Promise<GlobalStats> => {
+  try {
+    // Fetch total funded amount from projects
+    const { data: projectsData } = await supabase
+      .from('projects')
+      .select('funding_raised')
+      .eq('status', 'funded');
+
+    const totalFunded = projectsData?.reduce((sum: number, project: { funding_raised: number }) => 
+      sum + (project.funding_raised || 0), 0) || 0;
+
+    // Fetch total number of investors
+    const { count: investorCount } = await supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_type', 'investor');
+
+    // Fetch total number of projects
+    const { count: projectCount } = await supabase
+      .from('projects')
+      .select('*', { count: 'exact', head: true });
+
+    return {
+      totalFunded,
+      globalInvestors: investorCount || 0,
+      filmProjects: projectCount || 0
+    };
+  } catch (error) {
+    console.error('Error fetching global stats:', error);
+    return {
+      totalFunded: 0,
+      globalInvestors: 0,
+      filmProjects: 0
+    };
+  }
 }; 

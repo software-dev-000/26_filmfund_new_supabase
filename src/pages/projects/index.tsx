@@ -57,7 +57,6 @@ const ProjectsPage: React.FC = () => {
           director: project.project_team_members?.[0]?.name || 'Unknown Director'
         }));
         setProjects(transformedProjects);
-        console.log(`projects = ${JSON.stringify(transformedProjects, null, 2)}`);
       } catch (error) {
         console.error('Error fetching projects:', error);
       }

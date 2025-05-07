@@ -382,7 +382,7 @@ const UserSettings: React.FC = () => {
                         </p>
                       </div>
 
-                      <div>
+                      {/* <div>
                         <label className="block text-sm font-medium text-gray-400 mb-2">
                           Preferred Language
                         </label>
@@ -396,7 +396,7 @@ const UserSettings: React.FC = () => {
                           <option value="fr">Français</option>
                           <option value="de">Deutsch</option>
                         </select>
-                      </div>
+                      </div> */}
                     </div>
                   </section>
                 )}
@@ -470,7 +470,7 @@ const UserSettings: React.FC = () => {
                       </div>
                     </section>
 
-                    <section className="bg-navy-800 rounded-xl p-6 border border-navy-700">
+                    {/* <section className="bg-navy-800 rounded-xl p-6 border border-navy-700">
                       <h2 className="text-xl font-bold text-white mb-6">Active Sessions</h2>
                       <div className="space-y-4">
                         {recentSessions.map((session) => (
@@ -497,7 +497,7 @@ const UserSettings: React.FC = () => {
                           </div>
                         ))}
                       </div>
-                    </section>
+                    </section> */}
                   </div>
                 )}
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Film, 
@@ -15,33 +15,48 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Marquee from "react-fast-marquee";
+import { fetchGlobalStats, GlobalStats } from '../services/projectService';
 
-interface TeamMember {
-  name: string;
-  role: string;
-  bio: string;
-  image: string;
-  social: {
-    linkedin: string;
-    github?: string;
-    twitter?: string;
-  };
+interface Project {
+  funding_raised: number;
 }
 
 const About: React.FC = () => {
-  const stats = [
+  const [stats, setStats] = useState<GlobalStats>({
+    totalFunded: 0,
+    globalInvestors: 0,
+    filmProjects: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      setIsLoading(true);
+      try {
+        const globalStats = await fetchGlobalStats();
+        setStats(globalStats);
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadStats();
+  }, []);
+
+  const statsData = [
     {
-      value: "$120M+",
+      value: isLoading ? "..." : `$${(stats.totalFunded / 1000000).toFixed(1)}M+`,
       label: "Total Funded",
       icon: <Film size={24} />
     },
     {
-      value: "15K+",
+      value: isLoading ? "..." : `${stats.globalInvestors.toLocaleString()}+`,
       label: "Global Investors",
       icon: <Globe size={24} />
     },
     {
-      value: "250+",
+      value: isLoading ? "..." : `${stats.filmProjects.toLocaleString()}+`,
       label: "Film Projects",
       icon: <Users size={24} />
     },
@@ -103,33 +118,33 @@ const About: React.FC = () => {
         linkedin: "https://www.linkedin.com/in/nenad-nedeljkovic-27ab832/",
       }
     },
-    {
-      name: "Guy Zajonc",
-      role: "Senior Advisor - Films",
-      image: "/teams/teamimg3.png",
-      bio: "Guy is a former lawyer and CEO-level executive with experience in both private and publicly traded startups. He co-founded a production company, growing it to over $100M in revenue. He has worked with National Geographic, IMAX filmmaker Stephen Low, and collaborated with James Cameron on Ghosts of the Abyss and Battleship Bismarck for DiscoveryChannel.",
-      social: {
-        linkedin: "https://www.linkedin.com/in/guy-zajonc-60878495/",
-      }
-    },
-    {
-      name: "Jose Paolo Miller",
-      role: "Legal Advisor (MiCA & Compliance)",
-      image: "/teams/teamimg10.png",
-      bio: "Jose is an experienced lawyer specializing in fintech, payments, and blockchain, José provides legal guidance on regulatory compliance, ensuring FilmFund.io aligns with MiCA and other financial regulations. His expertise supports the platform's legal framework for tokenized film financing and investor protection.",
-      social: {
-        linkedin: "https://www.linkedin.com/in/jpmiler/",
-      }
-    },
-    {
-      name: "Mauro Andriotto",
-      role: "Legal Advisor",
-      image: "/teams/teamimg4.png",
-      bio: "Mauro is a leading expert in blockchain compliance and security token offerings. He has worked with numerous crypto projects, ensuring legal compliance across multiple jurisdictions. Mauro ensures that FilmFund.io complies with global legal standards, guiding the security token issuance and regulatory framework.",
-      social: {
-        linkedin: "#",
-      }
-    },
+    // {
+    //   name: "Guy Zajonc",
+    //   role: "Senior Advisor - Films",
+    //   image: "/teams/teamimg3.png",
+    //   bio: "Guy is a former lawyer and CEO-level executive with experience in both private and publicly traded startups. He co-founded a production company, growing it to over $100M in revenue. He has worked with National Geographic, IMAX filmmaker Stephen Low, and collaborated with James Cameron on Ghosts of the Abyss and Battleship Bismarck for DiscoveryChannel.",
+    //   social: {
+    //     linkedin: "https://www.linkedin.com/in/guy-zajonc-60878495/",
+    //   }
+    // },
+    // {
+    //   name: "Jose Paolo Miller",
+    //   role: "Legal Advisor (MiCA & Compliance)",
+    //   image: "/teams/teamimg10.png",
+    //   bio: "Jose is an experienced lawyer specializing in fintech, payments, and blockchain, José provides legal guidance on regulatory compliance, ensuring FilmFund.io aligns with MiCA and other financial regulations. His expertise supports the platform's legal framework for tokenized film financing and investor protection.",
+    //   social: {
+    //     linkedin: "https://www.linkedin.com/in/jpmiler/",
+    //   }
+    // },
+    // {
+    //   name: "Mauro Andriotto",
+    //   role: "Legal Advisor",
+    //   image: "/teams/teamimg4.png",
+    //   bio: "Mauro is a leading expert in blockchain compliance and security token offerings. He has worked with numerous crypto projects, ensuring legal compliance across multiple jurisdictions. Mauro ensures that FilmFund.io complies with global legal standards, guiding the security token issuance and regulatory framework.",
+    //   social: {
+    //     linkedin: "#",
+    //   }
+    // },
   ];
 
   const advisors = [
@@ -193,7 +208,7 @@ const About: React.FC = () => {
       <section className="py-12 bg-navy-900">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
+            {statsData.map((stat, index) => (
               <motion.div
                 key={index}
                 className="bg-navy-800 rounded-xl p-6 border border-navy-700"
@@ -204,7 +219,13 @@ const About: React.FC = () => {
                 <div className="w-12 h-12 bg-navy-700 rounded-lg flex items-center justify-center text-gold-500 mb-4">
                   {stat.icon}
                 </div>
-                <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
+                <div className="text-3xl font-bold text-white mb-1">
+                  {isLoading ? (
+                    <div className="h-8 w-32 bg-navy-700 rounded animate-pulse"></div>
+                  ) : (
+                    stat.value
+                  )}
+                </div>
                 <div className="text-gray-400">{stat.label}</div>
               </motion.div>
             ))}
@@ -264,57 +285,49 @@ const About: React.FC = () => {
             </p>
           </motion.div>
 
-          <Marquee
-            gradient={false}
-            speed={60}
-            pauseOnHover={true}
-            direction="left"
-            className="overflow-hidden"
-          >
-            <div className="flex gap-8 px-4">
-              {team.map((member, index) => (
-                <motion.div
-                  key={index}
-                  className="bg-navy-800 rounded-xl overflow-hidden border border-navy-700 w-[300px] flex flex-col"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <div className="aspect-square relative group">
-                    <img 
-                      src={member.image} 
-                      alt={member.name} 
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-navy-950 to-transparent opacity-0 transition-opacity duration-300"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {team.map((member, index) => (
+              <motion.div
+                key={index}
+                className="bg-navy-800 rounded-xl overflow-hidden border border-navy-700 flex flex-col"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <div className="relative group h-80">
+                  <img 
+                    src={member.image} 
+                    alt={member.name} 
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-950 to-transparent opacity-0 transition-opacity duration-300"></div>
+                </div>
+                <div className="p-6 flex flex-col flex-grow">
+                  <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
+                  <p className="text-gold-500 mb-3">{member.role}</p>
+                  <p className="text-gray-400 text-sm mb-4 flex-grow">{member.bio}</p>
+                  <div className="flex space-x-3 mt-auto">
+                    {member.social?.github && (
+                      <Link to={member.social.github} target="_blank" className="text-gray-400 hover:text-gold-500 transition-colors">
+                        <Github size={20} />
+                      </Link>
+                    )}
+                    {member.social.linkedin && (
+                      <Link to={member.social.linkedin} target="_blank" className="text-gray-400 hover:text-gold-500 transition-colors">
+                        <Linkedin size={20} />
+                      </Link>
+                    )}
+                    {member.social?.twitter && (
+                      <Link to={member.social.twitter} target="_blank" className="text-gray-400 hover:text-gold-500 transition-colors">
+                        <Twitter size={20} />
+                      </Link>
+                    )}
                   </div>
-                  <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
-                    <p className="text-gold-500 mb-3">{member.role}</p>
-                    <p className="text-gray-400 text-sm mb-4 flex-grow">{member.bio}</p>
-                    <div className="flex space-x-3 mt-auto">
-                      {member.social?.github && (
-                        <Link to={member.social.github} target="_blank" className="text-gray-400 hover:text-gold-500 transition-colors">
-                          <Github size={20} />
-                        </Link>
-                      )}
-                      {member.social.linkedin && (
-                        <Link to={member.social.linkedin} target="_blank" className="text-gray-400 hover:text-gold-500 transition-colors">
-                          <Linkedin size={20} />
-                        </Link>
-                      )}
-                      {member.social?.twitter && (
-                        <Link to={member.social.twitter} target="_blank" className="text-gray-400 hover:text-gold-500 transition-colors">
-                          <Twitter size={20} />
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </Marquee>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 

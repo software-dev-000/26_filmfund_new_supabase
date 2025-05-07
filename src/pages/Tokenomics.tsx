@@ -9,7 +9,7 @@ charts(FusionCharts);
 const dataSource = {
   chart: {
     caption: "Token Distribution",
-    subcaption: "Total Supply: 100,000,000",
+    subcaption: "Total Supply: 1,000,000,000",
     baseFontColor: "#ffffff",
     baseFontSize: "14",
     baseFontFamily: "Arial, Helvetica, sans-serif",
@@ -48,42 +48,42 @@ const dataSource = {
     },
     {
       label: "Private Sale",
-      value: 7000000,
+      value: 70000000,
       color: "#FFC51A"
     },
     {
       label: "Public Sale",
-      value: 18000000,
+      value: 180000000,
       color: "#FF9352"
     },
     {
       label: "Team & Advisors",
-      value: 15000000,
+      value: 150000000,
       color: "#4EA723"
     },
     {
       label: "Ecosystem development & partnerships",
-      value: 10000000,
+      value: 100000000,
       color: "#AF990D"
     },
     {
       label: "Marketing & Community Growth",
-      value: 15000000,
+      value: 150000000,
       color: "#6846D3"
     },
     {
       label: "Reward & Airdrop",
-      value: 23000000,
+      value: 230000000,
       color: "#D18FFB"
     },
     {
       label: "Reserve & Liquidity pool",
-      value: 10000000,
+      value: 100000000,
       color: "#E86DAE"
     },
     {
       label: "Legal & Compliance",
-      value: 1000000,
+      value: 10000000,
       color: "#F9AB9F"
     } 
   ]
@@ -93,11 +93,11 @@ const Tokenomics: React.FC = () => {
   const tokenInfo = {
     name: "FilmFund Token",
     symbol: "FFA",
-    totalSupply: "100,000,000",
+    totalSupply: "1,000,000,000",
     initialPrice: "$0.50",
-    currentPrice: "$2.15",
-    marketCap: "$215,000,000",
-    circulation: "35,000,000"
+    currentPrice: "$0.5",
+    marketCap: "$500,000,000",
+    circulation: "660,000,000"
   };
 
   const distribution = [
@@ -369,8 +369,8 @@ const Tokenomics: React.FC = () => {
               >
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold text-white mb-2">{tier.name}</h3>
-                  <div className="text-gold-500 text-3xl font-bold mb-2">{tier.apy}</div>
-                  <p className="text-gray-400">Min. Stake: {tier.minStake} FFA</p>
+                  {/* <div className="text-gold-500 text-3xl font-bold mb-2">{tier.apy}</div>
+                  <p className="text-gray-400">Min. Stake: {tier.minStake} FFA</p> */}
                 </div>
                 <div className="space-y-3">
                   {tier.benefits.map((benefit, i) => (

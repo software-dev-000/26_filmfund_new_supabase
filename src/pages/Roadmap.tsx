@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Flag,
@@ -11,8 +11,44 @@ import {
   Zap,
   ChevronRight
 } from 'lucide-react';
+import { supabase } from '../config/supabase';
 
 const Roadmap: React.FC = () => {
+  const [stats, setStats] = useState({
+    activeUsers: 0,
+    projectsFunded: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch total number of users
+        const { count: userCount } = await supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true });
+
+        // Fetch total number of funded projects
+        const { count: projectCount } = await supabase
+          .from('projects')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'funded');
+
+        setStats({
+          activeUsers: userCount || 0,
+          projectsFunded: projectCount || 0
+        });
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   const phases = [
     {
       title: "Phase 1: Foundation",
@@ -80,7 +116,7 @@ const Roadmap: React.FC = () => {
     {
       icon: <Users size={24} />,
       title: "Active Users",
-      value: "15,000+"
+      value: isLoading ? "..." : `${stats.activeUsers.toLocaleString()}+`
     },
     {
       icon: <Shield size={24} />,
@@ -90,7 +126,7 @@ const Roadmap: React.FC = () => {
     {
       icon: <Zap size={24} />,
       title: "Projects Funded",
-      value: "250+"
+      value: isLoading ? "..." : `${stats.projectsFunded.toLocaleString()}+`
     }
   ];
 
@@ -139,7 +175,11 @@ const Roadmap: React.FC = () => {
                   {achievement.icon}
                 </div>
                 <div className="text-2xl font-bold text-white mb-1">
-                  {achievement.value}
+                  {isLoading && (achievement.title === "Active Users" || achievement.title === "Projects Funded") ? (
+                    <div className="h-8 w-24 bg-navy-700 rounded animate-pulse"></div>
+                  ) : (
+                    achievement.value
+                  )}
                 </div>
                 <div className="text-gray-400">{achievement.title}</div>
               </motion.div>

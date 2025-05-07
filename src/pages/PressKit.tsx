@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Download,
@@ -11,21 +11,44 @@ import {
   Phone,
   Send
 } from 'lucide-react';
+import { fetchGlobalStats, GlobalStats } from '../services/projectService';
 
 const PressKit: React.FC = () => {
-  const stats = [
+  const [stats, setStats] = useState<GlobalStats>({
+    totalFunded: 0,
+    globalInvestors: 0,
+    filmProjects: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      setIsLoading(true);
+      try {
+        const globalStats = await fetchGlobalStats();
+        setStats(globalStats);
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadStats();
+  }, []);
+
+  const statsData = [
     {
-      value: "$120M+",
+      value: isLoading ? "..." : `$${(stats.totalFunded / 1000000).toFixed(1)}M+`,
       label: "Total Funded",
       icon: <Film size={24} />
     },
     {
-      value: "15K+",
+      value: isLoading ? "..." : `${stats.globalInvestors.toLocaleString()}+`,
       label: "Global Investors",
       icon: <Users size={24} />
     },
     {
-      value: "250+",
+      value: isLoading ? "..." : `${stats.filmProjects.toLocaleString()}+`,
       label: "Film Projects",
       icon: <Award size={24} />
     }
@@ -119,7 +142,7 @@ const PressKit: React.FC = () => {
       <section className="py-12 bg-navy-900">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {stats.map((stat, index) => (
+            {statsData.map((stat, index) => (
               <motion.div
                 key={index}
                 className="bg-navy-800 rounded-xl p-6 border border-navy-700"
@@ -130,7 +153,13 @@ const PressKit: React.FC = () => {
                 <div className="w-12 h-12 bg-navy-700 rounded-lg flex items-center justify-center text-gold-500 mb-4">
                   {stat.icon}
                 </div>
-                <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
+                <div className="text-3xl font-bold text-white mb-1">
+                  {isLoading ? (
+                    <div className="h-8 w-32 bg-navy-700 rounded animate-pulse"></div>
+                  ) : (
+                    stat.value
+                  )}
+                </div>
                 <div className="text-gray-400">{stat.label}</div>
               </motion.div>
             ))}
