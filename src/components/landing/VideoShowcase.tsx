@@ -1,8 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Play, ChevronRight, Shield, Users, DollarSign } from 'lucide-react';
+import { fetchGlobalStats, GlobalStats } from '../../services/projectService';
 
 const VideoShowcase: React.FC = () => {
+  const [stats, setStats] = useState<GlobalStats>({
+    totalFunded: 0,
+    globalInvestors: 0,
+    filmProjects: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchGlobalStats();
+        setStats(data);
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadStats();
+  }, []);
+
   const features = [
     {
       title: "Secure Investment",
@@ -129,7 +153,11 @@ const VideoShowcase: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                 >
-                  250+
+                  {isLoading ? (
+                    <div className="h-8 w-24 bg-navy-700 rounded animate-pulse"></div>
+                  ) : (
+                    `${stats.filmProjects.toLocaleString()}+`
+                  )}
                 </motion.div>
                 <div className="text-sm text-gray-400">Projects</div>
               </motion.div>
@@ -144,7 +172,11 @@ const VideoShowcase: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                 >
-                  $120M
+                  {isLoading ? (
+                    <div className="h-8 w-24 bg-navy-700 rounded animate-pulse"></div>
+                  ) : (
+                    `$${(stats.totalFunded / 1000000).toFixed(1)}M`
+                  )}
                 </motion.div>
                 <div className="text-sm text-gray-400">Funded</div>
               </motion.div>
@@ -159,7 +191,11 @@ const VideoShowcase: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                 >
-                  15K+
+                  {isLoading ? (
+                    <div className="h-8 w-24 bg-navy-700 rounded animate-pulse"></div>
+                  ) : (
+                    `${stats.globalInvestors.toLocaleString()}+`
+                  )}
                 </motion.div>
                 <div className="text-sm text-gray-400">Investors</div>
               </motion.div>
