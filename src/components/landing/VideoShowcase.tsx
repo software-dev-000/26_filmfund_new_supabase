@@ -154,7 +154,6 @@ const VideoShowcase: React.FC = () => {
                   ref={videoRef}
                   src="/intro-video.mp4"
                   autoPlay={false}
-                  muted
                   loop={false}
                   className="w-full h-full object-cover transition-transform duration-500"
                   onClick={() => handlePlayVideo(!isVideoPlaying)}
