@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
         { to: '/about', label: 'About Us' },
         { to: '/contact', label: 'Contact' },
         { to: '/careers', label: 'Careers' },
-        { to: '/press-kit', label: 'Press Kit' }
+        // { to: '/press-kit', label: 'Press Kit' }
       ]
     }
   ];
