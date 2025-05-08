@@ -44,7 +44,7 @@ const Footer: React.FC = () => {
                 <FooterLink to="/private-sale">Private Sale</FooterLink>
                 <FooterLink to="/for-fans">For Fans</FooterLink>
                 <FooterLink to="/for-filmmakers">For Filmmakers</FooterLink>
-                <FooterLink to="https://filmfund.io/whitepaper.pdf">Whitepaper</FooterLink>
+                <FooterLink to="https://filmfund.gitbook.io/docs">Whitepaper</FooterLink>
               </ul>
             </div>
             
