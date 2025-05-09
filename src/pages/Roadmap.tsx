@@ -12,8 +12,24 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { supabase } from '../config/supabase';
+import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 const Roadmap: React.FC = () => {
+  const { currentUser } = useAuth();
+  
+  // Determine the correct link destination based on auth status
+  let getStartedLink = "/register";
+  if(currentUser){
+    if (currentUser.user_metadata.user_type === "investor"){
+      getStartedLink = "/investor/dashboard";
+    } else if (currentUser.user_metadata.user_type === "filmmaker" || currentUser.user_metadata.user_type === "admin"){
+      getStartedLink = "/filmmaker/dashboard";
+    } else if (currentUser.user_metadata.user_type === "superadmin"){
+      getStartedLink = "/admin/dashboard";
+    }
+  }
+
   const [stats, setStats] = useState({
     activeUsers: 0,
     projectsFunded: 0
@@ -323,18 +339,18 @@ const Roadmap: React.FC = () => {
               and decentralized finance.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a 
-                href="/register" 
+              <Link 
+                to={getStartedLink} 
                 className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-8 py-3 rounded-lg font-medium transition-colors"
               >
                 Get Started
-              </a>
-              <a 
-                href="/contact" 
+              </Link>
+              <Link 
+                to="/contact" 
                 className="border border-gold-500 text-white hover:bg-navy-700 px-8 py-3 rounded-lg font-medium transition-colors"
               >
                 Contact Us
-              </a>
+              </Link>
             </div>
           </motion.div>
         </div>

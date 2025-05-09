@@ -4,6 +4,7 @@ import { Coins, Lock, TrendingUp, Users, Shield, PieChart as ChartPie, Zap, Arro
 import FusionCharts from "fusioncharts";
 import charts from "fusioncharts/fusioncharts.charts";
 import ReactFC from "react-fusioncharts";
+import { Link } from 'react-router-dom';
 charts(FusionCharts);
 
 const dataSource = {
@@ -411,7 +412,7 @@ const Tokenomics: React.FC = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <div className="flex items-center justify-between mb-4">
+                {/* <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-navy-700 rounded-lg flex items-center justify-center text-gold-500">
                     {metric.icon}
                   </div>
@@ -421,7 +422,9 @@ const Tokenomics: React.FC = () => {
                   </div>
                 </div>
                 <h3 className="text-gray-400 text-sm mb-1">{metric.label}</h3>
-                <p className="text-2xl font-bold text-white">{metric.value}</p>
+                <p className="text-2xl font-bold text-white">{metric.value}</p> */}
+                <h3 className="text-gray-400 text-sm mb-1">{metric.label}</h3>
+                <p className="text-2xl font-bold text-white mt-4">TBD</p>
               </motion.div>
             ))}
           </div>
@@ -445,18 +448,18 @@ const Tokenomics: React.FC = () => {
               to film investment opportunities.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a 
-                href="/register" 
+              <Link 
+                to="/register" 
                 className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-8 py-3 rounded-lg font-medium transition-colors"
               >
                 Buy FFA Tokens
-              </a>
-              <a 
-                href="/ffa-staking" 
+              </Link>
+              <Link 
+                to="/ffa-staking" 
                 className="border border-gold-500 text-white hover:bg-navy-700 px-8 py-3 rounded-lg font-medium transition-colors"
               >
                 Learn About Staking
-              </a>
+              </Link>
             </div>
           </motion.div>
         </div>

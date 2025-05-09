@@ -4,6 +4,7 @@ import { Mail, Lock, User, Film, CheckCircle, DollarSign } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth, UserType } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
+import { supabase } from '../../config/supabase';
 
 const Register: React.FC = () => {
   const [firstName, setFirstName] = useState('');
@@ -35,8 +36,21 @@ const Register: React.FC = () => {
       await signup(email, password, firstName, lastName, userType, '');
       toast.success('Account created successfully!');
       // Redirect after 1 second
-      setTimeout(() => {
-        navigate('/');
+      setTimeout(async () => {
+        // Get user data after successful login
+        const { data: { user } } = await supabase.auth.getUser();
+        console.log('User data:', user);
+        
+        toast.success('Successfully signed in!');
+        if(user?.user_metadata?.user_type === 'superadmin') {
+          navigate('/admin/dashboard');
+        } else if(user?.user_metadata?.user_type === 'filmmaker' || user?.user_metadata?.user_type === 'admin') {
+          navigate('/filmmaker/dashboard');
+        } else if(user?.user_metadata?.user_type === 'investor') {
+          navigate('/investor/dashboard');
+        } else {
+          navigate('/');
+        }
       }, 1000);
     } catch (err) {
       if (err instanceof Error) {
@@ -57,10 +71,10 @@ const Register: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <Link to="/" className="flex items-center justify-center gap-2 mb-6">
+          {/* <Link to="/" className="flex items-center justify-center gap-2 mb-6">
             <img src="/favicon.webp" alt="FilmFund.io" className="h-8" />
             <span className="text-2xl font-bold text-white">FilmFund.io</span>
-          </Link>
+          </Link> */}
           <h2 className="text-3xl font-bold text-white">Create your account</h2>
           <p className="mt-2 text-gray-400">Join the future of film financing</p>
         </motion.div>
@@ -100,7 +114,7 @@ const Register: React.FC = () => {
                   }`}
                 >
                   <DollarSign size={18} />
-                  Investor
+                  Fan
                 </button>
               </div>
             </div>

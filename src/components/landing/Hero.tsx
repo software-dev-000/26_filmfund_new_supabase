@@ -1,9 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Play, ChevronRight } from 'lucide-react';
+import { Play, ChevronRight, Notebook } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Hero: React.FC = () => {
+  const { currentUser } = useAuth();
+  
+  // Determine the correct link destination based on auth status
+  let getStartedLink = "/register";
+  if(currentUser){
+    if (currentUser.user_metadata.user_type === "investor"){
+      getStartedLink = "/investor/dashboard";
+    } else if (currentUser.user_metadata.user_type === "filmmaker" || currentUser.user_metadata.user_type === "admin"){
+      getStartedLink = "/filmmaker/dashboard";
+    } else if (currentUser.user_metadata.user_type === "superadmin"){
+      getStartedLink = "/admin/dashboard";
+    }
+  }
+
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       {/* Video Background */}
@@ -93,7 +108,7 @@ const Hero: React.FC = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-500 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-500"></span>
             </span>
-            <span className="text-gold-500 font-medium mr-2">Now Live</span>
+            <span className="text-gold-500 font-medium mr-2">Prototype Mode</span>
             <span className="text-gray-400 block sm:inline">Join the revolution in film financing</span>
           </motion.div>
 
@@ -132,7 +147,7 @@ const Hero: React.FC = () => {
             transition={{ delay: 0.5 }}
           >
             <Link 
-              to="/register" 
+              to={getStartedLink}
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gold-500 px-8 py-3 font-medium text-navy-900 transition-all duration-300 hover:bg-gold-400 hover:scale-[1.02] active:scale-[0.98]"
             >
               <motion.span
@@ -160,8 +175,9 @@ const Hero: React.FC = () => {
                 transition={{ repeat: Infinity, duration: 3 }}
               />
               <span className="relative flex items-center text-white">
-                <Play size={18} className="mr-2 transition-transform duration-300 group-hover:scale-110" />
-                Watch Demo
+                {/* <Play size={18} className="mr-2 transition-transform duration-300 group-hover:scale-110" /> */}
+                Whitepaper
+                <Notebook size={18} className="ml-2 transition-transform duration-300 group-hover:scale-110" />
               </span>
             </Link>
           </motion.div>

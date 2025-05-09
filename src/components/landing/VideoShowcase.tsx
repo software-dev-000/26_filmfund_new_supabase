@@ -1,8 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause, ChevronRight, Shield, Users, DollarSign } from 'lucide-react';
+import { Play, ChevronRight, Shield, Users, DollarSign, Pause, Maximize } from 'lucide-react';
 import { fetchGlobalStats, GlobalStats } from '../../services/projectService';
 import { Link } from 'react-router-dom';
+
+// Add a function to handle fullscreen
+const toggleFullScreen = (videoElement: HTMLVideoElement | null) => {
+  if (!videoElement) return;
+  
+  if (!document.fullscreenElement) {
+    videoElement.requestFullscreen().catch(err => {
+      console.error(`Error attempting to enable fullscreen: ${err.message}`);
+    });
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  }
+};
 
 const VideoShowcase: React.FC = () => {
   const [stats, setStats] = useState<GlobalStats>({
@@ -18,7 +33,6 @@ const VideoShowcase: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovering, setIsHovering] = useState(false);
   const [isVideoStarted, setIsVideoStarted] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   useEffect(() => {
     if(videoRef?.current?.currentTime.toString() === duration.toString() || videoRef.current?.currentTime === 0) {
@@ -96,7 +110,6 @@ const VideoShowcase: React.FC = () => {
   };
 
   const handleVideoEnd = () => {
-    setIsVideoPlaying(false);
     setIsVideoStarted(false);
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
@@ -186,7 +199,6 @@ const VideoShowcase: React.FC = () => {
                   src="/intro-video.mp4"
                   autoPlay={false}
                   preload='auto'
-                  muted
                   loop={false}
                   className="w-full h-full object-cover transition-transform duration-500"
                   onClick={() => handlePlayVideo(!isVideoPlayingRef.current)}
@@ -195,10 +207,9 @@ const VideoShowcase: React.FC = () => {
                   onEnded={handleVideoEnd}
                 />
                 <div 
-                  className="absolute bottom-1 left-0 right-0 h-4 bg-navy-900/50 backdrop-blur-sm flex items-center cursor-pointer z-10"
-                  onClick={handleSeek}
+                  className="absolute bottom-0 left-0 right-0 h-8 bg-navy-900/50 backdrop-blur-sm flex items-center px-2 cursor-pointer z-10"
                 >
-                  <div className="w-full h-1.5 bg-navy-700 rounded-full relative">
+                  <div className="w-full h-2 bg-navy-700 rounded-full relative" onClick={handleSeek}>
                     <div 
                       className="h-full bg-gold-500 rounded-full transition-all duration-100 relative"
                       style={{ width: `${(currentTime / duration) * 100}%` }}
@@ -206,9 +217,18 @@ const VideoShowcase: React.FC = () => {
                       <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-gold-500 rounded-full shadow-lg transform scale-0 group-hover:scale-100 transition-transform" />
                     </div>
                   </div>
-                  {/* <div className="ml-2 text-xs text-white">
-                    {Math.floor(currentTime)}s / {Math.floor(duration)}s
-                  </div> */}
+                  
+                  {/* Fullscreen button */}
+                  <button 
+                    className="ml-2 p-1 text-white hover:text-gold-500 transition-colors rounded-full opacity-0 group-hover:opacity-100"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFullScreen(videoRef.current);
+                    }}
+                    title="Fullscreen"
+                  >
+                    <Maximize size={16} />
+                  </button>
                 </div>
               </div>
               
@@ -346,7 +366,7 @@ const VideoShowcase: React.FC = () => {
               transition={{ delay: 0.6 }}
             >
               <button className="group inline-flex items-center text-gold-500 hover:text-gold-400 transition-colors">
-                <Link to="/contact"><span>Learn more about our platform</span></Link>
+                <Link to="/about"><span>Learn more about our platform</span></Link>
                 <ChevronRight className="ml-2 transition-transform group-hover:translate-x-1" />
               </button>
             </motion.div>

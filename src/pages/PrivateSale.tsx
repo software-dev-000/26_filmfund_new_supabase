@@ -212,10 +212,15 @@ const PrivateSale: React.FC = () => {
                     </label>
                     <div className="relative">
                       <input
-                        type="number"
+                        type="text"
                         id="amount"
                         value={purchaseAmount}
-                        onChange={(e) => setPurchaseAmount(e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '' || /^\d*$/.test(value)) {
+                            setPurchaseAmount(value);
+                          }
+                        }}
                         className="w-full bg-navy-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold-500"
                         placeholder="Enter amount"
                         min={saleInfo.minPurchase}

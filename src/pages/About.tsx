@@ -16,12 +16,23 @@ import {
 import { Link } from 'react-router-dom';
 import Marquee from "react-fast-marquee";
 import { fetchGlobalStats, GlobalStats } from '../services/projectService';
-
-interface Project {
-  funding_raised: number;
-}
+import { useAuth } from '../contexts/AuthContext';
 
 const About: React.FC = () => {
+  const { currentUser } = useAuth();
+  
+  // Determine the correct link destination based on auth status
+  let getStartedLink = "/register";
+  if(currentUser){
+    if (currentUser.user_metadata.user_type === "investor"){
+      getStartedLink = "/investor/dashboard";
+    } else if (currentUser.user_metadata.user_type === "filmmaker" || currentUser.user_metadata.user_type === "admin"){
+      getStartedLink = "/filmmaker/dashboard";
+    } else if (currentUser.user_metadata.user_type === "superadmin"){
+      getStartedLink = "/admin/dashboard";
+    }
+  }
+
   const [stats, setStats] = useState<GlobalStats>({
     totalFunded: 0,
     globalInvestors: 0,
@@ -149,28 +160,22 @@ const About: React.FC = () => {
 
   const advisors = [
     {
-      name: "Ciprian Filip",
-      role: "Co-Founder & Advisor",
-      image: "/teams/teamimg2.png",
-      credentials: "Academy Award-winning Producer"
-    },
-    {
       name: "Guy Zajonc",
       role: "Senior Advisor - Films",
       image: "/teams/teamimg3.png",
-      credentials: "PhD in Cryptography, MIT"
+      credentials: "PhD in Cryptography, MIT",
+      social: {
+        linkedin: "https://www.linkedin.com/in/guy-zajonc-60878495/",
+      }
     },
     {
       name: "Jose Paolo Miller",
       role: "Legal Advisor (MiCA & Compliance)",
       image: "/teams/teamimg10.png",
-      credentials: "Blockchain Compliance Expert"
-    },
-    {
-      name: "Mauro Andriotto",
-      role: "Legal Advisor",
-      image: "/teams/teamimg4.png",
-      credentials: "Blockchain Compliance Expert"
+      credentials: "Blockchain Compliance Expert",
+      social: {
+        linkedin: "https://www.linkedin.com/in/jpmiler/",
+      }
     }
   ];
 
@@ -364,7 +369,10 @@ const About: React.FC = () => {
                 <div>
                   <h3 className="text-xl font-bold text-white mb-1">{advisor.name}</h3>
                   <p className="text-gold-500 mb-2">{advisor.role}</p>
-                  <p className="text-gray-400 text-sm">{advisor.credentials}</p>
+                  {/* <p className="text-gray-400 text-sm">{advisor.credentials}</p> */}
+                  <Link to={advisor.social.linkedin} target="_blank" className="text-gray-400 hover:text-gold-500 transition-colors">
+                    <Linkedin size={20} />
+                  </Link>
                 </div>
               </motion.div>
             ))}
@@ -390,7 +398,7 @@ const About: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
-                to="/register" 
+                to={getStartedLink} 
                 className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-8 py-3 rounded-lg font-medium transition-colors"
               >
                 Get Started

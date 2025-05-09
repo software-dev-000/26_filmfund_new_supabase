@@ -1608,7 +1608,10 @@ const NewProject: React.FC = () => {
                         handlePaymentSuccess()
                         return;
                       } else {
-                        setCurrentStep(currentStep + 1)
+                        // if user is not superadmin or admin, set current step to 4 (payment). 
+                        // setCurrentStep(currentStep + 1)  // currently all user can submit project without payment
+                        handlePaymentSuccess()
+                        return;
                       }
                     } else {
                       setCurrentStep(currentStep + 1)

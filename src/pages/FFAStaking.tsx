@@ -143,7 +143,8 @@ const FFAStaking: React.FC = () => {
                   {stat.icon}
                 </div>
                 <h3 className="text-gray-400 text-sm mb-1">{stat.title}</h3>
-                <p className="text-2xl font-bold text-white">{stat.value}</p>
+                {/* <p className="text-2xl font-bold text-white">{stat.value}</p> */}
+                <p className="text-2xl font-bold text-white">TBD</p>
               </motion.div>
             ))}
           </div>

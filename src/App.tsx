@@ -108,7 +108,6 @@ function App() {
 }
 
 function Home() {
-  const { currentUser } = useAuth();
   return (
     <>
       <Hero />
