@@ -238,13 +238,13 @@ const Careers: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                  <Link 
+                  {/* <Link 
                     to={`/careers/${position.title.toLowerCase().replace(/\s+/g, '-')}`}
                     className="mt-4 md:mt-0 inline-flex items-center bg-gold-500 hover:bg-gold-600 text-navy-900 px-6 py-2 rounded-lg font-medium transition-colors"
                   >
                     <Send size={18} className="mr-2" />
                     Apply Now
-                  </Link>
+                  </Link> */}
                 </div>
                 <p className="text-gray-400">{position.description}</p>
               </motion.div>
@@ -270,7 +270,7 @@ const Careers: React.FC = () => {
               and let us know how you can contribute to our mission.
             </p>
             <Link 
-              to="mailto:careers@filmfund.io"
+              to="mailto:contact@filmfund.io"
               className="inline-flex items-center bg-gold-500 hover:bg-gold-600 text-navy-900 px-8 py-3 rounded-lg font-medium transition-colors"
             >
               <Send size={20} className="mr-2" />

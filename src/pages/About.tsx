@@ -72,7 +72,7 @@ const About: React.FC = () => {
       icon: <Users size={24} />
     },
     {
-      value: "12",
+      value: "0",
       label: "Industry Awards",
       icon: <Award size={24} />
     }
