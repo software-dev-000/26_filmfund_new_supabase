@@ -1,8 +1,26 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Film, DollarSign, Users, BarChart4 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 const HowItWorks: React.FC = () => {
+  const { currentUser } = useAuth();
+  
+  // Determine the correct link destination based on auth status
+  let getStartedLink = "/register";
+  let getStartedText = "Join FilmFund.io";
+  if(currentUser){
+    if (currentUser.user_metadata.user_type === "investor"){
+      getStartedLink = "/investor/dashboard";
+    } else if (currentUser.user_metadata.user_type === "filmmaker" || currentUser.user_metadata.user_type === "admin"){
+      getStartedLink = "/filmmaker/dashboard";
+    } else if (currentUser.user_metadata.user_type === "superadmin"){
+      getStartedLink = "/admin/dashboard";
+    }
+    getStartedText = "Go to Dashboard";
+  }
+
   const steps = [
     {
       icon: <Film size={24} />,
@@ -61,12 +79,12 @@ const HowItWorks: React.FC = () => {
           viewport={{ once: true }}
           transition={{ delay: 0.4 }}
         >
-          <a 
-            href="/register" 
+          <Link 
+            to={getStartedLink} 
             className="inline-block bg-gold-500 hover:bg-gold-600 text-navy-900 px-8 py-3 rounded-md font-medium transition-colors"
           >
-            Join FilmFund.io
-          </a>
+            {getStartedText}
+          </Link>
         </motion.div>
       </div>
     </section>

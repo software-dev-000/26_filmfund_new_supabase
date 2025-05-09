@@ -163,7 +163,8 @@ const Hero: React.FC = () => {
             </Link>
             
             <Link 
-              to="/how-it-works" 
+              to="https://filmfund.gitbook.io/docs" 
+              target="_blank"
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg px-8 py-3 font-medium"
             >
               <span className="absolute inset-0 bg-white/5 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/10"></span>

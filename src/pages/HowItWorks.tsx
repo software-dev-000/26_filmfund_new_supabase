@@ -7,6 +7,20 @@ import { Link } from 'react-router-dom';
 const HowItWorks: React.FC = () => {
   const { currentUser } = useAuth();
 
+  // Determine the correct link destination based on auth status
+  let getStartedLink = "/register";
+  let getStartedText = "Create Account";
+  if(currentUser){
+    if (currentUser.user_metadata.user_type === "investor"){
+      getStartedLink = "/investor/dashboard";
+    } else if (currentUser.user_metadata.user_type === "filmmaker" || currentUser.user_metadata.user_type === "admin"){
+      getStartedLink = "/filmmaker/dashboard";
+    } else if (currentUser.user_metadata.user_type === "superadmin"){
+      getStartedLink = "/admin/dashboard";
+    }
+    getStartedText = "Go to Dashboard";
+  }
+
   const steps = [
     {
       icon: <FileText size={24} />,
@@ -174,21 +188,12 @@ const HowItWorks: React.FC = () => {
               Whether you're an investor or filmmaker, we have the tools you need to succeed.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {currentUser ? (
-                <Link 
-                  to={`/${currentUser.user_metadata.user_type}/dashboard`}
-                  className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-6 py-3 rounded-md font-medium transition-colors"
-                >
-                  Go to Dashboard
-                </Link>
-              ) : (
-                <Link 
-                  to="/register" 
-                  className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-6 py-3 rounded-md font-medium transition-colors"
-                >
-                  Create Account
-                </Link>
-              )}
+              <Link 
+                to={getStartedLink} 
+                className="bg-gold-500 hover:bg-gold-600 text-navy-900 px-6 py-3 rounded-md font-medium transition-colors"
+              >
+                {getStartedText}
+              </Link>
               <Link 
                 to="/projects" 
                 className="border border-gold-500 text-white hover:bg-navy-700 px-6 py-3 rounded-md font-medium transition-colors"
