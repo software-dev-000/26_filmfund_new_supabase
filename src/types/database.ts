@@ -142,3 +142,13 @@ export interface ProjectPayment {
   payment_intent_id: string | null;
   created_at: string;
 } 
+
+export interface PrivateSale {
+  id: string;
+  user_id: string;
+  wallet_address: string;
+  token_amount: number;
+  quote_amount: number;
+  created_at: string;
+  transaction_hash: string;
+}

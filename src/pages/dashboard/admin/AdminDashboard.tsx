@@ -17,7 +17,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { projectService } from '../../../services/projectService';
 import { Project } from '../../../types/database';
 import { useToast } from '../../../contexts/ToastContext';
-import ConfirmModal from '../../../components/ConfirmModal';
+import ConfirmModal from '../../../components/common/ConfirmModal';
 
 
 const AdminDashboard: React.FC = () => {
