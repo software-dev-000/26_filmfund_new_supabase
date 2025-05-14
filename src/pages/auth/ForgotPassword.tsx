@@ -3,25 +3,23 @@ import { motion } from 'framer-motion';
 import { Mail, Film } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const { resetPassword } = useAuth();
+  const toast = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      setError('');
-      setMessage('');
       setLoading(true);
       await resetPassword(email);
-      setMessage('Check your email for password reset instructions');
+      toast.success('Check your email for password reset instructions');
     } catch (err) {
-      setError('Failed to reset password');
+      toast.error('Failed to reset password');
     } finally {
       setLoading(false);
     }
@@ -35,25 +33,9 @@ const ForgotPassword: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <Link to="/" className="flex items-center justify-center gap-2 mb-6">
-            <Film size={32} className="text-gold-500" />
-            <span className="text-2xl font-bold text-white">FilmFund.io</span>
-          </Link>
           <h2 className="text-3xl font-bold text-white">Reset your password</h2>
           <p className="mt-2 text-gray-400">Enter your email to receive reset instructions</p>
         </motion.div>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <span className="block sm:inline">{error}</span>
-          </div>
-        )}
-
-        {message && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-            <span className="block sm:inline">{message}</span>
-          </div>
-        )}
 
         <motion.form 
           initial={{ opacity: 0 }}

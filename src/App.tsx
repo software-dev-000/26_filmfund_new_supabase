@@ -12,7 +12,7 @@ import { ToastProvider } from './contexts/ToastContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { bsc, bscTestnet } from 'viem/chains';
+import { mainnet, sepolia } from 'viem/chains';
 import { type Config, cookieToInitialState, WagmiProvider } from 'wagmi';
 import { createAppKit } from '@reown/appkit/react';
 import { WalletProvider } from './contexts/WalletContext';
@@ -42,6 +42,7 @@ const UserSettings = lazy(() => import('./pages/UserSettings'));
 const Login = lazy(() => import('./pages/auth/Login'));
 const Register = lazy(() => import('./pages/auth/Register'));
 const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/auth/ResetPassword'));
 const AdminLogin = lazy(() => import('./pages/auth/AdminLogin'));
 const AdminRoute = lazy(() => import('./pages/auth/AdminRoute'));
 const FilmmakerRoute = lazy(() => import('./pages/auth/FilmmakerRoute'));
@@ -61,8 +62,8 @@ if (!projectId) {
 
 // Set up metadata
 const metadata = {
-  name: 'valmira_frontend',
-  description: 'The first innovated multi chain meme launchpad',
+  name: 'filmfund',
+  description: 'The first innovated filmfunding platform',
   url: 'https://reown.com/appkit', // origin must match your domain & subdomain
   icons: ['https://assets.reown.com/reown-profile-pic.png'],
 };
@@ -71,8 +72,8 @@ const metadata = {
 export const web3modal = createAppKit({
   adapters: [wagmiAdapter],
   projectId,
-  networks: [bsc, bscTestnet],
-  defaultNetwork: bsc,
+  networks: [sepolia, mainnet],
+  defaultNetwork: sepolia,
   metadata: metadata,
   features: {
     analytics: true, // Optional - defaults to your Cloud configuration
@@ -139,6 +140,7 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
                         <Route path="/admin/login" element={<AdminLogin />} />
                       </Routes>
                     </Suspense>

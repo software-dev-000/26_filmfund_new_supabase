@@ -151,4 +151,5 @@ export interface PrivateSale {
   quote_amount: number;
   created_at: string;
   transaction_hash: string;
+  is_claimed: boolean;
 }

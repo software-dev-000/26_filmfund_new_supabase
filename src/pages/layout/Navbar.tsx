@@ -4,6 +4,7 @@ import { Menu, X, Film, LogOut, User, ChevronDown } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../config/supabase';
+import { useAccount, useDisconnect } from 'wagmi';
 
 interface MenuLink {
   label: string;
@@ -24,6 +25,10 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
+
+  // handling wallet disconnect when logging out
+  const { isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
 
   const menuItems: MenuItem[] = [
     {
@@ -89,6 +94,8 @@ const Navbar: React.FC = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      if(isConnected)
+        disconnect()
       navigate('/');
     } catch (error) {
       console.error('Error logging out:', error);

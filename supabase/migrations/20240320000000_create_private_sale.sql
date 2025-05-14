@@ -6,8 +6,9 @@ create table private_sale (
   wallet_address text not null,
   token_amount integer not null,
   quote_amount integer not null,
+  transaction_hash text,
+  is_claimed boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  transaction_hash text
 );
 
 -- Add indexes
@@ -17,17 +18,12 @@ create index private_sale_wallet_address_idx on private_sale(wallet_address);
 -- Add RLS policies
 alter table private_sale enable row level security;
 
--- Allow users to view their own purchases
-create policy "Users can view their own purchases"
-on private_sale for select
-using (auth.uid() = user_id);
-
 -- Allow users to insert their own purchases
 create policy "Users can insert their own purchases"
 on private_sale for insert
 with check (auth.uid() = user_id);
 
--- Allow admins to view all purchases
-create policy "Users can view all purchases"
+-- Allow all users and admins to view all purchases
+create policy "All users can view all purchases"
 on private_sale for select
-using (auth.uid() = user_id);
+using (true);
