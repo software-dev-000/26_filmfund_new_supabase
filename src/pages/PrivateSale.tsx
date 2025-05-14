@@ -478,13 +478,13 @@ const PrivateSale = () => {
                     </table>
                   </div>
                   <div className="mt-2 flex justify-end">
-                    <button 
+                    {/* <button 
                       className="bg-gold-500 h-8  text-navy-900 px-3 py-1 rounded text-xs font-medium"
                       onClick={() => console.log(globalSaleInfo.userPurchaseWallets)}
                       disabled={true}
                     >
                       Claim Available Tokens
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>

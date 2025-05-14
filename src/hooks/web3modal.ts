@@ -4,7 +4,7 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { cookieStorage, createStorage } from '@wagmi/core';
 
 // Get projectId from https://cloud.reown.com
-export const projectId = '5900003232869af56bb0fb6703c5af28';
+export const projectId = '658e0e7bd9bb373efdd8ca9654f3caaa';
 
 if (!projectId) {
   throw new Error('Project ID is not defined');
