@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
         <div className="flex lg:flex-row flex-col md:flex-row mb-12 gap-20">
           <div className="flex flex-col items-start ml-auto gap-4 justify-between">
             <img 
-              src="/favicon.webp" 
+              src="/logo.webp" 
               alt="FilmFund.io" 
               className="h-8 place-self-start"
             />
@@ -69,11 +69,20 @@ const Footer: React.FC = () => {
         </div>
         
         <div className="border-t border-navy-800 pt-6">
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-row items-center gap-4 justify-between">
             <p className="text-gray-400 text-sm">
               © {new Date().getFullYear()} FilmFund.io. All rights reserved.
             </p>
+
+            <div className='col-span-1'>
+              <ul className="flex flex-row gap-8">
+                <FooterLink to="/privacy">Privacy Policy</FooterLink>
+                <FooterLink to="/terms">Terms of Service</FooterLink>
+                <FooterLink to="/disclaimer">Disclaimer</FooterLink>
+              </ul>
+            </div>
           </div>
+          
         </div>
       </div>
     </footer>

@@ -156,7 +156,7 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2 min-w-[80px]">
             <img 
-              src="/favicon.webp" 
+              src="/logo.webp" 
               alt="FilmFund.io" 
               className="h-8 md:h-12"
             />

@@ -38,6 +38,9 @@ const Contact = lazy(() => import('./pages/Contact'));
 const PressKit = lazy(() => import('./pages/PressKit'));
 const Roadmap = lazy(() => import('./pages/Roadmap'));
 const Tokenomics = lazy(() => import('./pages/Tokenomics'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Disclaimer = lazy(() => import('./pages/Disclaimer'));
 const UserSettings = lazy(() => import('./pages/UserSettings'));
 const Login = lazy(() => import('./pages/auth/Login'));
 const Register = lazy(() => import('./pages/auth/Register'));
@@ -142,6 +145,9 @@ function App() {
                         <Route path="/forgot-password" element={<ForgotPassword />} />
                         <Route path="/reset-password" element={<ResetPassword />} />
                         <Route path="/admin/login" element={<AdminLogin />} />
+                        <Route path="/privacy" element={<Privacy />} />
+                        <Route path="/terms" element={<Terms />} />
+                        <Route path="/disclaimer" element={<Disclaimer />} />
                       </Routes>
                     </Suspense>
                   </main>

@@ -163,10 +163,6 @@ CREATE POLICY "Anyone can view published projects"
     ON projects FOR SELECT
     USING (status != 'draft');
 
-CREATE POLICY "Filmmakers can view their own projects"
-    ON projects FOR SELECT
-    USING (filmmaker_id = auth.uid());
-
 CREATE POLICY "Filmmakers can create projects"
     ON projects FOR INSERT
     WITH CHECK (filmmaker_id = auth.uid());

@@ -209,6 +209,61 @@ const About: React.FC = () => {
         </div>
       </section>
 
+      {/* KYC Verification Badge */}
+      <section className="py-8 bg-navy-950 border-y border-navy-800">
+        <div className="container mx-auto px-4 md:px-6">
+          <motion.div 
+            className="flex flex-col md:flex-row items-center justify-center gap-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <h3 className="text-white font-semibold">KYC Verified Platform</h3>
+                <p className="text-sm text-gray-400">Compliant with international regulations</p>
+              </div>
+            </div>
+            <div className="h-px md:h-8 w-8 md:w-px bg-navy-700"></div>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-500/10 rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <h3 className="text-white font-semibold">Secure & Regulated</h3>
+                <p className="text-sm text-gray-400">Your investments are protected</p>
+              </div>
+            </div>
+            <div className="h-px md:h-8 w-8 md:w-px bg-navy-700"></div>
+            <div className="relative group">
+              <div className="w-48 h-32 bg-navy-800 rounded-lg overflow-hidden border border-navy-700">
+                <img 
+                  src="/kyc.png" 
+                  alt="KYC Verification" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="absolute inset-0 bg-navy-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Link 
+                  to="https://techhy.me/kyc/certificate/FilmFund" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white text-sm font-medium hover:text-gold-500 transition-colors"
+                >
+                  View Full Verification
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Stats Section */}
       <section className="py-12 bg-navy-900">
         <div className="container mx-auto px-4 md:px-6">

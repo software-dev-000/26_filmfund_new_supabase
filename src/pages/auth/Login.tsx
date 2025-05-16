@@ -54,7 +54,7 @@ const Login: React.FC = () => {
           className="text-center"
         >
           {/* <Link to="/" className="flex items-center justify-center gap-2 mb-6">
-            <img src="/favicon.webp" alt="FilmFund.io" className="h-8" />
+            <img src="/logo.webp" alt="FilmFund.io" className="h-8" />
             <span className="text-2xl font-bold text-white">FilmFund.io</span>
           </Link> */}
           <h2 className="text-3xl font-bold text-white">Welcome back</h2>
