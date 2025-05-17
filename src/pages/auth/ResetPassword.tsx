@@ -1,53 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Lock } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useToast } from '../../contexts/ToastContext';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../config/supabase';
+import { useToast } from '../../contexts/ToastContext';
 
 const ResetPassword: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isValidToken, setIsValidToken] = useState(false);
-  const [isCheckingToken, setIsCheckingToken] = useState(true);
+  const [tokenValid, setTokenValid] = useState(true);
   const toast = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error || !session) {
-          setIsValidToken(false);
-          toast.error('Invalid or expired reset link');
-          navigate('/forgot-password');
-          return;
-        }
-
-        setIsValidToken(true);
-      } catch (err) {
-        setIsValidToken(false);
-        toast.error('Invalid or expired reset link');
-        navigate('/forgot-password');
-      } finally {
-        setIsCheckingToken(false);
-      }
-    };
-
-    checkToken();
-  }, [navigate, toast]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!isValidToken) {
+    // Check if token exists in URL
+    const token = searchParams.get('token');
+    if (!token) {
+      setTokenValid(false);
       toast.error('Invalid or expired reset link');
-      navigate('/forgot-password');
       return;
     }
 
+    // Verify token validity
+    const verifyToken = async () => {
+      try {
+        const { error } = await supabase.auth.verifyOtp({
+          token_hash: token,
+          type: 'recovery'
+        });
+        
+        if (error) {
+          setTokenValid(false);
+          toast.error('Invalid or expired reset link');
+        }
+      } catch (error) {
+        console.error('Error verifying token:', error);
+        setTokenValid(false);
+        toast.error('Error verifying reset link');
+      }
+    };
+
+    verifyToken();
+  }, [searchParams, toast]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     if (password !== confirmPassword) {
       toast.error('Passwords do not match');
       return;
@@ -58,33 +58,46 @@ const ResetPassword: React.FC = () => {
       return;
     }
 
+    setLoading(true);
     try {
-      setLoading(true);
+      const token = searchParams.get('token');
+      if (!token) {
+        throw new Error('No reset token found');
+      }
+
       const { error } = await supabase.auth.updateUser({
         password: password
       });
-      
+
       if (error) throw error;
-      
-      toast.success('Password has been reset successfully');
+
+      toast.success('Password reset successfully');
       navigate('/login');
-    } catch (err) {
-      toast.error('Failed to reset password');
+    } catch (error: any) {
+      console.error('Error resetting password:', error);
+      toast.error(error.message || 'Failed to reset password');
     } finally {
       setLoading(false);
     }
   };
 
-  if (isCheckingToken) {
+  if (!tokenValid) {
     return (
-      <div className="min-h-screen bg-navy-950 flex items-center justify-center">
-        <div className="text-white">Verifying reset link...</div>
+      <div className="min-h-screen flex items-center justify-center bg-navy-950">
+        <div className="bg-navy-800 p-8 rounded-xl shadow-lg max-w-md w-full">
+          <h2 className="text-2xl font-bold text-white mb-4">Invalid Reset Link</h2>
+          <p className="text-gray-400 mb-6">
+            This password reset link is invalid or has expired. Please request a new password reset link.
+          </p>
+          <button
+            onClick={() => navigate('/forgot-password')}
+            className="w-full bg-gold-500 hover:bg-gold-600 text-navy-900 font-medium py-2 px-4 rounded-lg transition-colors"
+          >
+            Request New Reset Link
+          </button>
+        </div>
       </div>
     );
-  }
-
-  if (!isValidToken) {
-    return null; // Will redirect to forgot-password in useEffect
   }
 
   return (

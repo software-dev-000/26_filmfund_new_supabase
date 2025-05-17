@@ -454,7 +454,29 @@ export const projectService = {
 
     if (error) throw error;
     return data;
-  }
+  },
+
+  getProjectById: async (projectId: string) => {
+    const { data, error } = await supabase
+      .from('projects')
+      .select(`
+        *,
+        project_team_members (*),
+        project_social_links (*),
+        project_tokenization (*),
+        project_investment_highlights (*),
+        project_financial_structures (*),
+        project_risks (*),
+        project_milestones (*),
+        project_media (*),
+        project_legal_documents (*)
+      `)
+      .eq('id', projectId)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
 };
 
 export interface GlobalStats {

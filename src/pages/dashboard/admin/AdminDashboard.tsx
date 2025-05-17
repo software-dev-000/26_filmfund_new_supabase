@@ -11,7 +11,8 @@ import {
   TrendingUp,
   PlusCircle,
   Edit,
-  Trash2
+  Trash2,
+  Eye
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { projectService } from '../../../services/projectService';
@@ -130,6 +131,10 @@ const AdminDashboard: React.FC = () => {
     navigate(`/admin/projects/${projectId}/edit`);
   };
 
+  const handleView = (projectId: string) => {
+    navigate(`/projects/${projectId}`);
+  };
+
   const renderProjectItem = (item: Project) => (
     <div key={item.id} className="flex items-center justify-between p-4 bg-navy-700 rounded-lg">
       <div className="flex items-center space-x-4">
@@ -143,6 +148,13 @@ const AdminDashboard: React.FC = () => {
       </div>
       
       <div className="flex space-x-2 z-10">
+        <button 
+          onClick={() => handleView(item.id)}
+          className="p-2 rounded-full bg-navy-600 text-white hover:bg-navy-500 transition-colors"
+          title="View"
+        >
+          <Eye size={16} />
+        </button>
         {item.status === 'pending' && (
           <>
             <button 

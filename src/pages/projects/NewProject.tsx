@@ -5,6 +5,14 @@ import {
   FileText,
   Image as ImageIcon,
   ChevronLeft,
+  Building2,
+  Scale,
+  Shield,
+  Wallet,
+  Coins,
+  Tag,
+  Globe,
+  Lock,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -30,48 +38,47 @@ interface FormData {
   genre: string;
   status: string;
   timeline: string;
-  currentStage: string;
+  current_stage: string;
   budget: string;
   website: string;
-  fundingGoal: string;
+  funding_goal: string;
   duration: string;
-  stableSplit: string;
+  stable_split: string;
   synopsis: string;
   description: string;
-  investmentHighlights: { title: string; description: string }[];
-  financialStructure: { title: string; description: string }[];
+  investment_highlights: { title: string; description: string }[];
+  financial_structures: { title: string; description: string }[];
   risks: { title: string; description: string }[];
   milestones: { title: string; duration: string; description: string }[];
-  coverImage: File | null;
-  teamMembers: TeamMember[];
-  documents: File[];
+  cover_image: File | null;
+  team_members: TeamMember[];
   gallery: File[];
-  socialLinks: { website: string; twitter: string; instagram: string };
+  social_links: { website: string; twitter: string; instagram: string };
   tokenization: {
     jurisdiction: string;
-    legalAdvisor: string;
-    tokenizedAssets: string[];
-    securityType: string;
-    maxSupply: string;
-    tokenSymbol: string;
+    legal_advisor: string;
+    tokenized_assets: string[];
+    security_type: string;
+    max_supply: string;
+    token_symbol: string;
     blockchain: string;
-    lockupPeriod: string;
-    enableDividends: boolean;
-    tradingOption: string;
-    whitelistOnly: boolean;
-    tokenPrice: string;
-    customTerms: string;
-    vestingStartDate: string;
-    vestingDuration: string;
-    cliffPeriod: string;
-    requireKycAml: boolean;
-    accreditedOnly: boolean;
-    distributionMethod: string;
-    secondaryMarket: string;
-    spvName: string;
-    legalDocuments: File[];
+    lockup_period: string;
+    enable_dividends: boolean;
+    trading_option: string;
+    whitelist_only: boolean;
+    token_price: string;
+    custom_terms: string;
+    vesting_start_date: string;
+    vesting_duration: string;
+    cliff_period: string;
+    require_kyc_aml: boolean;
+    accredited_only: boolean;
+    distribution_method: string;
+    secondary_market: string;
+    spv_name: string;
+    legal_documents: File[];
   };
-  paymentAmount: string;
+  payment_amount: string;
 }
 
 const initialFormData: FormData = {
@@ -80,20 +87,20 @@ const initialFormData: FormData = {
   genre: 'action',
   status: 'pending',
   timeline: 'timeline',
-  currentStage: 'current stage',
+  current_stage: 'current stage',
   budget: '1000000',
   website: 'https://www.filmfund.io',
-  fundingGoal: '1000000',
+  funding_goal: '1000000',
   duration: '30',
-  stableSplit: '70',
+  stable_split: '70',
   synopsis: 'Synopsis',
   description: 'Description',
-  investmentHighlights: [{ title: 'Investment Highlight 1', description: 'Description'}],
-  financialStructure: [{ title: 'Financial Structure 1', description: 'Description'}],
+  investment_highlights: [{ title: 'Investment Highlight 1', description: 'Description'}],
+  financial_structures: [{ title: 'Financial Structure 1', description: 'Description'}],
   risks: [{ title: 'Risk 1', description: 'Description'}],
   milestones: [{ title: 'Milestone 1', duration: 'Q1 2025', description: 'Description'}],
-  coverImage: null,
-  teamMembers: [{
+  cover_image: null,
+  team_members: [{
     name: 'John Doe',
     role: 'Producer',
     bio: 'John Doe is a producer with over 20 years of experience in the film industry.',
@@ -104,43 +111,47 @@ const initialFormData: FormData = {
       description: 'Description'
     }]
   }],
-    documents: [],
-    gallery: [],
-    socialLinks: { website: 'https://www.filmfund.io', twitter: 'https://twitter.com/filmfund', instagram: 'https://www.instagram.com/filmfund' },
-    tokenization: {
+  gallery: [],
+  social_links: { website: 'https://www.filmfund.io', twitter: 'https://twitter.com/filmfund', instagram: 'https://www.instagram.com/filmfund' },
+  tokenization: {
     jurisdiction: 'us',
-    legalAdvisor: 'advisor1',
-    tokenizedAssets: ['Film Equity', 'Future Profits'],
-    securityType: 'regD',
-    maxSupply: '1000000000',
-    tokenSymbol: 'FILM',
+    legal_advisor: 'advisor1',
+    tokenized_assets: ['Film Equity', 'Future Profits'],
+    security_type: 'regD',
+    max_supply: '1000000000',
+    token_symbol: 'FILM',
     blockchain: 'ethereum',
-    lockupPeriod: '12',
-    enableDividends: true,
-    tradingOption: 'sto',
-    whitelistOnly: true,
-    tokenPrice: '1.00',
-    customTerms: 'Standard terms apply. Additional conditions may be specified in the legal documentation.',
-    vestingStartDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
-    vestingDuration: '24',
-    cliffPeriod: '6',
-    requireKycAml: true,
-    accreditedOnly: true,
-    distributionMethod: 'wallet',
-    secondaryMarket: 'sto',
-    spvName: 'FilmFund SPV LLC',
-    legalDocuments: []
+    lockup_period: '12',
+    enable_dividends: true,
+    trading_option: 'sto',
+    whitelist_only: true,
+    token_price: '1.00',
+    custom_terms: 'Standard terms apply. Additional conditions may be specified in the legal documentation.',
+    vesting_start_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
+    vesting_duration: '24',
+    cliff_period: '6',
+    require_kyc_aml: true,
+    accredited_only: true,
+    distribution_method: 'wallet',
+    secondary_market: 'sto',
+    spv_name: 'FilmFund SPV LLC',
+    legal_documents: []
   },
-  paymentAmount: '2750', // Default payment amount
+  payment_amount: '2750', // Default payment amount
 };
 
+interface NewProjectProps {
+  isEditing?: boolean;
+  initialData?: any;
+  onUpdate?: (data: any) => Promise<void>;
+}
 
-const NewProject: React.FC = () => {
+const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData, onUpdate }) => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { success, error } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [formData, setFormData] = useState<FormData>(initialData || initialFormData);
   const [isCreating, setIsCreating] = useState(false);
   const [creationProgress, setCreationProgress] = useState('');
 
@@ -199,24 +210,32 @@ const NewProject: React.FC = () => {
       error('Some files were skipped because they exceed the 10MB size limit');
     }
 
-    if (field === 'coverImage') {
+    if (field === 'cover_image') {
       setFormData(prev => ({
         ...prev,
-        coverImage: validFiles[0] || null
+        cover_image: validFiles[0] || null
       }));
     } else if (field === 'gallery') {
       setFormData(prev => ({
         ...prev,
         gallery: [...prev.gallery, ...validFiles]
       }));
-    } else if (field === 'legalDocuments') {
-    setFormData(prev => ({
-      ...prev,
-      tokenization: {
-        ...prev.tokenization,
-          legalDocuments: [...prev.tokenization.legalDocuments, ...validFiles]
-      }
-    }));
+    } else if (field === 'legal_documents') {
+      setFormData(prev => ({
+        ...prev,
+        tokenization: {
+          ...prev.tokenization,
+          legal_documents: validFiles
+        }
+      }));
+    } else if (field.startsWith('team_member_image_')) {
+      const index = parseInt(field.replace('team_member_image_', ''));
+      const newTeamMembers = [...formData.team_members];
+      newTeamMembers[index] = { ...newTeamMembers[index], image: validFiles[0] || null };
+      setFormData(prev => ({
+        ...prev,
+        team_members: newTeamMembers
+      }));
     } else {
       setFormData(prev => ({
         ...prev,
@@ -226,15 +245,6 @@ const NewProject: React.FC = () => {
   };
   
 
-  const handleTeamMemberImageChange = (index: number, file: File | null) => {
-    const newTeamMembers = [...formData.teamMembers];
-    newTeamMembers[index] = { ...newTeamMembers[index], image: file };
-    setFormData(prev => ({
-      ...prev,
-      teamMembers: newTeamMembers
-    }));
-  };
-
   const handlePaymentSuccess = async () => {
     console.log('Payment successful. Creating project...');
     setIsCreating(true);
@@ -243,20 +253,27 @@ const NewProject: React.FC = () => {
         throw new Error('You must be logged in to create a project');
       }
 
+      if (isEditing && onUpdate) {
+        // Update existing project
+        setCreationProgress('Updating project...');
+        await onUpdate(formData);
+        return;
+      }
+
       // First, upload all files in parallel
       setCreationProgress('Uploading files...');
       console.log('Uploading files...');
       
       // Prepare all file upload promises
-      const coverImageUploadPromise = formData.coverImage 
+      const coverImageUploadPromise = formData.cover_image 
         ? projectService.uploadFile(
             'project-images',
-            `${currentUser.id}/${formData.coverImage.name}`,
-            formData.coverImage
+            `${currentUser.id}/${formData.cover_image.name}`,
+            formData.cover_image
           )
         : Promise.resolve('');
 
-      const teamMemberUploadPromises = formData.teamMembers.map(member => {
+      const teamMemberUploadPromises = formData.team_members.map(member => {
         if (!member.image) return Promise.resolve({ ...member, image_url: '' });
         
         return projectService.uploadFile(
@@ -267,15 +284,12 @@ const NewProject: React.FC = () => {
       });
 
       // Upload all other files in parallel
-      const documentUploadPromises = formData.documents.map(file => 
-        projectService.uploadFile('project-documents', `${currentUser.id}/${file.name}`, file)
-      );
       
       const galleryUploadPromises = formData.gallery.map(file => 
         projectService.uploadFile('project-gallery', `${currentUser.id}/${file.name}`, file)
       );
-      
-      const legalDocumentUploadPromises = formData.tokenization.legalDocuments.map(file => 
+      console.log('legal_documents', formData.tokenization.legal_documents);
+      const legalDocumentUploadPromises = formData.tokenization.legal_documents.map(file => 
         projectService.uploadFile('legal-documents', `${currentUser.id}/${file.name}`, file)
       );
 
@@ -283,13 +297,11 @@ const NewProject: React.FC = () => {
       const [
         coverImageUrl,
         teamMembersWithImages,
-        documentUploads,
         galleryUploads,
         legalDocumentUploads
       ] = await Promise.all([
         coverImageUploadPromise,
         Promise.all(teamMemberUploadPromises),
-        Promise.all(documentUploadPromises),
         Promise.all(galleryUploadPromises),
         Promise.all(legalDocumentUploadPromises)
       ]);
@@ -306,12 +318,12 @@ const NewProject: React.FC = () => {
         genre: formData.genre,
         status: formData.status as any,
         timeline: formData.timeline,
-        current_stage: formData.currentStage,
+        current_stage: formData.current_stage,
         budget: parseFloat(formData.budget),
         website: formData.website,
-        funding_goal: parseFloat(formData.fundingGoal),
+        funding_goal: parseFloat(formData.funding_goal),
         duration: parseInt(formData.duration),
-        stable_split: parseInt(formData.stableSplit),
+        stable_split: parseInt(formData.stable_split),
         synopsis: formData.synopsis,
         description: formData.description,
         cover_image: coverImageUrl,
@@ -334,17 +346,23 @@ const NewProject: React.FC = () => {
       // Add social links
       setCreationProgress('Adding social links...');
       console.log('Adding social links...');
-      const socialLinkPromises = Object.entries(formData.socialLinks)
-        .filter(([_, url]) => url)
-        .map(([platform, url]) => 
-          projectService.addProjectSocialLink({
-            project_id: project.id,
-            website: platform === 'website' ? url : null,
-            twitter: platform === 'twitter' ? url : null,
-            instagram: platform === 'instagram' ? url : null
-          })
-        );
-      await Promise.all(socialLinkPromises);
+      // const socialLinkPromises = Object.entries(formData.social_links)
+      //   .filter(([_, url]) => url)
+      //   .map(([platform, url]) => 
+      //     projectService.addProjectSocialLink({
+      //       project_id: project.id,
+      //       website: platform === 'website' ? url : null,
+      //       twitter: platform === 'twitter' ? url : null,
+      //       instagram: platform === 'instagram' ? url : null
+      //     })
+      //   );
+      // await Promise.all(socialLinkPromises);
+      await projectService.addProjectSocialLink({
+        project_id: project.id,
+        website: formData.social_links.website,
+        twitter: formData.social_links.twitter,
+        instagram: formData.social_links.instagram
+      });
 
       // Create tokenization
       setCreationProgress('Creating tokenization...');
@@ -352,41 +370,33 @@ const NewProject: React.FC = () => {
       await projectService.createTokenization({
         project_id: project.id,
         jurisdiction: formData.tokenization.jurisdiction,
-        legal_advisor: formData.tokenization.legalAdvisor,
-        tokenized_assets: formData.tokenization.tokenizedAssets,
-        security_type: formData.tokenization.securityType,
-        max_supply: formData.tokenization.maxSupply.toString(),
-        token_symbol: formData.tokenization.tokenSymbol,
+        legal_advisor: formData.tokenization.legal_advisor,
+        tokenized_assets: formData.tokenization.tokenized_assets,
+        security_type: formData.tokenization.security_type,
+        max_supply: formData.tokenization.max_supply.toString(),
+        token_symbol: formData.tokenization.token_symbol,
         blockchain: formData.tokenization.blockchain,
-        lockup_period: formData.tokenization.lockupPeriod.toString(),
-        enable_dividends: formData.tokenization.enableDividends,
-        trading_option: formData.tokenization.tradingOption,
-        whitelist_only: formData.tokenization.whitelistOnly,
-        token_price: formData.tokenization.tokenPrice.toString(),
-        custom_terms: formData.tokenization.customTerms,
-        vesting_start_date: formData.tokenization.vestingStartDate,
-        vesting_duration: formData.tokenization.vestingDuration.toString(),
-        cliff_period: formData.tokenization.cliffPeriod.toString(),
-        require_kyc_aml: formData.tokenization.requireKycAml,
-        accredited_only: formData.tokenization.accreditedOnly,
-        distribution_method: formData.tokenization.distributionMethod,
-        secondary_market: formData.tokenization.secondaryMarket,
-        spv_name: formData.tokenization.spvName
+        lockup_period: formData.tokenization.lockup_period.toString(),
+        enable_dividends: formData.tokenization.enable_dividends,
+        trading_option: formData.tokenization.trading_option,
+        whitelist_only: formData.tokenization.whitelist_only,
+        token_price: formData.tokenization.token_price.toString(),
+        custom_terms: formData.tokenization.custom_terms,
+        vesting_start_date: formData.tokenization.vesting_start_date,
+        vesting_duration: formData.tokenization.vesting_duration.toString(),
+        cliff_period: formData.tokenization.cliff_period.toString(),
+        require_kyc_aml: formData.tokenization.require_kyc_aml,
+        accredited_only: formData.tokenization.accredited_only,
+        distribution_method: formData.tokenization.distribution_method,
+        secondary_market: formData.tokenization.secondary_market,
+        spv_name: formData.tokenization.spv_name
       });
 
       // Link uploaded files to the project
       setCreationProgress('Linking files to project...');
       console.log('Linking files to project...');
       const fileLinkPromises = [
-        ...documentUploads.map(url => 
-          projectService.addProjectMedia({
-            project_id: project.id,
-            file_url: url,
-            file_type: 'document',
-            file_name: url.split('/').pop() || 'document'
-          })
-        ),
-        ...galleryUploads.map(url => 
+        ...galleryUploads.map((url: string) => 
           projectService.addProjectMedia({
             project_id: project.id,
             file_url: url,
@@ -412,7 +422,7 @@ const NewProject: React.FC = () => {
       // Add investment highlights
       setCreationProgress('Adding investment highlights...');
       console.log('Adding investment highlights...');
-      const investmentHighlightPromises = formData.investmentHighlights.map(highlight => 
+      const investmentHighlightPromises = formData.investment_highlights.map(highlight => 
         projectService.addInvestmentHighlight({
           project_id: project.id,
           title: highlight.title,
@@ -424,7 +434,7 @@ const NewProject: React.FC = () => {
       // Add financial structures
       setCreationProgress('Adding financial structures...');
       console.log('Adding financial structures...');
-      const financialStructurePromises = formData.financialStructure.map(structure => 
+      const financialStructurePromises = formData.financial_structures.map(structure => 
         projectService.addFinancialStructure({
           project_id: project.id,
           title: structure.title,
@@ -483,23 +493,23 @@ const NewProject: React.FC = () => {
   const addTeamMember = () => {
     setFormData(prev => ({
       ...prev,
-      teamMembers: [...prev.teamMembers, { name: '', role: '', bio: '', image: null, notableProjects: [] }]
+      team_members: [...prev.team_members, { name: '', role: '', bio: '', image: null, notableProjects: [] }]
     }));
   };
 
   const updateTeamMember = (index: number, field: string, value: string) => {
-    const newTeamMembers = [...formData.teamMembers];
+    const newTeamMembers = [...formData.team_members];
     newTeamMembers[index] = { ...newTeamMembers[index], [field]: value };
     setFormData(prev => ({
       ...prev,
-      teamMembers: newTeamMembers
+      team_members: newTeamMembers
     }));
   };
 
   const removeTeamMember = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      teamMembers: prev.teamMembers.filter((_, i) => i !== index)
+      team_members: prev.team_members.filter((_, i) => i !== index)
     }));
   };
 
@@ -532,50 +542,50 @@ const NewProject: React.FC = () => {
   const addInvestmentHighlight = () => {
     setFormData(prev => ({
       ...prev,
-      investmentHighlights: [...prev.investmentHighlights, { title: '', description: '' }]
+      investment_highlights: [...prev.investment_highlights, { title: '', description: '' }]
     }));
   };
 
   const updateInvestmentHighlight = (index: number, field: string, value: string) => {
-    const newInvestmentHighlights = [...formData.investmentHighlights];
+    const newInvestmentHighlights = [...formData.investment_highlights];
     newInvestmentHighlights[index] = { ...newInvestmentHighlights[index], [field]: value };
     setFormData(prev => ({
       ...prev,
-      investmentHighlights: newInvestmentHighlights 
+      investment_highlights: newInvestmentHighlights 
     }));
   };
 
   const removeInvestmentHighlight = (index: number) => {
-    const newInvestmentHighlights = [...formData.investmentHighlights];
+    const newInvestmentHighlights = [...formData.investment_highlights];
     newInvestmentHighlights.splice(index, 1);
     setFormData(prev => ({
       ...prev,
-      investmentHighlights: newInvestmentHighlights
+      investment_highlights: newInvestmentHighlights
     }));
   };
 
   const addFinancialStructure = () => { 
     setFormData(prev => ({
       ...prev,
-      financialStructure: [...prev.financialStructure, { title: '', description: '' }]
+      financial_structures: [...prev.financial_structures, { title: '', description: '' }]
     }));
   };
 
   const updateFinancialStructure = (index: number, field: string, value: string) => {
-    const newFinancialStructure = [...formData.financialStructure];
+    const newFinancialStructure = [...formData.financial_structures];
     newFinancialStructure[index] = { ...newFinancialStructure[index], [field]: value };
     setFormData(prev => ({
       ...prev,
-      financialStructure: newFinancialStructure
+      financial_structures: newFinancialStructure
     }));
   };
 
   const removeFinancialStructure = (index: number) => {
-    const newFinancialStructure = [...formData.financialStructure];
+    const newFinancialStructure = [...formData.financial_structures];
     newFinancialStructure.splice(index, 1);
     setFormData(prev => ({
       ...prev,
-      financialStructure: newFinancialStructure
+      financial_structures: newFinancialStructure
     }));
   };  
   
@@ -606,14 +616,21 @@ const NewProject: React.FC = () => {
   
   
 
-  const handleRemoveFile = (field: 'coverImage' | 'gallery' | 'documents' | 'legalDocuments', index?: number) => {
-    if (field === 'legalDocuments') {
+  const handleRemoveFile = (field: 'cover_image' | 'gallery' | 'legal_documents' | 'team_member_image', index?: number) => {
+    if (field === 'legal_documents') {
       setFormData(prev => ({
         ...prev,
         tokenization: {
           ...prev.tokenization,
-          legalDocuments: prev.tokenization.legalDocuments.filter((_, i) => i !== index)
+          legal_documents: prev.tokenization.legal_documents.filter((_, i) => i !== index)
         }
+      }));
+    } else if (field === 'team_member_image' && typeof index === 'number') {
+      const newTeamMembers = [...formData.team_members];
+      newTeamMembers[index] = { ...newTeamMembers[index], image: null };
+      setFormData(prev => ({
+        ...prev,
+        team_members: newTeamMembers
       }));
     } else if (index !== undefined) {
       setFormData(prev => ({
@@ -627,9 +644,9 @@ const NewProject: React.FC = () => {
       }));
     }
     // Reset the file input
-    const input = document.getElementById(field === 'coverImage' ? 'cover-image' : 
+    const input = document.getElementById(field === 'cover_image' ? 'cover-image' : 
       field === 'gallery' ? 'gallery-images' : 
-      field === 'legalDocuments' ? 'legal-documents' : 'project-documents') as HTMLInputElement;
+      field === 'legal_documents' ? 'legal-documents' : 'project-documents') as HTMLInputElement;
     if (input) {
       input.value = '';
     }
@@ -638,7 +655,7 @@ const NewProject: React.FC = () => {
   const addNotableProject = (memberIndex: number) => {
     setFormData(prev => ({
       ...prev,
-      teamMembers: prev.teamMembers.map((member, index) => 
+      team_members: prev.team_members.map((member, index) => 
         index === memberIndex 
           ? {
               ...member,
@@ -652,7 +669,7 @@ const NewProject: React.FC = () => {
   const updateNotableProject = (memberIndex: number, projectIndex: number, field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      teamMembers: prev.teamMembers.map((member, index) => 
+      team_members: prev.team_members.map((member, index) => 
         index === memberIndex 
           ? {
               ...member,
@@ -670,7 +687,7 @@ const NewProject: React.FC = () => {
   const removeNotableProject = (memberIndex: number, projectIndex: number) => {
     setFormData(prev => ({
       ...prev,
-      teamMembers: prev.teamMembers.map((member, index) => 
+      team_members: prev.team_members.map((member, index) => 
         index === memberIndex 
           ? {
               ...member,
@@ -688,7 +705,9 @@ const NewProject: React.FC = () => {
           <div className="bg-navy-800 p-6 rounded-lg shadow-xl max-w-md w-full">
             <div className="flex flex-col items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-500 mb-4"></div>
-              <h3 className="text-white text-lg font-medium mb-2">Creating Project</h3>
+              <h3 className="text-white text-lg font-medium mb-2">
+                {isEditing ? 'Updating Project' : 'Creating Project'}
+              </h3>
               <p className="text-gray-400 text-center">{creationProgress}</p>
             </div>
           </div>
@@ -702,21 +721,25 @@ const NewProject: React.FC = () => {
             className="mb-8"
           >
             <Link 
-              to="/filmmaker/dashboard"
+              to={isEditing ? "/admin/dashboard" : "/filmmaker/dashboard"}
               className="inline-flex items-center text-gray-400 hover:text-white mb-4"
             >
               <ChevronLeft size={20} className="mr-1" />
               Back to Dashboard
             </Link>
-            <h1 className="text-3xl font-bold text-white mb-2">Create New Project</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              {isEditing ? 'Edit Project' : 'Create New Project'}
+            </h1>
             <p className="text-gray-400">
-              Fill in the details below to submit your film project for funding consideration.
+              {isEditing 
+                ? 'Update your project details below.'
+                : 'Fill in the details below to submit your film project for funding consideration.'}
             </p>
           </motion.div>
 
           <div className="mb-8">
             <div className="flex justify-between items-center">
-              {['Project Details', 'Team & Media', 'Financials', 'Payment'].map((step, index) => (
+              {['Project Details', 'Team & Media', 'Financials', 'Tokenization', 'Payment'].map((step, index) => (
                 <div 
                   key={index}
                   className="flex-1 relative"
@@ -800,14 +823,14 @@ const NewProject: React.FC = () => {
                       </div>
 
                       <div>
-                        <label htmlFor="currentStage" className="block text-sm font-medium text-gray-300 mb-1">
+                        <label htmlFor="current_stage" className="block text-sm font-medium text-gray-300 mb-1">
                           Current Stage
                         </label>
                         <input
                           type="text"
-                          id="currentStage"
-                          name="currentStage"
-                          value={formData.currentStage}
+                          id="current_stage"
+                          name="current_stage"
+                          value={formData.current_stage}
                           onChange={handleInputChange}
                           className="w-full px-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
                           placeholder="Enter your film's current stage"
@@ -1012,7 +1035,7 @@ const NewProject: React.FC = () => {
                   <h2 className="text-xl font-bold text-white mb-4">Team Members</h2>
                   
                   <div className="space-y-6">
-                    {formData.teamMembers.map((member, index) => (
+                    {formData.team_members.map((member, index) => (
                       <div key={index} className="p-4 bg-navy-700 rounded-lg">
                         <div className="flex justify-between items-center mb-4">
                           <h3 className="text-white font-medium">Team Member {index + 1}</h3>
@@ -1075,7 +1098,7 @@ const NewProject: React.FC = () => {
                             Notable Projects
                           </label>
                           <div className="space-y-4">
-                            {member.notableProjects.map((project, projectIndex) => (
+                            {member.notableProjects?.map((project, projectIndex) => (
                               <div key={projectIndex} className="p-4 bg-navy-600 rounded-lg">
                                 <div className="flex justify-between items-center mb-4">
                                   <h4 className="text-white font-medium">Project {projectIndex + 1}</h4>
@@ -1146,14 +1169,7 @@ const NewProject: React.FC = () => {
                             <input
                               type="file"
                               accept="image/*"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0] || null;
-                                if (file && file.size <= 5 * 1024 * 1024) { // 5MB limit
-                                  handleTeamMemberImageChange(index, file);
-                                } else if (file) {
-                                  error('Image file size must be less than 5MB');
-                                }
-                              }}
+                              onChange={(e) => handleFileChange(e, `team_member_image_${index}`)}
                               className="hidden"
                               id={`team-member-image-${index}`}
                             />
@@ -1172,7 +1188,7 @@ const NewProject: React.FC = () => {
                                     type="button"
                                     onClick={(e) => {
                                       e.preventDefault();
-                                      handleTeamMemberImageChange(index, null);
+                                      handleRemoveFile('team_member_image', index);
                                     }}
                                     className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                                   >
@@ -1220,7 +1236,7 @@ const NewProject: React.FC = () => {
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={(e) => handleFileChange(e, 'coverImage')}
+                          onChange={(e) => handleFileChange(e, 'cover_image')}
                           className="hidden"
                           id="cover-image"
                         />
@@ -1228,10 +1244,10 @@ const NewProject: React.FC = () => {
                           htmlFor="cover-image"
                           className="flex flex-col items-center cursor-pointer"
                         >
-                          {formData.coverImage ? (
+                          {formData.cover_image ? (
                             <div className="relative w-64 h-36 mb-2">
                               <img
-                                src={URL.createObjectURL(formData.coverImage)}
+                                src={ URL.createObjectURL(formData.cover_image)}
                                 alt="Cover"
                                 className="w-full h-full object-cover rounded-lg"
                               />
@@ -1239,7 +1255,7 @@ const NewProject: React.FC = () => {
                                 type="button"
                                 onClick={(e) => {
                                   e.preventDefault();
-                                  handleRemoveFile('coverImage');
+                                  handleRemoveFile('cover_image');
                                 }}
                                 className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                               >
@@ -1313,53 +1329,6 @@ const NewProject: React.FC = () => {
                       )}
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                          Project Documents
-                        </label>
-                        <div className="border-2 border-dashed border-navy-600 rounded-lg p-6">
-                          <input
-                          type="file"
-                          accept=".pdf,.doc,.docx,.txt"
-                          multiple
-                          onChange={(e) => handleFileChange(e, 'documents')}
-                          className="hidden"
-                          id="project-documents"
-                        />
-                        <label
-                          htmlFor="project-documents"
-                          className="flex flex-col items-center cursor-pointer"
-                        >
-                          <FileText size={32} className="text-gray-400 mb-2" />
-                          <p className="text-gray-400 text-center mb-1">
-                            Click to upload project documents
-                          </p>
-                          <p className="text-sm text-gray-500 text-center">
-                            PDF, DOC, DOCX or TXT (max 10MB each)
-                          </p>
-                        </label>
-                      </div>
-                      {formData.documents.length > 0 && (
-                        <div className="mt-4 space-y-2">
-                          {formData.documents.map((file, index) => (
-                            <div key={index} className="flex items-center justify-between bg-navy-700 p-2 rounded-lg">
-                              <div className="flex items-center">
-                                <FileText size={16} className="text-gray-400 mr-2" />
-                                <span className="text-gray-300">{file.name}</span>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveFile('documents', index)}
-                                className="text-red-400 hover:text-red-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
                   </div>
                 </div>
               </div>
@@ -1371,7 +1340,7 @@ const NewProject: React.FC = () => {
                 <h2 className="text-xl font-bold text-white mb-4">Investment Highlight</h2>
               
                 <div className="space-y-6">
-                  {formData.investmentHighlights.map((highlight, index) => (
+                  {formData.investment_highlights.map((highlight, index) => (
                     <div key={index} className="p-4 bg-navy-700 rounded-lg">
                       <div className="flex justify-between items-center mb-4">
                         <h3 className="text-white font-medium">Investment {index + 1}</h3>
@@ -1430,7 +1399,7 @@ const NewProject: React.FC = () => {
                 <h2 className="text-xl font-bold text-white mb-4">Financial Structure</h2>
               
                 <div className="space-y-6">
-                  {formData.financialStructure.map((structure, index) => (
+                  {formData.financial_structures.map((structure, index) => (
                     <div key={index} className="p-4 bg-navy-700 rounded-lg">
                       <div className="flex justify-between items-center mb-4">
                         <h3 className="text-white font-medium">Financial Structure {index + 1}</h3>
@@ -1549,20 +1518,486 @@ const NewProject: React.FC = () => {
             {currentStep === 4 && (
               <div className="space-y-6">
                 <div className="bg-navy-800 rounded-xl p-6 border border-navy-700">
+                  <h2 className="text-xl font-bold text-white mb-4">Token Structure</h2>
+                  
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="tokenization.jurisdiction" className="block text-sm font-medium text-gray-300 mb-1">
+                          Token Jurisdiction
+                        </label>
+                        <div className="relative">
+                          <Building2 size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                          <select
+                            id="tokenization.jurisdiction"
+                            name="tokenization.jurisdiction"
+                            value={formData.tokenization.jurisdiction}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                            required
+                          >
+                            <option value="">Select jurisdiction</option>
+                            <option value="us">United States</option>
+                            <option value="eu">European Union</option>
+                            <option value="uk">United Kingdom</option>
+                            <option value="sg">Singapore</option>
+                            <option value="ch">Switzerland</option>
+                            <option value="ky">Cayman Islands</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label htmlFor="tokenization.legal_advisor" className="block text-sm font-medium text-gray-300 mb-1">
+                          Legal Advisor
+                        </label>
+                        <div className="relative">
+                          <Scale size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                          <select
+                            id="tokenization.legal_advisor"
+                            name="tokenization.legal_advisor"
+                            value={formData.tokenization.legal_advisor}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                            required
+                          >
+                            <option value="">Select advisor</option>
+                            <option value="advisor1">Smith & Associates LLP</option>
+                            <option value="advisor2">Global Securities Law Group</option>
+                            <option value="advisor3">Blockchain Legal Partners</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        What Will Be Tokenized
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {['Film Equity', 'Future Profits', 'IP Rights', 'Distribution Rights'].map((asset) => (
+                          <label
+                            key={asset}
+                            className="flex items-center p-3 bg-navy-700 rounded-lg cursor-pointer hover:bg-navy-600 transition-colors"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={formData.tokenization.tokenized_assets.includes(asset)}
+                              onChange={() => handleMultiSelect('tokenized_assets', asset)}
+                              className="h-4 w-4 text-gold-500 rounded border-navy-600 focus:ring-gold-500"
+                            />
+                            <span className="ml-2 text-white">{asset}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="tokenization.security_type" className="block text-sm font-medium text-gray-300 mb-1">
+                          Security Token Type
+                        </label>
+                        <div className="relative">
+                          <Shield size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                          <select
+                            id="tokenization.security_type"
+                            name="tokenization.security_type"
+                            value={formData.tokenization.security_type}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                            required
+                          >
+                            <option value="">Select type</option>
+                            <option value="regD">Reg D</option>
+                            <option value="regS">Reg S</option>
+                            <option value="regA">Reg A+</option>
+                            <option value="regCF">Reg CF</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label htmlFor="tokenization.blockchain" className="block text-sm font-medium text-gray-300 mb-1">
+                          Blockchain Platform
+                        </label>
+                        <div className="relative">
+                          <Wallet size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                          <select
+                            id="tokenization.blockchain"
+                            name="tokenization.blockchain"
+                            value={formData.tokenization.blockchain}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                            required
+                          >
+                            <option value="">Select blockchain</option>
+                            <option value="polygon">Polygon</option>
+                            <option value="ethereum">Ethereum</option>
+                            <option value="bsc">BSC</option>
+                            <option value="solana">Solana</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="tokenization.max_supply" className="block text-sm font-medium text-gray-300 mb-1">
+                          Maximum Token Supply
+                        </label>
+                        <div className="relative">
+                          <Coins size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                          <input
+                            type="number"
+                            id="tokenization.max_supply"
+                            name="tokenization.max_supply"
+                            value={formData.tokenization.max_supply}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                            placeholder="e.g., 1000000"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label htmlFor="tokenization.token_symbol" className="block text-sm font-medium text-gray-300 mb-1">
+                          Token Symbol
+                        </label>
+                        <div className="relative">
+                          <Tag size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                          <input
+                            type="text"
+                            id="tokenization.token_symbol"
+                            name="tokenization.token_symbol"
+                            value={formData.tokenization.token_symbol}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                            placeholder="e.g., FILM"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="tokenization.lockup_period" className="block text-sm font-medium text-gray-300 mb-1">
+                          Lock-up Period (months)
+                        </label>
+                        <div className="relative">
+                          <Lock size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                          <input
+                            type="number"
+                            id="tokenization.lockup_period"
+                            name="tokenization.lockup_period"
+                            value={formData.tokenization.lockup_period}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                            placeholder="e.g., 12"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label htmlFor="tokenization.token_price" className="block text-sm font-medium text-gray-300 mb-1">
+                          Token Price (USD)
+                        </label>
+                        <div className="relative">
+                          <DollarSign size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                          <input
+                            type="number"
+                            step="0.01"
+                            id="tokenization.token_price"
+                            name="tokenization.token_price"
+                            value={formData.tokenization.token_price}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                            placeholder="e.g., 1.00"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="tokenization.trading_option" className="block text-sm font-medium text-gray-300 mb-1">
+                        Transfer/Trading Options
+                      </label>
+                      <div className="relative">
+                        <Globe size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <select
+                          id="tokenization.trading_option"
+                          name="tokenization.trading_option"
+                          value={formData.tokenization.trading_option}
+                          onChange={handleInputChange}
+                          className="w-full pl-10 pr-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                          required
+                        >
+                          <option value="">Select option</option>
+                          <option value="sto">STO Exchange</option>
+                          <option value="p2p">P2P with KYC</option>
+                          <option value="locked">Not Tradable</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          checked={formData.tokenization.enable_dividends}
+                          onChange={() => handleCheckboxChange('tokenization.enable_dividends')}
+                          className="h-4 w-4 text-gold-500 rounded border-navy-600 focus:ring-gold-500"
+                        />
+                        <span className="text-white">Enable Dividend Distribution</span>
+                      </label>
+
+                      <label className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          checked={formData.tokenization.whitelist_only}
+                          onChange={() => handleCheckboxChange('tokenization.whitelist_only')}
+                          className="h-4 w-4 text-gold-500 rounded border-navy-600 focus:ring-gold-500"
+                        />
+                        <span className="text-white">Whitelisted Transfers Only</span>
+                      </label>
+                    </div>
+
+                    <div>
+                      <label htmlFor="tokenization.custom_terms" className="block text-sm font-medium text-gray-300 mb-1">
+                        Additional Terms
+                      </label>
+                      <textarea
+                        id="tokenization.custom_terms"
+                        name="tokenization.custom_terms"
+                        value={formData.tokenization.custom_terms}
+                        onChange={handleInputChange}
+                        rows={4}
+                        className="w-full px-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                        placeholder="Enter any additional terms or custom conditions..."
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-navy-800 rounded-xl p-6 border border-navy-700">
+                  <h2 className="text-xl font-bold text-white mb-4">Vesting Schedule</h2>
+                  
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label htmlFor="tokenization.vesting_start_date" className="block text-sm font-medium text-gray-300 mb-1">
+                        Vesting Start Date
+                      </label>
+                      <input
+                        type="date"
+                        id="tokenization.vesting_start_date"
+                        name="tokenization.vesting_start_date"
+                        value={formData.tokenization.vesting_start_date}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="tokenization.vesting_duration" className="block text-sm font-medium text-gray-300 mb-1">
+                        Vesting Duration (months)
+                      </label>
+                      <input
+                        type="number"
+                        id="tokenization.vesting_duration"
+                        name="tokenization.vesting_duration"
+                        value={formData.tokenization.vesting_duration}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                        placeholder="e.g., 24"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="tokenization.cliff_period" className="block text-sm font-medium text-gray-300 mb-1">
+                        Cliff Period (months)
+                      </label>
+                      <input
+                        type="number"
+                        id="tokenization.cliff_period"
+                        name="tokenization.cliff_period"
+                        value={formData.tokenization.cliff_period}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                        placeholder="e.g., 6"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-navy-800 rounded-xl p-6 border border-navy-700">
+                  <h2 className="text-xl font-bold text-white mb-4">Compliance Requirements</h2>
+                  
+                  <div className="space-y-4">
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        checked={formData.tokenization.require_kyc_aml}
+                        onChange={() => handleCheckboxChange('tokenization.require_kyc_aml')}
+                        className="h-4 w-4 text-gold-500 rounded border-navy-600 focus:ring-gold-500"
+                      />
+                      <span className="text-white">KYC/AML Requirement</span>
+                    </label>
+
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        checked={formData.tokenization.accredited_only}
+                        onChange={() => handleCheckboxChange('tokenization.accredited_only')}
+                        className="h-4 w-4 text-gold-500 rounded border-navy-600 focus:ring-gold-500"
+                      />
+                      <span className="text-white">Accredited Investors Only</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="bg-navy-800 rounded-xl p-6 border border-navy-700">
+                  <h2 className="text-xl font-bold text-white mb-4">Distribution and Trading</h2>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="tokenization.distribution_method" className="block text-sm font-medium text-gray-300 mb-1">
+                        Token Distribution Method
+                      </label>
+                      <select
+                        id="tokenization.distribution_method"
+                        name="tokenization.distribution_method"
+                        value={formData.tokenization.distribution_method}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                        required
+                      >
+                        <option value="">Select method</option>
+                        <option value="wallet">Direct Wallet Transfer</option>
+                        <option value="custodial">Custodial Service</option>
+                        <option value="vesting">Vesting Contract</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="tokenization.secondary_market" className="block text-sm font-medium text-gray-300 mb-1">
+                        Secondary Market Listing
+                      </label>
+                      <select
+                        id="tokenization.secondary_market"
+                        name="tokenization.secondary_market"
+                        value={formData.tokenization.secondary_market}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                        required
+                      >
+                        <option value="">Select listing plan</option>
+                        <option value="sto">STO Exchange</option>
+                        <option value="p2p">P2P with KYC</option>
+                        <option value="none">No Listing Planned</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-navy-800 rounded-xl p-6 border border-navy-700">
+                  <h2 className="text-xl font-bold text-white mb-4">Legal Entity</h2>
+                  
+                  <div>
+                    <label htmlFor="tokenization.spv_name" className="block text-sm font-medium text-gray-300 mb-1">
+                      SPV or Legal Entity Name
+                    </label>
+                    <input
+                      type="text"
+                      id="tokenization.spv_name"
+                      name="tokenization.spv_name"
+                      value={formData.tokenization.spv_name}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+                      placeholder="Enter legal entity name"
+                    />
+                    <p className="mt-1 text-sm text-gray-400">
+                      This entity will be registered or used by the legal advisor for token issuance
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-navy-800 rounded-xl p-6 border border-navy-700">
+                  <h2 className="text-xl font-bold text-white mb-4">Legal Documents</h2>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Upload Legal Documents
+                    </label>
+                    <div className="border-2 border-dashed border-navy-600 rounded-lg p-6">
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        multiple
+                        onChange={(e) => handleFileChange(e, 'legal_documents')}
+                        className="hidden"
+                        id="legal-documents"
+                      />
+                      <label
+                        htmlFor="legal-documents"
+                        className="flex flex-col items-center cursor-pointer"
+                      >
+                        <FileText size={32} className="text-gray-400 mb-2" />
+                        <p className="text-gray-400 text-center mb-1">
+                          Click to upload or drag and drop
+                        </p>
+                        <p className="text-sm text-gray-500 text-center">
+                          PDF files only, max 10MB each
+                        </p>
+                      </label>
+                      {formData.tokenization.legal_documents?.length > 0 && (
+                        <div className="mt-4 space-y-2">
+                          {formData.tokenization.legal_documents.map((file, index) => (
+                            <div key={index} className="flex items-center text-sm text-gray-400 justify-between bg-navy-700 p-2 rounded-lg">
+                              <div className="flex items-center">
+                                <FileText size={16} className="mr-2" />
+                                {file.name}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveFile('legal_documents', index)}
+                                className="text-red-400 hover:text-red-300 ml-2"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {currentStep === 5 && (
+              <div className="space-y-6">
+                <div className="bg-navy-800 rounded-xl p-6 border border-navy-700">
                   <h2 className="text-xl font-bold text-white mb-4">Payment</h2>
                   
                   <div className="space-y-4">
                   <div>
-                    <label htmlFor="paymentAmount" className="block text-sm font-medium text-gray-300 mb-1">
+                    <label htmlFor="payment_amount" className="block text-sm font-medium text-gray-300 mb-1">
                       Payment Amount (USD)
                     </label>
                       <div className="relative">
                         <DollarSign size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                         <input
                           type="number"
-                          id="paymentAmount"
-                          name="paymentAmount"
-                          value={formData.paymentAmount}
+                          id="payment_amount"
+                          name="payment_amount"
+                          value={formData.payment_amount}
                           onChange={handleInputChange}
                           className="w-full pl-10 pr-4 py-2 bg-navy-700 border border-navy-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
                           placeholder="Enter amount"
@@ -1578,7 +2013,7 @@ const NewProject: React.FC = () => {
                     </div>
 
                     <StripePaymentForm
-                      amount={parseFloat(formData.paymentAmount)}
+                      amount={parseFloat(formData.payment_amount)}
                       onSuccess={handlePaymentSuccess}
                       onCancel={() => setCurrentStep(3)}
                       onError={handlePaymentError}
@@ -1599,11 +2034,11 @@ const NewProject: React.FC = () => {
                 </button>
               )}
               
-              {currentStep < 4 ? (
+              {currentStep < 5 ? (
                 <button
                   type="button"
                   onClick={() => {
-                    if (currentStep === 3) {
+                    if (currentStep === 4) {
                       if(currentUser?.user_metadata.user_type === 'superadmin' || currentUser?.user_metadata.user_type === 'admin') {
                         handlePaymentSuccess()
                         return;

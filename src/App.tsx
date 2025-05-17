@@ -25,6 +25,7 @@ const AdminDashboard = lazy(() => import('./pages/dashboard/admin/AdminDashboard
 const InvestorDashboard = lazy(() => import('./pages/dashboard/investor/InvestorDashboard'));
 const FilmmakerDashboard = lazy(() => import('./pages/dashboard/filmmaker/FilmmakerDashboard'));
 const NewProject = lazy(() => import('./pages/projects/NewProject'));
+const EditProject = lazy(() => import('./pages/admin/EditProject'));
 const ProjectsPage = lazy(() => import('./pages/projects'));
 const ProjectView = lazy(() => import('./pages/projects/DetailView'));
 const HowItWorksPage = lazy(() => import('./pages/HowItWorks'));
@@ -125,6 +126,11 @@ function App() {
                           <FilmmakerRoute>
                             <NewProject />
                           </FilmmakerRoute>
+                        } />
+                        <Route path="/admin/projects/:projectId/edit" element={
+                          <AdminRoute>
+                            <EditProject />
+                          </AdminRoute>
                         } />
                         <Route path="/projects" element={<ProjectsPage />} />
                         <Route path="/projects/:id" element={<ProjectView />} />
