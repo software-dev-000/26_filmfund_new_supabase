@@ -99,7 +99,7 @@ const FilmmakerDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="container p-6 lg:p-8 min-h-screen bg-navy-950 mt-[50px]">
+      <div className="container mx-auto p-6 lg:p-8 min-h-screen bg-navy-950 mt-[50px]">
         <div className="mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-navy-800 rounded w-1/3 mb-4"></div>

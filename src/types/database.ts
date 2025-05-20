@@ -43,9 +43,17 @@ export interface ProjectTeamMember {
   project_id: string;
   name: string;
   role: string;
-  bio: string | null;
-  image_url: string | null;
+  bio: string;
+  image_url?: string;
+  experience?: string;
+  project_team_member_projects?: ProjectTeamMemberProject[];
+  social_links?: {
+    linkedin?: string;
+    twitter?: string;
+    email?: string;
+  };
   created_at: string;
+  updated_at: string;
 }
 
 export interface ProjectTeamMemberProject {

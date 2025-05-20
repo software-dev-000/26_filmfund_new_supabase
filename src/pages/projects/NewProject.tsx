@@ -1095,6 +1095,57 @@ const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData,
 
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Profile Image
+                          </label>
+                          <div className="border-2 border-dashed border-navy-600 rounded-lg p-6">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleFileChange(e, `team_member_image_${index}`)}
+                              className="hidden"
+                              id={`team-member-image-${index}`}
+                            />
+                            <label
+                              htmlFor={`team-member-image-${index}`}
+                              className="flex flex-col items-center cursor-pointer"
+                            >
+                              {member.image ? (
+                                <div className="relative w-48 h-48 mb-2">
+                                  <img
+                                    src={URL.createObjectURL(member.image)}
+                                    alt={member.name}
+                                    className="w-full h-full object-cover rounded-lg"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      handleRemoveFile('team_member_image', index);
+                                    }}
+                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                  </button>
+                                </div>
+                              ) : (
+                                <>
+                                  <ImageIcon size={32} className="text-gray-400 mb-2" />
+                                  <p className="text-gray-400 text-center mb-1">
+                                    Click to upload profile image
+                                  </p>
+                                  <p className="text-sm text-gray-500 text-center">
+                                    PNG, JPG or GIF (max 5MB)
+                                  </p>
+                                </>
+                              )}
+                            </label>
+                           </div>
+                        </div>
+
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
                             Notable Projects
                           </label>
                           <div className="space-y-4">
@@ -1161,56 +1212,7 @@ const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData,
                           </div>
                         </div>
 
-                        <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Profile Image
-                          </label>
-                          <div className="border-2 border-dashed border-navy-600 rounded-lg p-6">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => handleFileChange(e, `team_member_image_${index}`)}
-                              className="hidden"
-                              id={`team-member-image-${index}`}
-                            />
-                            <label
-                              htmlFor={`team-member-image-${index}`}
-                              className="flex flex-col items-center cursor-pointer"
-                            >
-                              {member.image ? (
-                                <div className="relative w-32 h-32 mb-2">
-                                  <img
-                                    src={URL.createObjectURL(member.image)}
-                                    alt={member.name}
-                                    className="w-full h-full object-cover rounded-lg"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      handleRemoveFile('team_member_image', index);
-                                    }}
-                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                                  >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                    </svg>
-                                  </button>
-                                </div>
-                              ) : (
-                                <>
-                                  <ImageIcon size={32} className="text-gray-400 mb-2" />
-                                  <p className="text-gray-400 text-center mb-1">
-                                    Click to upload profile image
-                                  </p>
-                                  <p className="text-sm text-gray-500 text-center">
-                                    PNG, JPG or GIF (max 5MB)
-                                  </p>
-                                </>
-                              )}
-                            </label>
-                           </div>
-                        </div>
+                        
                       </div>
                     ))}
                     
@@ -1296,38 +1298,42 @@ const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData,
                           htmlFor="gallery-images"
                           className="flex flex-col items-center cursor-pointer"
                         >
-                          <ImageIcon size={32} className="text-gray-400 mb-2" />
-                          <p className="text-gray-400 text-center mb-1">
-                            Click to upload gallery images
-                          </p>
-                          <p className="text-sm text-gray-500 text-center">
-                            PNG, JPG or GIF (max 10MB each)
-                          </p>
+                          {formData.gallery.length > 0 ? (
+                            <div className="mt-4 grid grid-cols-3 gap-4">
+                              {formData.gallery.map((file, index) => (
+                                <div key={index} className="relative w-64 h-36">
+                                  <img
+                                    src={URL.createObjectURL(file)}
+                                    alt={`Gallery ${index + 1}`}
+                                    className="w-full h-full object-cover rounded-lg"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveFile('gallery', index)}
+                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                          <>
+                            <ImageIcon size={32} className="text-gray-400 mb-2" />
+                            <p className="text-gray-400 text-center mb-1">
+                              Click to upload gallery images
+                            </p>
+                            <p className="text-sm text-gray-500 text-center">
+                              PNG, JPG or GIF (max 10MB each)
+                            </p>
+                          </>)}
+                          
                         </label>
                       </div>
-                      {formData.gallery.length > 0 && (
-                        <div className="mt-4 grid grid-cols-3 gap-4">
-                          {formData.gallery.map((file, index) => (
-                            <div key={index} className="relative">
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt={`Gallery ${index + 1}`}
-                                className="w-full object-cover rounded-lg"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveFile('gallery', index)}
-                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                              >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      </div>
+                      
+                    </div>
 
                   </div>
                 </div>
