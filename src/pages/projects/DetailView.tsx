@@ -2,26 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Film, 
   DollarSign, 
   Users, 
-  Clock, 
   Globe,
   FileText,
-  Calendar,
-  TrendingUp,
   Shield,
   ChevronRight,
-  PlayCircle,
-  User,
-  Briefcase,
   Target,
   PieChart,
   X,
   Linkedin,
   Twitter,
   Mail,
-  Award
 } from 'lucide-react';
 import { projectService } from '../../services/projectService';
 import { 
@@ -60,11 +52,11 @@ const TeamMemberModal: React.FC<TeamMemberModalProps> = ({ member, onClose }) =>
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
       >
-        <div className="p-6">
-          <div className="flex justify-between items-start mb-6">
-            <h2 className="text-2xl font-bold text-white">{member.name}</h2>
+        <div className="p-4 md:p-6">
+          <div className="flex justify-between items-start mb-8">
+            <h2 className="text-3xl font-bold text-white">{member.name}</h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-white transition-colors"
@@ -73,65 +65,32 @@ const TeamMemberModal: React.FC<TeamMemberModalProps> = ({ member, onClose }) =>
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-1">
-              <div className="aspect-square rounded-lg overflow-hidden mb-4">
-                <img 
-                  src={member.image_url || "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg"} 
-                  alt={member.name} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-gold-500 font-medium mb-2">Role</h3>
-                  <p className="text-white">{member.role}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Left Column - Avatar and Basic Info */}
+            <div className="md:col-span-1 space-y-6">
+              <div className="relative">
+                <div className="aspect-square rounded-2xl overflow-hidden shadow-xl border-4 border-gold-500/20">
+                  <img 
+                    src={member.image_url || "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg"} 
+                    alt={member.name} 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                {member.experience && (
-                  <div>
-                    <h3 className="text-gold-500 font-medium mb-2">Experience</h3>
-                    <p className="text-white">{member.experience}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="md:col-span-2 space-y-6">
-              <div>
-                <h3 className="text-gold-500 font-medium mb-2">Bio</h3>
-                <p className="text-white">{member.bio}</p>
+                <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-gold-500 text-navy-900 px-6 py-2 rounded-full font-semibold shadow-lg">
+                  {member.role}
+                </div>
               </div>
 
-              {member.project_team_member_projects && member.project_team_member_projects.length > 0 && (
-                <div>
-                  <h3 className="text-gold-500 font-medium mb-4">Notable Projects</h3>
-                  <div className="space-y-4">
-                    {member.project_team_member_projects.map((project, index) => (
-                      <div key={index} className="bg-gray-700/50 rounded-lg p-4">
-                        <h4 className="font-bold text-white mb-2">{project.title}</h4>
-                        {project.description && (
-                          <p className="text-gray-300 text-sm mb-2">{project.description}</p>
-                        )}
-                        {project.link && (
-                          <a 
-                            href={project.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-gold-500 hover:text-gold-400 text-sm inline-flex items-center"
-                          >
-                            View Project
-                            <ChevronRight size={16} className="ml-1" />
-                          </a>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+              {member.experience && (
+                <div className="bg-gray-700/50 rounded-xl p-4">
+                  <h3 className="text-gold-500 font-medium mb-2">Experience</h3>
+                  <p className="text-white">{member.experience}</p>
                 </div>
               )}
 
               {member.social_links && (
-                <div>
-                  <h3 className="text-gold-500 font-medium mb-2">Connect</h3>
+                <div className="bg-gray-700/50 rounded-xl p-4">
+                  <h3 className="text-gold-500 font-medium mb-3">Connect</h3>
                   <div className="flex space-x-4">
                     {member.social_links.linkedin && (
                       <a 
@@ -165,6 +124,41 @@ const TeamMemberModal: React.FC<TeamMemberModalProps> = ({ member, onClose }) =>
                 </div>
               )}
             </div>
+
+            {/* Right Column - Bio and Notable Projects */}
+            <div className="md:col-span-2 space-y-6">
+              <div className="bg-gray-700/50 rounded-xl p-6">
+                <h3 className="text-gold-500 font-medium mb-3">Bio</h3>
+                <p className="text-white leading-relaxed">{member.bio}</p>
+              </div>
+
+              {member.project_team_member_projects && member.project_team_member_projects.length > 0 && (
+                <div className="bg-gray-700/50 rounded-xl p-6">
+                  <h3 className="text-gold-500 font-medium mb-4">Notable Projects</h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {member.project_team_member_projects.map((project, index) => (
+                      <div key={index} className="bg-gray-800/50 rounded-lg p-4 hover:bg-gray-800 transition-colors">
+                        <h4 className="font-bold text-white mb-2">{project.title}</h4>
+                        {project.description && (
+                          <p className="text-gray-300 text-sm mb-3">{project.description}</p>
+                        )}
+                        {project.link && (
+                          <a 
+                            href={project.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-gold-500 hover:text-gold-400 text-sm font-medium"
+                          >
+                            View Project
+                            <ChevronRight size={16} className="ml-1" />
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </motion.div>
@@ -182,14 +176,15 @@ const ProjectDetailView: React.FC = () => {
     const fetchProject = async () => {
       try {
         if (!id) return;
-        const data = await projectService.getProject(id);
+        const data = await projectService.getProjectById(id);
+        console.log('[Project data]:', data);
         const transformedProject: ProjectWithUI = {
           ...data,
           type: 'independent', // Default to independent for now
           days_left: 30, // Default to 30 days
           funding_raised: data.project_payments?.reduce((sum: number, payment: { amount: number }) => sum + payment.amount, 0) || 0,
           investors: data.project_payments?.length || 0,
-          director: data.project_team_members?.[0]?.name || 'Unknown Director'
+          director: data.project_team_members?.filter((member:any) => member.role === 'Director')?.[0]?.name || 'Unknown Director'
         };
         setProject(transformedProject);
       } catch (error) {

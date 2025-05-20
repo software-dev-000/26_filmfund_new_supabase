@@ -50,7 +50,12 @@ const AdminDashboard: React.FC = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const projects = await projectService.getAllProjects();
+      const [userCount, projects] = await Promise.all([
+        projectService.getAllUserCount(),
+        projectService.getAllProjects()
+      ]);
+
+      console.log('[userCount]:', userCount);
       const pendingProjects = projects.filter((project: Project) => project.status === 'pending');
       setPendingApprovals(pendingProjects);
       setAllProjects(projects);
@@ -58,8 +63,7 @@ const AdminDashboard: React.FC = () => {
       // Calculate stats
       setStats({
         totalProjects: projects.length,
-        activeUsers: projects.reduce((acc: number, project: Project) => 
-          acc + (project.status === 'active' ? 1 : 0), 0),
+        activeUsers: userCount ?? 0,
         pendingApprovals: pendingProjects.length,
         complianceAlerts: 0 // This would come from a different service
       });
@@ -139,7 +143,13 @@ const AdminDashboard: React.FC = () => {
     <div key={item.id} className="flex items-center justify-between p-4 bg-navy-700 rounded-lg">
       <div className="flex items-center space-x-4">
         <div className="w-12 h-12 bg-navy-600 rounded-lg flex items-center justify-center">
-          <Film size={24} className="text-gold-500" />
+          {item.cover_image ? (
+            <img src={item.cover_image} alt={item.title} className="w-12 h-12 rounded-lg" />
+          ) : (
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-navy-600">
+              <Film size={24} className="text-gold-500" />
+            </div>
+          )}
         </div>
         <div>
           <h3 className="text-white font-medium">{item.title}</h3>

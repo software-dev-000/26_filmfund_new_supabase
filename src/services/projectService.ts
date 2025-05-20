@@ -3,6 +3,7 @@ import { s3Service } from './s3Service';
 import { 
   Project, 
   ProjectTeamMember,
+  ProjectTeamMemberProject,
   ProjectMedia, 
   ProjectSocialLink,
   ProjectTokenization,
@@ -27,12 +28,15 @@ export const projectService = {
     return data;
   },
 
-  async getProject(id: string) {
+  async getProjectById(id: string) {
     const { data, error } = await supabase
       .from('projects')
       .select(`
         *,
-        project_team_members (*),
+        project_team_members (
+          *,
+          project_team_member_projects (*)
+        ),
         project_media (*),
         project_social_links (*),
         project_tokenization (*),
@@ -45,6 +49,30 @@ export const projectService = {
       `)
       .eq('id', id)
       .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getAllProjects() {
+    const { data, error } = await supabase
+      .from('projects')
+      .select(`
+        *,
+        project_team_members (
+          *,
+          project_team_member_projects (*)
+        ),
+        project_media (*),
+        project_social_links (*),
+        project_tokenization (*),
+        project_milestones (*),
+        project_investment_highlights (*),
+        project_financial_structures (*),
+        project_risks (*),
+        project_legal_documents (*),
+        project_payments (*)
+      `);
 
     if (error) throw error;
     return data;
@@ -70,18 +98,21 @@ export const projectService = {
         .select(`
           cover_image,
           project_media (file_url),
-          project_legal_documents (file_url)
+          project_legal_documents (file_url),
+          project_team_members (image_url)
         `)
         .eq('id', id)
         .single();
 
+      console.log('[project]', project);
+      // return;
       if (fetchError) throw fetchError;
 
       // Delete cover image if exists
       if (project.cover_image) {
-        const coverImagePath = project.cover_image.split('project-images/')[1];
+        const coverImagePath = project.cover_image.split('project-cover-image/')[1];
         if (coverImagePath) {
-          await s3Service.deleteFile('project-images', coverImagePath);
+          await s3Service.deleteFile('project-cover-image', coverImagePath);
         }
       }
 
@@ -109,6 +140,18 @@ export const projectService = {
         );
       }
 
+      // Delete team member images
+      if (project.project_team_members) {
+        await Promise.all(
+          project.project_team_members.map(async (member: any) => {
+            const memberPath = member.image_url.split('team-member-avatar/')[1];
+            if (memberPath) {
+              await s3Service.deleteFile('team-member-avatar', memberPath);
+            }
+          })
+        );
+      }
+
       // Delete the project (this will cascade delete all related records)
       const { error: deleteError } = await supabase
         .from('projects')
@@ -120,6 +163,16 @@ export const projectService = {
       console.error('Error deleting project:', error);
       throw error;
     }
+  },
+
+  // User operations
+  async getAllUserCount() {
+    const { count, error } = await supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true });
+
+    if (error) throw error;
+    return count;
   },
 
   // Team members operations
@@ -155,6 +208,39 @@ export const projectService = {
     if (error) throw error;
   },
 
+  // Team member notable projects operations
+  async addNotableProject(notableProject: Omit<ProjectTeamMemberProject, 'id' | 'created_at'>) {
+    const { data, error } = await supabase
+      .from('project_team_member_projects')
+      .insert(notableProject)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },  
+
+  async updateNotableProject(id: string, updates: Partial<ProjectTeamMemberProject>) {
+    const { data, error } = await supabase
+      .from('project_team_member_projects')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteNotableProject(id: string) {
+    const { error } = await supabase
+      .from('project_notable_projects')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  },  
+  
   // Project media operations
   async addProjectMedia(media: Omit<ProjectMedia, 'id' | 'created_at'>) {
     const { data, error } = await supabase
@@ -435,48 +521,8 @@ export const projectService = {
     }
   },
 
-  async getAllProjects() {
-    const { data, error } = await supabase
-      .from('projects')
-      .select(`
-        *,
-        project_team_members (*),
-        project_media (*),
-        project_social_links (*),
-        project_tokenization (*),
-        project_milestones (*),
-        project_investment_highlights (*),
-        project_financial_structures (*),
-        project_risks (*),
-        project_legal_documents (*),
-        project_payments (*)
-      `);
+  
 
-    if (error) throw error;
-    return data;
-  },
-
-  getProjectById: async (projectId: string) => {
-    const { data, error } = await supabase
-      .from('projects')
-      .select(`
-        *,
-        project_team_members (*),
-        project_social_links (*),
-        project_tokenization (*),
-        project_investment_highlights (*),
-        project_financial_structures (*),
-        project_risks (*),
-        project_milestones (*),
-        project_media (*),
-        project_legal_documents (*)
-      `)
-      .eq('id', projectId)
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
 };
 
 export interface GlobalStats {

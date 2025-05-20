@@ -28,7 +28,7 @@ function transformProjectData(dbData: any) {
 }
 
 function extractS3Path(url: string, bucket: string) {
-  // Example: https://.../project-images/userid/filename.jpg => userid/filename.jpg
+  // Example: https://.../project-cover-image/userid/filename.jpg => userid/filename.jpg
   const idx = url.indexOf(`${bucket}/`);
   return idx !== -1 ? url.substring(idx + bucket.length + 1) : '';
 }
@@ -68,10 +68,10 @@ const EditProject: React.FC = () => {
       let coverImageUrl = projectData.cover_image;
       if (updatedData.cover_image && updatedData.cover_image !== projectData.cover_image) {
         if (projectData.cover_image) {
-          await projectService.deleteFile('project-images', extractS3Path(projectData.cover_image, 'project-images'));
+          await projectService.deleteFile('project-cover-image', extractS3Path(projectData.cover_image, 'project-cover-image'));
         }
         coverImageUrl = await projectService.uploadFile(
-          'project-images',
+          'project-cover-image',
           `${currentUser.id}/${updatedData.cover_image.name}`,
           updatedData.cover_image
         );

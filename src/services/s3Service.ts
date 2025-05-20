@@ -68,7 +68,7 @@ export const s3Service = {
       await s3Client.send(command);
     } catch (error) {
       console.error('Error deleting file from S3:', error);
-      throw error;
+      // throw error;
     }
   },
 

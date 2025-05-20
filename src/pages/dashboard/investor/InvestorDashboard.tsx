@@ -191,7 +191,7 @@ const InvestorDashboard: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="lg:col-span-2 bg-navy-800 rounded-xl border border-navy-700 overflow-hidden"
+          className="lg:col-span-2 bg-navy-800 rounded-xl border border-navy-700"
         >
           <div className="p-6 border-b border-navy-700">
             <div className="flex items-center justify-between">
@@ -202,51 +202,18 @@ const InvestorDashboard: React.FC = () => {
             </div>
           </div>
           
-          <div className="relative">
-            <div className="flex overflow-x-hidden">
-              <div className="animate-scroll flex">
+          <div className="p-6">
+            {recentInvestments.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4">
                 {recentInvestments.map((investment) => (
                   <div 
                     key={investment.id} 
-                    className="flex items-center p-6 hover:bg-navy-700/50 transition-colors min-w-[400px]"
+                    className="flex items-center p-4 bg-navy-700/50 rounded-lg hover:bg-navy-700 transition-colors"
                   >
                     <img 
                       src={investment.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
                       alt={investment.title} 
-                      className="w-16 h-16 rounded-lg object-cover mr-4"
-                    />
-                    <div className="flex-grow">
-                      <h3 className="text-white font-medium mb-1">{investment.title}</h3>
-                      <div className="flex items-center space-x-4">
-                        <p className="text-sm text-gray-400">
-                          Invested on {new Date(investment.created_at).toLocaleDateString()}
-                        </p>
-                        <span className="text-sm text-gray-400">
-                          {investment.stable_split}% Stable
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-gold-500 font-semibold mb-1">
-                        ${investment.funding_raised.toLocaleString()}
-                      </p>
-                      <span className="inline-flex items-center text-sm text-green-400">
-                        <ArrowUpRight size={14} className="mr-1" />
-                        {investment.performance || '+0%'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-                {/* Duplicate items for seamless scrolling */}
-                {recentInvestments.map((investment) => (
-                  <div 
-                    key={`${investment.id}-duplicate`} 
-                    className="flex items-center p-6 hover:bg-navy-700/50 transition-colors min-w-[400px]"
-                  >
-                    <img 
-                      src={investment.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
-                      alt={investment.title} 
-                      className="w-16 h-16 rounded-lg object-cover mr-4"
+                      className="w-20 h-20 rounded-lg object-cover mr-4"
                     />
                     <div className="flex-grow">
                       <h3 className="text-white font-medium mb-1">{investment.title}</h3>
@@ -271,7 +238,12 @@ const InvestorDashboard: React.FC = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+                <p className="text-xl font-medium mb-2">No investments yet</p>
+                <p className="text-sm">Start investing in film projects to see them here</p>
+              </div>
+            )}
           </div>
         </motion.div>
         
@@ -365,10 +337,11 @@ const InvestorDashboard: React.FC = () => {
           </div>
           
           <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {upcomingProjects.map((project) => (
-              <div 
-                key={project.id} 
-                className="bg-navy-700 rounded-lg overflow-hidden hover:bg-navy-600 transition-colors"
+            {upcomingProjects.length > 0 ? (
+              upcomingProjects.map((project) => (
+                <div 
+                  key={project.id} 
+                  className="bg-navy-700 rounded-lg overflow-hidden hover:bg-navy-600 transition-colors"
               >
                 <img 
                   src={project.cover_image || "https://images.pexels.com/photos/3265460/pexels-photo-3265460.jpeg"} 
@@ -408,7 +381,12 @@ const InvestorDashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            ))): (
+              <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-400">
+                <p className="text-xl font-medium mb-2">No upcoming projects found</p>
+                <p className="text-sm">Check back later for new projects</p>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>

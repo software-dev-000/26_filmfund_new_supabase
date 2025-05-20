@@ -267,7 +267,7 @@ const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData,
       // Prepare all file upload promises
       const coverImageUploadPromise = formData.cover_image 
         ? projectService.uploadFile(
-            'project-images',
+            'project-cover-image',
             `${currentUser.id}/${formData.cover_image.name}`,
             formData.cover_image
           )
@@ -277,7 +277,7 @@ const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData,
         if (!member.image) return Promise.resolve({ ...member, image_url: '' });
         
         return projectService.uploadFile(
-          'team-member-images',
+          'team-member-avatar',
           `${currentUser.id}/${member.name.replace(/\s+/g, '-').toLowerCase()}.${member.image.name.split('.').pop()}`,
           member.image
         ).then(memberImageUrl => ({ ...member, image_url: memberImageUrl }));
@@ -338,11 +338,25 @@ const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData,
           name: member.name,
           role: member.role,
           bio: member.bio,
-          image_url: member.image_url
+          image_url: member.image_url,
         })
       );
-      await Promise.all(teamMemberPromises);
+      const createdTeamMembers = await Promise.all(teamMemberPromises);
 
+      // Add team member's notable projects
+      setCreationProgress('Adding team member\'s notable projects...');
+      console.log('Adding team member\'s notable projects...');
+      const notableProjectPromises = createdTeamMembers.map((createdMember, index) => 
+        formData.team_members[index].notableProjects.map(project => 
+          projectService.addNotableProject({
+            team_member_id: createdMember.id,
+            title: project.title,
+            link: project.link,
+            description: project.description,
+          })
+        )
+      );
+      await Promise.all(notableProjectPromises.flat());
       // Add social links
       setCreationProgress('Adding social links...');
       console.log('Adding social links...');
@@ -616,7 +630,16 @@ const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData,
   
   
 
-  const handleRemoveFile = (field: 'cover_image' | 'gallery' | 'legal_documents' | 'team_member_image', index?: number) => {
+  const handleRemoveTeamMemberImage = (index: number) => {
+    const newTeamMembers = [...formData.team_members];
+    newTeamMembers[index] = { ...newTeamMembers[index], image: null };
+    setFormData(prev => ({
+      ...prev,
+      team_members: newTeamMembers
+    }));
+  };
+
+  const handleRemoveFile = (field: 'cover_image' | 'gallery' | 'legal_documents', index?: number) => {
     if (field === 'legal_documents') {
       setFormData(prev => ({
         ...prev,
@@ -625,30 +648,16 @@ const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData,
           legal_documents: prev.tokenization.legal_documents.filter((_, i) => i !== index)
         }
       }));
-    } else if (field === 'team_member_image' && typeof index === 'number') {
-      const newTeamMembers = [...formData.team_members];
-      newTeamMembers[index] = { ...newTeamMembers[index], image: null };
-      setFormData(prev => ({
-        ...prev,
-        team_members: newTeamMembers
-      }));
     } else if (index !== undefined) {
       setFormData(prev => ({
         ...prev,
-        [field]: (prev[field] as File[]).filter((_: File, i: number) => i !== index)
+        [field]: (prev[field] as File[]).filter((_, i) => i !== index)
       }));
     } else {
       setFormData(prev => ({
         ...prev,
         [field]: null
       }));
-    }
-    // Reset the file input
-    const input = document.getElementById(field === 'cover_image' ? 'cover-image' : 
-      field === 'gallery' ? 'gallery-images' : 
-      field === 'legal_documents' ? 'legal-documents' : 'project-documents') as HTMLInputElement;
-    if (input) {
-      input.value = '';
     }
   };
 
@@ -1120,7 +1129,7 @@ const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData,
                                     type="button"
                                     onClick={(e) => {
                                       e.preventDefault();
-                                      handleRemoveFile('team_member_image', index);
+                                      handleRemoveTeamMemberImage(index);
                                     }}
                                     className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                                   >
