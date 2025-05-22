@@ -14,6 +14,7 @@ import {
   Linkedin,
   Twitter,
   Mail,
+  ChevronLeft,
 } from 'lucide-react';
 import { projectService } from '../../services/projectService';
 import { 
@@ -23,7 +24,8 @@ import {
   ProjectTokenization,
   ProjectInvestmentHighlight,
   ProjectFinancialStructure,
-  ProjectPayment
+  ProjectPayment,
+  ProjectMedia,
 } from '../../types/database';
 
 interface ProjectWithUI extends Project {
@@ -38,6 +40,7 @@ interface ProjectWithUI extends Project {
   project_investment_highlights?: ProjectInvestmentHighlight[];
   project_financial_structures?: ProjectFinancialStructure[];
   project_payments?: ProjectPayment[];
+  project_media?: ProjectMedia[];
 }
 
 interface TeamMemberModalProps {
@@ -56,7 +59,7 @@ const TeamMemberModal: React.FC<TeamMemberModalProps> = ({ member, onClose }) =>
       >
         <div className="p-4 md:p-6">
           <div className="flex justify-between items-start mb-8">
-            <h2 className="text-3xl font-bold text-white">{member.name}</h2>
+            <h2 className="text-2xl font-bold text-white">{member.name}</h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-white transition-colors"
@@ -171,6 +174,7 @@ const ProjectDetailView: React.FC = () => {
   const [project, setProject] = useState<ProjectWithUI | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedMember, setSelectedMember] = useState<ProjectTeamMember | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -196,6 +200,16 @@ const ProjectDetailView: React.FC = () => {
 
     fetchProject();
   }, [id]);
+
+  useEffect(() => {
+    const autoSlideInterval = setInterval(() => {
+      setCurrentSlide(prev => 
+        prev === (project?.project_media?.length || 0) ? 0 : prev + 1
+      );
+    }, 5000);
+
+    return () => clearInterval(autoSlideInterval);
+  }, [project?.project_media?.length]);
 
   if (loading) {
     return (
@@ -232,32 +246,115 @@ const ProjectDetailView: React.FC = () => {
     <div className="min-h-screen bg-gray-900 text-white p-8">
       <div className="max-w-7xl mx-auto">
       {/* Hero Section */}
-        <div className="relative h-[60vh] min-h-[400px] rounded-lg overflow-hidden mb-8">
-          <img 
-            src={project.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
-            alt={project.title} 
-            className="w-full h-full object-cover"
-          />
+        <div className="relative h-[40vh] md:h-[60vh] md:min-h-[400px] rounded-lg overflow-hidden mb-8">
+          <div className="relative h-full">
+            {/* Slideshow */}
+            <div className="relative h-full">
+              {/* Cover Image */}
+              <div 
+                className={`absolute inset-0 transition-opacity duration-500 ${
+                  currentSlide === 0 ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                <img 
+                  src={project.cover_image || "https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg"} 
+                  alt={project.title} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
+              {/* Gallery Images */}
+              {project.project_media?.map((media, index) => (
+                <div 
+                  key={media.id}
+                  className={`absolute inset-0 transition-opacity duration-500 ${
+                    currentSlide === index + 1 ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  <img 
+                    src={media.file_url} 
+                    alt={`Gallery ${index + 1}`} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className="absolute inset-0 flex items-center justify-between px-4">
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentSlide(prev => 
+                    prev === 0 ? (project.project_media?.length || 0) : prev - 1
+                  );
+                }}
+                className="z-10 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentSlide(prev => 
+                    prev === (project.project_media?.length || 0) ? 0 : prev + 1
+                  );
+                }}
+                className="z-10 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors"
+              >
+                <ChevronRight size={24} />
+              </button>
+            </div>
+
+            {/* Slide Indicators */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentSlide(0);
+                }}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  currentSlide === 0 ? 'bg-white' : 'bg-white/50'
+                }`}
+              />
+              {project.project_media?.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentSlide(index + 1);
+                  }}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    currentSlide === index + 1 ? 'bg-white' : 'bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 right-0 p-8">
+          <div className="absolute top-0 left-0 right-0 p-4 md:p-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <h1 className="text-4xl md:text-5xl font-bold mb-3">{project.title}</h1>
-              <p className="text-xl text-gray-300 mb-6">{project.tagline}</p>
-              <div className="flex flex-wrap gap-4 text-sm">
-                <span className="bg-gray-800/80 backdrop-blur-sm text-white px-3 py-1 rounded-full">
-                  {project.genre}
-                </span>
-                <span className="bg-gray-800/80 backdrop-blur-sm text-white px-3 py-1 rounded-full">
-                  {project.current_stage || 'Pre-Production'}
-                </span>
-                <span className="bg-gray-800/80 backdrop-blur-sm text-white px-3 py-1 rounded-full">
-                  Budget: ${(project.budget / 1000000).toFixed(1)}M
-                </span>
-              </div>
+              <h1 className="text-2xl md:text-4xl font-bold mb-3">{project.title}</h1>
+              <p className="text-sm md:text-xl text-gray-300 mb-6">{project.tagline}</p>
+              
             </motion.div>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
+            <div className="flex flex-wrap gap-4 text-sm">
+              <span className="bg-gray-800/80 backdrop-blur-sm text-white px-3 py-1 rounded-full">
+                {project.genre}
+              </span>
+              <span className="bg-gray-800/80 backdrop-blur-sm text-white px-3 py-1 rounded-full">
+                {project.current_stage || 'Pre-Production'}
+              </span>
+              <span className="bg-gray-800/80 backdrop-blur-sm text-white px-3 py-1 rounded-full">
+                Budget: ${(project.budget / 1000000).toFixed(1)}M
+              </span>
+            </div>
           </div>
         </div>
 

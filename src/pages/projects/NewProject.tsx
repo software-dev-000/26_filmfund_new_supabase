@@ -146,6 +146,27 @@ interface NewProjectProps {
   onUpdate?: (data: any) => Promise<void>;
 }
 
+// Add this utility function at the top of the file
+const processGalleryBatch = async (files: File[], userId: string): Promise<string[]> => {
+  const results = [];
+  const batchSize = 10;
+  
+  for (let i = 0; i < files.length; i += batchSize) {
+    const batch = files.slice(i, i + batchSize);
+    const batchResults = await Promise.all(
+      batch.map(file => 
+        projectService.uploadFile('project-gallery', `${userId}/${file.name}`, file)
+      )
+    );
+    results.push(...batchResults);
+    // Add a small delay between batches to prevent rate limiting
+    if (i + batchSize < files.length) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+  return results;
+};
+
 const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData, onUpdate }) => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -283,12 +304,6 @@ const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData,
         ).then(memberImageUrl => ({ ...member, image_url: memberImageUrl }));
       });
 
-      // Upload all other files in parallel
-      
-      const galleryUploadPromises = formData.gallery.map(file => 
-        projectService.uploadFile('project-gallery', `${currentUser.id}/${file.name}`, file)
-      );
-      console.log('legal_documents', formData.tokenization.legal_documents);
       const legalDocumentUploadPromises = formData.tokenization.legal_documents.map(file => 
         projectService.uploadFile('legal-documents', `${currentUser.id}/${file.name}`, file)
       );
@@ -297,15 +312,15 @@ const NewProject: React.FC<NewProjectProps> = ({ isEditing = false, initialData,
       const [
         coverImageUrl,
         teamMembersWithImages,
-        galleryUploads,
         legalDocumentUploads
       ] = await Promise.all([
         coverImageUploadPromise,
         Promise.all(teamMemberUploadPromises),
-        Promise.all(galleryUploadPromises),
         Promise.all(legalDocumentUploadPromises)
       ]);
 
+      // Process gallery images in batches of 10
+      const galleryUploads = await processGalleryBatch(formData.gallery, currentUser.id);
       console.log('All files uploaded successfully');
 
       // Now create the project in the database

@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-navy-950 text-white pt-16 pb-8">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex lg:flex-row flex-col md:flex-row mb-12 gap-20">
+        <div className="flex lg:flex-row flex-col md:flex-row mb-12 gap-8">
           <div className="flex flex-col items-start ml-auto gap-4 justify-between">
             <img 
               src="/logo.webp" 
@@ -16,11 +16,11 @@ const Footer: React.FC = () => {
               className="h-8 place-self-start"
             />
               
-            <p className="text-gray-400 w-3/4 text-start">
+            <p className="text-gray-400 w-full md:w-3/4 text-start">
               Connecting filmmakers with investors through blockchain technology.
               Revolutionizing film financing with transparency and security.
             </p>
-            <div className="flex space-x-8 justify-center">
+            <div className="flex justify-center gap-4">
               <SocialIcon icon={<XIcon style={{ fontSize: 20 }} />} to="https://x.com/FilmFund_DM/" />
               <SocialIcon icon={<Linkedin size={20} />} to="https://www.linkedin.com/company/filmfund-io/" />
               <SocialIcon icon={<Instagram size={20} />} to="https://www.instagram.com/filmfund.io_/" />

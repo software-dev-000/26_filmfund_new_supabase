@@ -144,7 +144,7 @@ const AdminDashboard: React.FC = () => {
       <div className="flex items-center space-x-4">
         <div className="w-12 h-12 bg-navy-600 rounded-lg flex items-center justify-center">
           {item.cover_image ? (
-            <img src={item.cover_image} alt={item.title} className="w-12 h-12 rounded-lg" />
+            <img src={item.cover_image} alt={item.title} className="w-12 h-12 rounded-lg object-cover" />
           ) : (
             <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-navy-600">
               <Film size={24} className="text-gold-500" />
